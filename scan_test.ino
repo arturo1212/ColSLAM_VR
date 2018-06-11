@@ -3,7 +3,7 @@
 #include "MPU6050_6Axis_MotionApps20.h"
 #include <ros.h>
 #include <std_msgs/String.h>
-#define window 3
+#define window 7
 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
     #include "Wire.h"
@@ -56,7 +56,11 @@ int getDistance()
   // int val = 6787 / (analogRead(A0) - 3)) - 4;
 
   while(iter < window ){
-    IRprom += 6787 / (analogRead(A0) - 3)) - 4;
+    int aux = analogRead(A0);
+    if (aux ==3){
+      aux++;
+    }
+    IRprom += 6787 / (aux - 3) - 4;
     LIDARprom += pulseIn(5, HIGH)/10;
     iter++;
   }
@@ -94,23 +98,26 @@ void setup() {
         mpuIntStatus = mpu.getIntStatus();
         dmpReady = true;
         packetSize = mpu.dmpGetFIFOPacketSize();
-    } 
+    }
+  myservo.write(0);
+  delay(1000);
 }
 
 void loop() {
   char copy[15];
+  
   for(int pos = 0; pos <= 180; pos += 1)
   {
-    Get_yaw();
     myservo.write(pos);
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
-    delay(20);
+    //delay(10);
+    Get_yaw();
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(180-pos));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
-    Get_yaw();
     myservo.write(pos);
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
-    delay(20);
+    //delay(10);
+    Get_yaw();
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(180-pos));
   }
 }
