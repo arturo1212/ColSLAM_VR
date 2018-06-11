@@ -1,8 +1,6 @@
 #include <Servo.h>
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
-#include <ros.h>
-#include <std_msgs/String.h>
 #define window 7
 
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
