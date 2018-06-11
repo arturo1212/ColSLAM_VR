@@ -109,13 +109,13 @@ void loop() {
     myservo.write(pos);
     //delay(10);
     Get_yaw();
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(180-pos));
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
     myservo.write(pos);
     //delay(10);
     Get_yaw();
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(180-pos));
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
   }
 }
