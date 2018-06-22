@@ -23,9 +23,47 @@ Quaternion q;           // [w, x, y, z]         quaternion container
 VectorFloat gravity;    // [x, y, z]            gravity vector
 float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gravity vector
 
+// Odometry variables
+unsigned long start;
+int pinFeedback_left  = A1;
+int pinFeedback_right = A2;
+int tCycle  = 0;
+int valA    = 85;
+float odom1 = 0, odom2 = 0;
+float tHigh = 0;
+float tLow  = 0;
+float dc    = 0;
+float angle = 0;    //Measured angle from feedback
+float dcMin = 2.9;  //From Parallax spec sheet
+float dcMax = 97.1; //From Parallax spec sheet
+
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() {
     mpuInterrupt = true;
+}
+
+float mido_angulo(int pin) {
+  while(1) {  //From Parallax spec sheet
+    tHigh  = pulseIn(pin, HIGH);
+    tLow   = pulseIn(pin, LOW);
+    tCycle = tHigh + tLow;
+
+    if ( tCycle > 1000 && tCycle < 1200) {
+        break; //valid tCycle;
+    }
+  }
+  dc = (100 * tHigh) / tCycle; //From Parallax spec sheet, you are trying to determine the percentage of the HIGH in the pulse
+  angle = ((dc - dcMin) * 360) / (dcMax - dcMin + 1); //From Parallax spec sheet
+  if (angle < 0.0) {
+      return;
+      angle = 0.0;
+  }
+  else 
+  if (angle > 359.0) {
+      return;
+      angle = 359.0;
+  }
+  return angle;
 }
 
 void Get_yaw(){
@@ -79,6 +117,8 @@ int getDistance()
 void setup() {
   Serial.begin(57600); // Start serial communications
   myservo.attach(9);
+  pinMode(pinFeedback_left, INPUT);
+  pinMode(pinFeedback_right, INPUT);
   pinMode(6, OUTPUT); // Set pin 2 as trigger pin
   digitalWrite(6, LOW); // Set trigger LOW for continuous read
   pinMode(5, INPUT); // Set pin 3 as monitor pin
@@ -106,16 +146,19 @@ void loop() {
   
   for(int pos = 0; pos <= 180; pos += 1)
   {
+    odom1 = mido_angulo(pinFeedback_left);
+    odom2 = mido_angulo(pinFeedback_right);
     myservo.write(pos);
-    //delay(10);
     Get_yaw();
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
+    odom1 = mido_angulo(pinFeedback_left);
+    odom2 = mido_angulo(pinFeedback_right);
     myservo.write(pos);
     //delay(10);
     Get_yaw();
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
   }
 }
