@@ -102,6 +102,7 @@ int getDistance()
   }
   LIDARprom = LIDARprom/window;
   IRprom = IRprom/window;
+  Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
   if(IRprom > 35 ){
     LIDARprom = LIDARprom - 15;
     if (LIDARprom > 85 ){
@@ -109,7 +110,8 @@ int getDistance()
       }else {
         return LIDARprom;
       }
-   } else {
+   } 
+   else {
     return IRprom;
    }
 }
@@ -143,22 +145,26 @@ void setup() {
 
 void loop() {
   char copy[15];
-  
+  Serial.println(String(getDistance()));
+  /*
   for(int pos = 0; pos <= 180; pos += 1)
   {
-    odom1 = mido_angulo(pinFeedback_left);
-    odom2 = mido_angulo(pinFeedback_right);
+    Serial.println("Entro");
+    //odom1 = mido_angulo(pinFeedback_left);
+    //odom2 = mido_angulo(pinFeedback_right);
+    Serial.println("Angulos");
     myservo.write(pos);
     Get_yaw();
+    Serial.println("A imprimir");
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
-    odom1 = mido_angulo(pinFeedback_left);
-    odom2 = mido_angulo(pinFeedback_right);
+    //odom1 = mido_angulo(pinFeedback_left);
+    //odom2 = mido_angulo(pinFeedback_right);
     myservo.write(pos);
     //delay(10);
     Get_yaw();
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
-  }
+  }*/
 }
