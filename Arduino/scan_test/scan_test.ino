@@ -49,19 +49,17 @@ float mido_angulo(int pin) {
     tCycle = tHigh + tLow;
 
     if ( tCycle > 1000 && tCycle < 1200) {
-        break; //valid tCycle;
+      break; //valid tCycle;
     }
   }
   dc = (100 * tHigh) / tCycle; //From Parallax spec sheet, you are trying to determine the percentage of the HIGH in the pulse
   angle = ((dc - dcMin) * 360) / (dcMax - dcMin + 1); //From Parallax spec sheet
   if (angle < 0.0) {
-      return;
-      angle = 0.0;
+    angle = 0.0;
   }
   else 
   if (angle > 359.0) {
-      return;
-      angle = 359.0;
+    angle = 359.0;
   }
   return angle;
 }
@@ -102,7 +100,7 @@ int getDistance()
   }
   LIDARprom = LIDARprom/window;
   IRprom = IRprom/window;
-  Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
+  //Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
   if(IRprom > 35 ){
     LIDARprom = LIDARprom - 15;
     if (LIDARprom > 85 ){
@@ -145,14 +143,13 @@ void setup() {
 
 void loop() {
   char copy[15];
-  Serial.println(String(getDistance()));
-  /*
+  //Serial.println(String(getDistance()));
   for(int pos = 0; pos <= 180; pos += 1)
   {
-    Serial.println("Entro");
+    //Serial.println("Entro");
     //odom1 = mido_angulo(pinFeedback_left);
     //odom2 = mido_angulo(pinFeedback_right);
-    Serial.println("Angulos");
+    //Serial.println("Angulos");
     myservo.write(pos);
     Get_yaw();
     Serial.println("A imprimir");
@@ -166,5 +163,5 @@ void loop() {
     //delay(10);
     Get_yaw();
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
-  }*/
+  }
 }
