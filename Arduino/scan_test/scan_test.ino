@@ -121,9 +121,9 @@ void setup() {
   myservo.attach(9);
   pinMode(pinFeedback_left, INPUT);
   pinMode(pinFeedback_right, INPUT);
-  pinMode(6, OUTPUT); // Set pin 2 as trigger pin
-  digitalWrite(6, LOW); // Set trigger LOW for continuous read
-  pinMode(5, INPUT); // Set pin 3 as monitor pin
+  pinMode(6, OUTPUT); // Set pin 6 as trigger pin LIDAR
+  digitalWrite(6, LOW); // Set trigger LOW for continuous read LIDAR
+  pinMode(5, INPUT); // Set pin 5 as monitor pin LIDAR
   #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         Wire.begin();
         TWBR = 24; // 400kHz I2C clock (200kHz if CPU is 8MHz)
