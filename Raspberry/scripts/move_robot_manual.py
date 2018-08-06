@@ -6,8 +6,8 @@ import pigpio
 
 pi = pigpio.pi()
 # Servo Parallax PWM: 1280–1720
-SERVOr = 4  # Modificar PINES PARA GPIO
-SERVOl = 2
+SERVOr = 17  # Modificar PINES PARA GPIO
+SERVOl = 27
 
 def isData():
     return select.select([sys.stdin], [], [], 0.25) == ([sys.stdin], [], [])
