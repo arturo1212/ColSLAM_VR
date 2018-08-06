@@ -2,6 +2,8 @@ import sys
 import select
 import tty
 import termios
+import pigpio
+
 pi = pigpio.pi()
 # Servo Parallax PWM: 1280–1720
 SERVOr = 4  # Modificar PINES PARA GPIO
