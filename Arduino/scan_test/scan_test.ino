@@ -86,8 +86,8 @@ int getDistance()
 {
   int8_t iter=0;
   float IRprom=0, LIDARprom=0; // Promedio de lecturas de distancia para el IR y el LIDAR dentro de la ventana window
-  // unsigned long pulseWidth = pulseIn(5, HIGH);    // Lectura del LIDAR.
-  // int val = 6787 / (analogRead(A0) - 3)) - 4;
+  unsigned long pulseWidth = pulseIn(5, HIGH);    // Lectura del LIDAR.
+  int val = 6787 / (analogRead(A0) - 3) - 4;
 
   while(iter < window ){
     int aux = analogRead(A0);
@@ -99,6 +99,7 @@ int getDistance()
     iter++;
   }
   LIDARprom = LIDARprom/window;
+  //Serial.println("LIDAR:" + String(LIDARprom));
   IRprom = IRprom/window;
   //Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
   if(IRprom > 35 ){
@@ -147,18 +148,17 @@ void loop() {
   for(int pos = 0; pos <= 180; pos += 1)
   {
     //Serial.println("Entro");
-    //odom1 = mido_angulo(pinFeedback_left);
-    //odom2 = mido_angulo(pinFeedback_right);
+    odom1 = mido_angulo(pinFeedback_left);
+    odom2 = mido_angulo(pinFeedback_right);
     //Serial.println("Angulos");
     myservo.write(pos);
     Get_yaw();
-    Serial.println("A imprimir");
-    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos));
+    Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
-    //odom1 = mido_angulo(pinFeedback_left);
-    //odom2 = mido_angulo(pinFeedback_right);
+    odom1 = mido_angulo(pinFeedback_left);
+    odom2 = mido_angulo(pinFeedback_right);
     myservo.write(pos);
     //delay(10);
     Get_yaw();
