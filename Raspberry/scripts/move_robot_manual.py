@@ -48,9 +48,9 @@ try:
             if(c == "w"):
                 forward(SERVOl, SERVOr)
             elif(c == "a"):
-                turn_left(SERVOl, SERVOr)
+                turn_left(SERVOr, SERVOl)
             elif(c == "s"):
-                backward(SERVOr, SERVOl)
+                backward(SERVOl, SERVOr)
             elif(c == "d"):
                 turn_right(SERVOr, SERVOl)
             print("KEY", c)
