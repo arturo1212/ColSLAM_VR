@@ -13,4 +13,4 @@ while not rospy.is_shutdown():
                 pub.publish(result)
                 rate.sleep()
         except:
-                print("Arduino disconnected", file=sys.stderr)
+                print("Arduino disconnected")
