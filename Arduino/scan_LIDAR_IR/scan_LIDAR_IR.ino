@@ -91,10 +91,10 @@ int getDistance()
 
   while(iter < window ){
     int aux = analogRead(A0);
-    if (aux ==3){
+    if (aux == 7 ){
       aux++;
     }
-    IRprom += 6787 / (aux - 3) - 4;
+    IRprom += 13 * pow(aux * 0.0048828125, -1) * 2;
     LIDARprom += pulseIn(5, HIGH)/10;
     iter++;
   }
