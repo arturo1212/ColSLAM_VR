@@ -8,10 +8,13 @@ pi = pigpio.pi()
 # Servo Parallax PWM: 1280–1720
 SERVOr = 17  # Modificar PINES PARA GPIO
 SERVOl = 27
+pi.set_PWM_frequency(SERVOl, 50)
+pi.set_PWM_frequency(SERVOr, 50)
+print(pi.get_PWM_frequency(SERVOr))
 
 def forward(sr, sl):
-    pi.set_servo_pulsewidth(sr, 1280)
     pi.set_servo_pulsewidth(sl, 1720)
+    pi.set_servo_pulsewidth(sr, 1280)
 
 def backward(sr, sl):
     pi.set_servo_pulsewidth(sr, 1720)
@@ -30,7 +33,7 @@ def turn_right(sr, sl):
     pi.set_servo_pulsewidth(SERVOl, 1720)
     
 def isData():
-    return select.select([sys.stdin], [], [], 0.1) == ([sys.stdin], [], [])
+    return select.select([sys.stdin], [], [], 0.05) == ([sys.stdin], [], [])
 
 old_settings = termios.tcgetattr(sys.stdin)
 try:
@@ -55,6 +58,6 @@ try:
                 turn_right(SERVOr, SERVOl)
             print("KEY", c)
             continue
-        stop(SERVOr, SERVOl)
+        stop(SERVOl, SERVOr)
 finally:
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
