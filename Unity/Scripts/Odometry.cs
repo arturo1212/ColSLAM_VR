@@ -63,21 +63,24 @@ public class Odometry : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     { // Si ventana de tiempo, entonces:
-        if (Time.realtimeSinceStartup - prev_time > 2f)
+        if (Time.realtimeSinceStartup - prev_time > 1f)
         {
-            Vector3 x_p = position_avg(pos_list);           // Calcular position_avg actual.
-            Vector3 u = update_model(pos_pre, x_p);         // Update model (u)
-            Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
-            
-            //Actualizar transform y rotacion
-            transform.position = new Vector3(x_n.x, transform.position.y, x_n.y);
-            Vector3 rotationVector = transform.rotation.eulerAngles;
-            rotationVector.y = x_n.z;                      // Asignar rotacion.
-            transform.rotation = Quaternion.Euler(rotationVector);
+            Debug.Log("Updating Model "+pos_list.Count);
+            foreach (Vector3 lectura in pos_list)
+            {
+                Vector3 x_p = lectura;           // Calcular position_avg actual.
+                Vector3 u = update_model(pos_pre, x_p);         // Update model (u)
+                Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
 
-            pos_pre = x_n;                                  // Actualizar pre.
+                //Actualizar transform y rotacion
+                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y);
+                Vector3 rotationVector = transform.rotation.eulerAngles;
+                rotationVector.y = x_n.z * Mathf.Rad2Deg;                      // Asignar rotacion.
+                transform.rotation = Quaternion.Euler(rotationVector);
+
+                pos_pre = x_n;                                  // Actualizar pre.
+            }
             pos_list.Clear();                               // Limpiar lista y agregar comienzo.
-            pos_list.Add(x_n);
             prev_time = Time.realtimeSinceStartup;
         }
         else
