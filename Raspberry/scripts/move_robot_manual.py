@@ -29,10 +29,10 @@ try:
             if(c == "w"):
                 pi.set_servo_pulsewidth(SERVOr, 1280)
                 pi.set_servo_pulsewidth(SERVOl, 1720)
-            elif(c == "s"):
+            elif(c == "a"):
                 pi.set_servo_pulsewidth(SERVOr, 1720)
                 pi.set_servo_pulsewidth(SERVOl, 1280)
-            elif(c == "a"):
+            elif(c == "s"):
                 pi.set_servo_pulsewidth(SERVOr, 1720)
                 pi.set_servo_pulsewidth(SERVOl, 1720)
             elif(c == "d"):
