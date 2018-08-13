@@ -54,13 +54,13 @@ float mido_angulo(int pin) {
   }
   dc = (100 * tHigh) / tCycle; //From Parallax spec sheet, you are trying to determine the percentage of the HIGH in the pulse
   angle = ((dc - dcMin) * 360) / (dcMax - dcMin + 1); //From Parallax spec sheet
-  if (angle < 0.0) {
+  /*if (angle < 0.0) {
     angle = 0.0;
   }
   else 
   if (angle > 359.0) {
     angle = 359.0;
-  }
+  }*/
   return angle;
 }
 
@@ -86,43 +86,27 @@ int getDistance()
 {
   int8_t iter=0;
   float IRprom=0, LIDARprom=0; // Promedio de lecturas de distancia para el IR y el LIDAR dentro de la ventana window
-  unsigned long pulseWidth = pulseIn(5, HIGH);    // Lectura del LIDAR.
-  int val = 6787 / (analogRead(A0) - 3) - 4;
+  // unsigned long pulseWidth = pulseIn(5, HIGH);    // Lectura del LIDAR.
+  //int val = 6787 / (analogRead(A0) - 3) - 4;
 
   while(iter < window ){
     int aux = analogRead(A0);
-    if (aux ==3){
+    if (aux == 7 ){
       aux++;
     }
-    IRprom += 6787 / (aux - 3) - 4;
-    LIDARprom += pulseIn(5, HIGH)/10;
+    IRprom += 13 * pow(aux * 0.0048828125, -1) * 2;
     iter++;
   }
-  LIDARprom = LIDARprom/window;
-  //Serial.println("LIDAR:" + String(LIDARprom));
   IRprom = IRprom/window;
-  //Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
-  if(IRprom > 35 ){
-    LIDARprom = LIDARprom - 15;
-    if (LIDARprom > 85 ){
-        return LIDARprom + 5;
-      }else {
-        return LIDARprom;
-      }
-   } 
-   else {
     return IRprom;
-   }
 }
+
 
 void setup() {
   Serial.begin(57600); // Start serial communications
   myservo.attach(9);
   pinMode(pinFeedback_left, INPUT);
   pinMode(pinFeedback_right, INPUT);
-  pinMode(6, OUTPUT); // Set pin 6 as trigger pin LIDAR
-  digitalWrite(6, LOW); // Set trigger LOW for continuous read LIDAR
-  pinMode(5, INPUT); // Set pin 5 as monitor pin LIDAR
   #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
         Wire.begin();
         TWBR = 24; // 400kHz I2C clock (200kHz if CPU is 8MHz)
