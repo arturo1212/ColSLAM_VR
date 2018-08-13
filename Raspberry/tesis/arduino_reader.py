@@ -1,6 +1,7 @@
 import serial
 import rospy
 from std_msgs.msg import String
+import sys
 
 ser = serial.Serial('/dev/ttyACM0', 57600)
 pub = rospy.Publisher('arduino', String, queue_size=1)
