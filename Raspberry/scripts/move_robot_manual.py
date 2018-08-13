@@ -30,7 +30,7 @@ def turn_right(sr, sl):
     pi.set_servo_pulsewidth(SERVOl, 1720)
     
 def isData():
-    return select.select([sys.stdin], [], [], 0.25) == ([sys.stdin], [], [])
+    return select.select([sys.stdin], [], [], 0.1) == ([sys.stdin], [], [])
 
 old_settings = termios.tcgetattr(sys.stdin)
 try:
