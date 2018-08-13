@@ -10,7 +10,7 @@ r = GPIO.PWM(17, 50)
 l = GPIO.PWM(27, 50)
 
 r.start(6.4)
-l.start(6.4)
+l.start(8.6)
 try:
     while True:
         pass
