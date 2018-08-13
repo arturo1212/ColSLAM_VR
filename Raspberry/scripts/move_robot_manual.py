@@ -22,13 +22,13 @@ def stop(sr, sl):
     pi.set_servo_pulsewidth(sl, 0)
 
 def turn_left(sr, sl):
-    pi.set_servo_pulsewidth(SERVOr, 1720)
-    pi.set_servo_pulsewidth(SERVOl, 1720)
-
-def turn_right(sr, sl):
     pi.set_servo_pulsewidth(SERVOr, 1280)
     pi.set_servo_pulsewidth(SERVOl, 1280)
 
+def turn_right(sr, sl):
+    pi.set_servo_pulsewidth(SERVOr, 1720)
+    pi.set_servo_pulsewidth(SERVOl, 1720)
+    
 def isData():
     return select.select([sys.stdin], [], [], 0.25) == ([sys.stdin], [], [])
 
