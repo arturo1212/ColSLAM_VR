@@ -55,7 +55,6 @@ try:
                 turn_right(SERVOr, SERVOl)
             print("KEY", c)
             continue
-        pi.set_servo_pulsewidth(SERVOr, 0)
-        pi.set_servo_pulsewidth(SERVOl, 0) 
+        stop(SERVOr, SERVOl)
 finally:
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
