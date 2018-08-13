@@ -9,6 +9,26 @@ pi = pigpio.pi()
 SERVOr = 17  # Modificar PINES PARA GPIO
 SERVOl = 27
 
+def forward(sr, sl):
+    pi.set_servo_pulsewidth(sr, 1280)
+    pi.set_servo_pulsewidth(sl, 1720)
+
+def backward(sr, sl):
+    pi.set_servo_pulsewidth(sr, 1720)
+    pi.set_servo_pulsewidth(sl, 1280)
+
+def stop(sr, sl):
+    pi.set_servo_pulsewidth(sr, 0)
+    pi.set_servo_pulsewidth(sl, 0)
+
+def turn_left(sr, sl):
+    pi.set_servo_pulsewidth(SERVOr, 1720)
+    pi.set_servo_pulsewidth(SERVOl, 1720)
+
+def turn_right(sr, sl):
+    pi.set_servo_pulsewidth(SERVOr, 1280)
+    pi.set_servo_pulsewidth(SERVOl, 1280)
+
 def isData():
     return select.select([sys.stdin], [], [], 0.25) == ([sys.stdin], [], [])
 
@@ -23,21 +43,16 @@ try:
         if isData():
             c = sys.stdin.read(1)
             if c == 'p':         # x1b is ESC
-                pi.set_servo_pulsewidth(SERVOr, 0)
-                pi.set_servo_pulsewidth(SERVOl, 0)
+                stop(SERVOr, SERVOl)
                 break
             if(c == "w"):
-                pi.set_servo_pulsewidth(SERVOr, 1280)
-                pi.set_servo_pulsewidth(SERVOl, 1720)
+                forward(SERVOr, SERVOl)
             elif(c == "a"):
-                pi.set_servo_pulsewidth(SERVOr, 1720)
-                pi.set_servo_pulsewidth(SERVOl, 1280)
+                backward(SERVOr, SERVOl)
             elif(c == "s"):
-                pi.set_servo_pulsewidth(SERVOr, 1720)
-                pi.set_servo_pulsewidth(SERVOl, 1720)
+                turn_left(SERVOr, SERVOl)
             elif(c == "d"):
-                pi.set_servo_pulsewidth(SERVOr, 1280)
-                pi.set_servo_pulsewidth(SERVOl, 1280)
+                turn_right(SERVOr, SERVOl)
             print("KEY", c)
             continue
         pi.set_servo_pulsewidth(SERVOr, 0)
