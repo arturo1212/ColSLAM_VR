@@ -55,8 +55,8 @@ public class PorfavorFunciona : MonoBehaviour {
         rotation_robot = float.Parse(tokens[0]);
         sensorAngle = int.Parse(tokens[2]);
         pointOrientation = (rotation_robot + sensorAngle -90);
-        raux = float.Parse(tokens[3]);
-        laux = float.Parse(tokens[4]);
+        raux = float.Parse(tokens[4]);
+        laux = float.Parse(tokens[3]);
         if (lAngle == -999)
         {
             lAngle = laux;
