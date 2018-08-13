@@ -46,9 +46,9 @@ try:
                 stop(SERVOr, SERVOl)
                 break
             if(c == "w"):
-                forward(SERVOr, SERVOl)
+                forward(SERVOl, SERVOr)
             elif(c == "a"):
-                turn_left(SERVOr, SERVOl)
+                turn_left(SERVOl, SERVOr)
             elif(c == "s"):
                 backward(SERVOr, SERVOl)
             elif(c == "d"):
