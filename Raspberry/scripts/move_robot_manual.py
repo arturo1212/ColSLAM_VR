@@ -5,7 +5,7 @@ import termios
 import pigpio
 
 pi = pigpio.pi()
-# Servo Parallax PWM: 1280–1720
+# Servo Parallax PWM: 1280 1720
 SERVOr = 17  # Modificar PINES PARA GPIO
 SERVOl = 27
 pi.set_PWM_frequency(SERVOl, 50)
