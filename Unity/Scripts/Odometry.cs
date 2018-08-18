@@ -4,6 +4,7 @@ using UnityEngine;
 public class Odometry : MonoBehaviour {
     //posicion anterior, posicion actual.
     // Promedio anterior y actual.
+    public float alpha1, alpha2, alpha3, alpha4;   // Factores en las probabilidades.
     float prev_time;
     Vector3 pos_pre;
     Vector3 avg_pre = new Vector3(0f, 0f, 0f);
@@ -39,9 +40,6 @@ public class Odometry : MonoBehaviour {
 
     public Vector3 odometry_sampling(Vector3 pos_prev, Vector3 u)
     {   
-        float alpha1, alpha2, alpha3, alpha4;   // Factores en las probabilidades.
-
-        alpha1 = alpha2 = alpha3 = alpha4 = 1;
         //OJO comparr con las laminas
         float rota1 = u.x + sample_normal(alpha1 * u.x * u.x + alpha2 * u.z * u.z);
         float rota2 = u.y + sample_normal(alpha1 * u.y * u.y + alpha2 * u.z * u.z);
@@ -65,7 +63,7 @@ public class Odometry : MonoBehaviour {
     { // Si ventana de tiempo, entonces:
         if (Time.realtimeSinceStartup - prev_time > 1f)
         {
-            Debug.Log("Updating Model "+pos_list.Count);
+            //Debug.Log("Updating Model "+pos_list.Count);
             foreach (Vector3 lectura in pos_list)
             {
                 Vector3 x_p = lectura;           // Calcular position_avg actual.
@@ -73,7 +71,8 @@ public class Odometry : MonoBehaviour {
                 Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
 
                 //Actualizar transform y rotacion
-                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y);
+                Debug.Log("New Pose " + x_n.ToString());
+                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(4.06f / rosComm.maxDistance);
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = x_n.z * Mathf.Rad2Deg;                      // Asignar rotacion.
                 transform.rotation = Quaternion.Euler(rotationVector);

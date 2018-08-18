@@ -114,7 +114,8 @@ public class PorfavorFunciona : MonoBehaviour {
         {
             CreateCube();
             sensorObject.transform.rotation = Quaternion.AngleAxis(-sensorAngle, new Vector3(0, 1, 0));
-            auxPose += transform.forward * displacement * 0.01f;
+            auxPose += transform.forward * displacement;
+            
             //transform.position += transform.forward * displacement * 0.01f;
             newReading = false;
         }
