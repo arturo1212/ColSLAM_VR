@@ -3,5 +3,6 @@ unzip master.zip
 cd pigpio-master
 make
 make install
-sudo pigpiod
+chmod +x /etc/svscan/pigpiod/run
+pigpiod
 python move_robot_manual.py
