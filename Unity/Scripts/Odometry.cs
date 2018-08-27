@@ -10,6 +10,9 @@ public class Odometry : MonoBehaviour {
     Vector3 avg_pre = new Vector3(0f, 0f, 0f);
     List<Vector3> pos_list = new List<Vector3>();
     private PorfavorFunciona rosComm;
+    public float threshold, rotThreshold, maxDisplacement=0;
+    bool stillRotationSet = false;
+    float prevRotation, currentRotation, diffRot;
 
     public Vector3 position_avg(List<Vector3> positions)
     {   // Devuelve el promedio en cada coordenada.
@@ -57,10 +60,22 @@ public class Odometry : MonoBehaviour {
         rosComm = GetComponent<PorfavorFunciona>();
         pos_pre = new Vector3(0f, 0f, 0f);
     }
-	
+	        
+    bool isDisplacing()
+    {
+        return rosComm.displacement >= threshold;
+    }
+
+    bool isRotating()
+    {
+        return Mathf.Abs(rosComm.LDistance) >= threshold || Mathf.Abs(rosComm.RDistance) >= threshold;
+    }
+
 	// Update is called once per frame
 	void Update ()
-    { // Si ventana de tiempo, entonces:
+    {
+        // Si ventana de tiempo, entonces:
+        //Debug.Log(rosComm.LDistance.ToString()+' '+rosComm.RDistance.ToString());
         if (Time.realtimeSinceStartup - prev_time > 1f)
         {
             //Debug.Log("Updating Model "+pos_list.Count);
@@ -71,7 +86,7 @@ public class Odometry : MonoBehaviour {
                 Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
 
                 //Actualizar transform y rotacion
-                Debug.Log("New Pose " + x_n.ToString());
+                //Debug.Log("New Pose " + x_n.ToString());
                 transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(4.06f / rosComm.maxDistance);
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = x_n.z * Mathf.Rad2Deg;                      // Asignar rotacion.

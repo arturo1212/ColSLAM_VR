@@ -2,6 +2,7 @@ using UnityEngine;
 using RosSharp.RosBridgeClient;
 
 public class PorfavorFunciona : MonoBehaviour {
+    public float memesCalientes;
     private bool first_time = true;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
@@ -54,7 +55,7 @@ public class PorfavorFunciona : MonoBehaviour {
         sensorDistance = int.Parse(tokens[1]);
         rotation_robot = float.Parse(tokens[0]);
         sensorAngle = int.Parse(tokens[2]);
-        pointOrientation = (rotation_robot + sensorAngle -90);
+        pointOrientation = (memesCalientes + sensorAngle -90);
         raux = float.Parse(tokens[4]);
         laux = float.Parse(tokens[3]);
         if (lAngle == -999)
@@ -84,6 +85,7 @@ public class PorfavorFunciona : MonoBehaviour {
     }
 
     void Start () {
+        memesCalientes = transform.rotation.eulerAngles.y;
         auxPose = transform.position;
         RosSocket rosSocket = new RosSocket(robotIP);
         int subscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
@@ -105,7 +107,12 @@ public class PorfavorFunciona : MonoBehaviour {
         {
             (cube.GetComponent<Renderer>()).material.color = new Color(0.5f, 1, 1);
         }
-        Destroy(cube, 50.0f);
+        Destroy(cube, 120.0f);
+    }
+
+    void Update()
+    {
+        memesCalientes = transform.rotation.eulerAngles.y;
     }
 
     void FixedUpdate()
