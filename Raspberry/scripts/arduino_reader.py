@@ -1,7 +1,6 @@
 import serial
 import sys
 import time
-import matplotlib.pyplot as plt
 
 ser = serial.Serial('/dev/ttyACM0', 57600)
 gyro_values = []
@@ -14,10 +13,11 @@ while True:
         end = time.time()
         if end - start >= 1800: # En secs
                 print("#DIFF: ",gyro_values[0], gyro_reading)
-                plt.figure(figsize=(10, 5))
-                plt.plot(gyro_values,'b')
-                plt.title("Valores del gyro")
-                plt.savefig("gyro.png")
+                f = open("Results.txt","w+")
+                f.write(gyro_values[0])
+                for i in range(1,len(gyro_values)):
+                        f.write(",{}".format(gyro_values[i]))
+                        f.close()
                 gyro_values.clear()
                 start = time.time()
                 
