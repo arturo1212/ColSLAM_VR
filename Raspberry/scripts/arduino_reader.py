@@ -1,5 +1,4 @@
 import serial
-from std_msgs.msg import String
 import sys
 import time
 import matplotlib.pyplot as plt
