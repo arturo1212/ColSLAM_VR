@@ -3,7 +3,7 @@ using RosSharp.RosBridgeClient;
 
 public class PorfavorFunciona : MonoBehaviour {
     public float memesCalientes;
-    private bool first_time = true;
+    public bool firstTime = false;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
     public float rotation_robot;    // Rotacion del robot (Giroscopio).
@@ -14,7 +14,7 @@ public class PorfavorFunciona : MonoBehaviour {
     public float wheelRadius, displacement;
 
     public Vector3 tpoint, actualPose, auxPose;
-    public int maxDistance = 500;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public int maxDistance = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.116:9090";  // IP del robot.
     
 
@@ -47,6 +47,15 @@ public class PorfavorFunciona : MonoBehaviour {
         return -diff;
     }
 
+    float Among360(float a)
+    {
+        if (a < 0)
+        {
+            return 360 + a;
+        }
+        return a;
+    }
+
     private void ReadArduino(string values)
     {
         string[] tokens = values.Split(',');
@@ -71,9 +80,14 @@ public class PorfavorFunciona : MonoBehaviour {
             rdeltaW = LeftDisplacement(ldiff);
             RDistance = RightDisplacement(rdiff) * Mathf.Deg2Rad * wheelRadius;
             LDistance = LeftDisplacement(ldiff) * Mathf.Deg2Rad * wheelRadius;
-            displacement = RDistance + LDistance / 2;
+            displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;
             lAngle = laux;
             rAngle = raux;
+        }
+        if(!firstTime)
+        {
+            print("PRIMER SET: " + rotation_robot.ToString());
+            firstTime = true;
         }
         //Debug.Log(tokens[0]+ " Dist: " + tokens[1] + " SensDir: " + tokens[2] + " RW: " + tokens[3] + " LW: " + tokens[4]);
     }
@@ -93,14 +107,14 @@ public class PorfavorFunciona : MonoBehaviour {
 
     void CreateCube()
     {   
-        float scaled = (sensorDistance / maxDistance) * 10;
+        float scaled = (sensorDistance / maxDistance);
         Vector3 rotationVector = transform.rotation.eulerAngles;
         //rotationVector.y = rotation_robot;                      // Asignar rotacion del gyro.
         //transform.rotation = Quaternion.Euler(rotationVector);
         //transform.position = new Vector3(scaled, 0f, transform.position.z);
         tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * scaled;
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+        cube.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
         //cube.AddComponent<Rigidbody>();
         cube.transform.position = transform.position + tpoint;
         if (sensorDistance <= 35)

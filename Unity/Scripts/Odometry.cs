@@ -11,8 +11,8 @@ public class Odometry : MonoBehaviour {
     List<Vector3> pos_list = new List<Vector3>();
     private PorfavorFunciona rosComm;
     public float threshold, rotThreshold, maxDisplacement=0;
-    bool stillRotationSet = false;
-    float prevRotation, currentRotation, diffRot;
+    bool stillRotationSet = false, previous_firstTime = false, hadSpasm=false;
+    public float prevRotation, currentRotation,diffRot;
 
     public Vector3 position_avg(List<Vector3> positions)
     {   // Devuelve el promedio en cada coordenada.
@@ -60,7 +60,12 @@ public class Odometry : MonoBehaviour {
         rosComm = GetComponent<PorfavorFunciona>();
         pos_pre = new Vector3(0f, 0f, 0f);
     }
-	        
+	 
+    bool isShaking(float gyro_reading, float thresh)
+    {
+        return Mathf.Abs(prevRotation - gyro_reading) >= thresh;
+    }
+
     bool isDisplacing()
     {
         return rosComm.displacement >= threshold;
@@ -72,12 +77,63 @@ public class Odometry : MonoBehaviour {
     }
 
 	// Update is called once per frame
-	void Update ()
+	void FixedUpdate ()
     {
-        // Si ventana de tiempo, entonces:
-        //Debug.Log(rosComm.LDistance.ToString()+' '+rosComm.RDistance.ToString());
-        if (Time.realtimeSinceStartup - prev_time > 1f)
+        // Verificacion de primera lectura
+        if (!rosComm.firstTime){
+            return;
+        }
+
+        float gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
+
+        if (!previous_firstTime)
         {
+            prevRotation = gyro_reading;
+            previous_firstTime = true;
+            return;
+        }
+
+        // Me quedo quieto
+        if ( ( !isRotating() && !isDisplacing() && stillRotationSet == false ) || prevRotation==0 )
+        {
+            if (isShaking(gyro_reading, 10))
+            {
+                Debug.Log("Espasmo! " + (prevRotation - gyro_reading).ToString());
+                return;
+            }
+            prevRotation = gyro_reading;
+            stillRotationSet = true;
+        }
+        //Comienzo a moverme
+        else if (stillRotationSet == true && ( isRotating() || isDisplacing() ))
+        {
+            diffRot += prevRotation - gyro_reading;
+            stillRotationSet = false;
+        }
+        if (!isDisplacing() && !isRotating())
+        {
+            currentRotation = prevRotation + diffRot;
+        }
+        else
+        {
+            if (isShaking(gyro_reading, 150) && !hadSpasm)
+            {
+                Debug.Log("Espasmo! " + (prevRotation - gyro_reading).ToString());
+                hadSpasm = true;
+                return;
+            }
+            Debug.Log("Believening in Gyro");
+            currentRotation = gyro_reading + diffRot;
+            Vector3 rotationVector = transform.rotation.eulerAngles;
+            rotationVector.y = currentRotation;                      // Asignar rotacion.
+            //transform.rotation = Quaternion.Euler(rotationVector);
+            prevRotation = gyro_reading;
+            hadSpasm = false;
+        }
+
+
+        if (Time.realtimeSinceStartup - prev_time > 1f)
+        {   
             //Debug.Log("Updating Model "+pos_list.Count);
             foreach (Vector3 lectura in pos_list)
             {
@@ -87,9 +143,10 @@ public class Odometry : MonoBehaviour {
 
                 //Actualizar transform y rotacion
                 //Debug.Log("New Pose " + x_n.ToString());
-                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(4.06f / rosComm.maxDistance);
+                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(0.85f / rosComm.maxDistance);
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = x_n.z * Mathf.Rad2Deg;                      // Asignar rotacion.
+                print(rotationVector.y);
                 transform.rotation = Quaternion.Euler(rotationVector);
 
                 pos_pre = x_n;                                  // Actualizar pre.
@@ -100,7 +157,7 @@ public class Odometry : MonoBehaviour {
         else
         {
             //Procesar lecturas de ruedas aqui
-            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, rosComm.rotation_robot * Mathf.Deg2Rad));
+            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, currentRotation * Mathf.Deg2Rad));
         }
         // No hacer nada, seguir llenando lista.
     }
