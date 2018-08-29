@@ -27,13 +27,13 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 unsigned long start;
 int pinFeedback_left  = A1;
 int pinFeedback_right = A2;
-int tCycle  = 0;
+int tCycle;
 int valA    = 85;
-float odom1 = 0, odom2 = 0;
-float tHigh = 0;
-float tLow  = 0;
-float dc    = 0;
-float angle = 0;    //Measured angle from feedback
+float odom1, odom2;
+float tHigh;
+float tLow;
+float dc;
+float angle;    //Measured angle from feedback
 float dcMin = 2.9;  //From Parallax spec sheet
 float dcMax = 97.1; //From Parallax spec sheet
 
@@ -54,13 +54,13 @@ float mido_angulo(int pin) {
   }
   dc = (100 * tHigh) / tCycle; //From Parallax spec sheet, you are trying to determine the percentage of the HIGH in the pulse
   angle = ((dc - dcMin) * 360) / (dcMax - dcMin + 1); //From Parallax spec sheet
-  /*if (angle < 0.0) {
+  if (angle < 0.0) {
     angle = 0.0;
   }
   else 
   if (angle > 359.0) {
     angle = 359.0;
-  }*/
+  }
   return angle;
 }
 
@@ -91,14 +91,14 @@ int getDistance()
 
   while(iter < window ){
     int aux = analogRead(A0);
-    if (aux == 7 ){
+    /*if (aux == 7 ){
       aux++;
-    }
+    }*/
     IRprom += 13 * pow(aux * 0.0048828125, -1) * 2;
     iter++;
   }
   IRprom = IRprom/window;
-    return IRprom;
+  return IRprom;
 }
 
 
