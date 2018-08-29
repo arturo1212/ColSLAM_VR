@@ -1,6 +1,6 @@
 FROM ros:tesis_base
 
-RUN apt-get update && apt-get -y install python3-serial python-serial
+RUN apt-get update && apt-get -y install apt-utils python3-serial python-serial
 ADD arduino_reader.py /home/.
 ADD run.sh /.
 CMD ["/bin/bash", "-c", "chmod 777 run.sh && ./run.sh"]
