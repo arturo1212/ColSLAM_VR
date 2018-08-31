@@ -12,7 +12,7 @@ public class Odometry : MonoBehaviour {
     private PorfavorFunciona rosComm;
     public float threshold, rotThreshold, maxDisplacement=0;
     bool stillRotationSet = false, previous_firstTime = false, hadSpasm=false;
-    public float prevRotation, currentRotation,diffRot;
+    public float prevRotation, currentRotation,diffRot, prev_gyro_reading;
 
     public Vector3 position_avg(List<Vector3> positions)
     {   // Devuelve el promedio en cada coordenada.
@@ -63,17 +63,34 @@ public class Odometry : MonoBehaviour {
 	 
     bool isShaking(float gyro_reading, float thresh)
     {
-        return Mathf.Abs(prevRotation - gyro_reading) >= thresh;
+        float diff = currentRotation - gyro_reading;
+
+        if (diff <= -300)
+        {
+            diff = 360 + diff;
+        }
+        else if (diff >= 300)//Si estoy de 360 a 0
+        {
+            diff = -(360 - diff);
+        }
+        if(Mathf.Abs(diff) >= thresh)
+            print("Sendo espasmo: "+diff.ToString());
+        return Mathf.Abs(diff) >= thresh;
     }
 
     bool isDisplacing()
     {
+        if(rosComm.displacement >= threshold)
+            print("Desplazando!");
         return rosComm.displacement >= threshold;
     }
 
     bool isRotating()
     {
-        return Mathf.Abs(rosComm.LDistance) >= threshold || Mathf.Abs(rosComm.RDistance) >= threshold;
+        float rot = Mathf.Abs(rosComm.RDistance - rosComm.LDistance) - Mathf.Abs(rosComm.RDistance + rosComm.LDistance);
+        if (rot >= rotThreshold)
+            print("Rotando!");
+        return rot >= rotThreshold;
     }
 
 	// Update is called once per frame
@@ -89,6 +106,7 @@ public class Odometry : MonoBehaviour {
         if (!previous_firstTime)
         {
             prevRotation = gyro_reading;
+            prev_gyro_reading = gyro_reading;
             previous_firstTime = true;
             return;
         }
@@ -98,7 +116,6 @@ public class Odometry : MonoBehaviour {
         {
             if (isShaking(gyro_reading, 10))
             {
-                Debug.Log("Espasmo! " + (prevRotation - gyro_reading).ToString());
                 return;
             }
             prevRotation = gyro_reading;
@@ -118,8 +135,7 @@ public class Odometry : MonoBehaviour {
         {
             if (isShaking(gyro_reading, 150) && !hadSpasm)
             {
-                Debug.Log("Espasmo! " + (prevRotation - gyro_reading).ToString());
-                hadSpasm = true;
+                //hadSpasm = true;
                 return;
             }
             Debug.Log("Believening in Gyro");
@@ -131,6 +147,7 @@ public class Odometry : MonoBehaviour {
             hadSpasm = false;
         }
 
+        prev_gyro_reading = gyro_reading;
 
         if (Time.realtimeSinceStartup - prev_time > 1f)
         {   
@@ -146,8 +163,9 @@ public class Odometry : MonoBehaviour {
                 transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(0.85f / rosComm.maxDistance);
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = x_n.z * Mathf.Rad2Deg;                      // Asignar rotacion.
-                print(rotationVector.y);
+                //print(rotationVector.y);
                 transform.rotation = Quaternion.Euler(rotationVector);
+                //print(transform.rotation.eulerAngles.y);
 
                 pos_pre = x_n;                                  // Actualizar pre.
             }
@@ -160,5 +178,6 @@ public class Odometry : MonoBehaviour {
             pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, currentRotation * Mathf.Deg2Rad));
         }
         // No hacer nada, seguir llenando lista.
+        
     }
 }

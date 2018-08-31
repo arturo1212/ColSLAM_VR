@@ -62,7 +62,7 @@ public class PorfavorFunciona : MonoBehaviour {
         float laux, raux, rdiff, ldiff, rdeltaW, ldeltaW;
         newReading = true;
         sensorDistance = int.Parse(tokens[1]);
-        rotation_robot = float.Parse(tokens[0]);
+        rotation_robot = Among360(float.Parse(tokens[0]));
         sensorAngle = int.Parse(tokens[2]);
         pointOrientation = (memesCalientes + sensorAngle -90);
         raux = float.Parse(tokens[4]);
