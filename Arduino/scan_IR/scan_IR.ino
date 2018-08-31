@@ -138,6 +138,7 @@ void loop() {
     myservo.write(pos);
     Get_yaw();
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
+    delay(15);
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
@@ -147,5 +148,6 @@ void loop() {
     //delay(10);
     Get_yaw();
     Serial.println(String(ypr[0]*180/M_PI,4)+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
+    delay(15);
   }
 }
