@@ -13,6 +13,6 @@ while not rospy.is_shutdown():
         result = str(ser.readline().strip())    # read up to one hundred bytes
         #splitted = result.decode('utf-8').split(',')
         #sys.stderr.write(splitted[0]+"\n")
-        end = time.time()
+        #end = time.time()
         pub.publish(result)
         rate.sleep()
