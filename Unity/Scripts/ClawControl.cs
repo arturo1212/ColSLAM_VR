@@ -6,7 +6,6 @@ using UnityEngine;
 
 public class ClawControl : MonoBehaviour {
     RosSocket rosSocket;
-    public MessageProvider MessageProvider;
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     public string Topic = "claw";
     public int publicationId;
