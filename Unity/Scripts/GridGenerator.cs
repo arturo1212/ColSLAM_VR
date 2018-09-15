@@ -19,7 +19,7 @@ public class GridGenerator : MonoBehaviour {
     public void createGrid()
     {
         floorCollider = gameObject.GetComponent(typeof(Collider)) as Collider;
-        Vector3 foorSize = new Vector3(floorCollider.bounds.size.x, floorCollider.bounds.size.z);
+        //Vector3 foorSize = new Vector3(floorCollider.bounds.size.x, floorCollider.bounds.size.z);
         print(floorCollider.bounds.center);
         //print(foorSize);
 
