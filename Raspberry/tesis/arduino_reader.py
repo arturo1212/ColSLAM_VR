@@ -11,6 +11,8 @@ rate = rospy.Rate(60) # 60hz
 start = time.time()
 while not rospy.is_shutdown():
         result = str(ser.readline().strip())    # read up to one hundred bytes
-        end = time.time()
+        #splitted = result.decode('utf-8').split(',')
+        #sys.stderr.write(splitted[0]+"\n")
+        #end = time.time()
         pub.publish(result)
         rate.sleep()
