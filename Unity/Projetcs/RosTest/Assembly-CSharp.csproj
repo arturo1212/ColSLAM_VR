@@ -92,8 +92,18 @@
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\JointLimitsManager.cs" />
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\RigidbodyUrdfDataManager.cs" />
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\UrdfPatcher.cs" />
+    <Compile Include="Assets\Scripts\AngleHelpers.cs" />
+    <Compile Include="Assets\Scripts\ClawControl.cs" />
+    <Compile Include="Assets\Scripts\CreateObstacles.cs" />
+    <Compile Include="Assets\Scripts\Movement.cs" />
+    <Compile Include="Assets\Scripts\NaiveMapping.cs" />
     <Compile Include="Assets\Scripts\Odometry.cs" />
-    <Compile Include="Assets\Scripts\PorfavorFunciona.cs" />
+    <Compile Include="Assets\Scripts\State.cs" />
+    <Compile Include="Assets\Scripts\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\States\Freezed.cs" />
+    <Compile Include="Assets\Scripts\States\Going.cs" />
+    <Compile Include="Assets\Scripts\States\Turning.cs" />
+    <Compile Include="Assets\Scripts\Transition.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/david/Documents/Tesis/RosTest/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
