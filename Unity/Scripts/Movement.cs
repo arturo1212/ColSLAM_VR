@@ -17,6 +17,8 @@ public class Movement : MonoBehaviour {
     public int pwmRBackward = 1720;
     public int pwmLBackward = 1280;
 
+    public bool facing = false;
+
 
     // Use this for initialization
     void Start () {
@@ -30,35 +32,63 @@ public class Movement : MonoBehaviour {
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            send_motors_pwm(pwmLForward, pwmRForward);
-            print("W key was pressed");
+            GoForward();
+            //print("W key was pressed");
         }
         else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            send_motors_pwm(pwmLBackward, pwmRForward);
-            print("A key was pressed");
+            TurnLeft();
+            //print("A key was pressed");
         }
         else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            send_motors_pwm(pwmLBackward, pwmRBackward);
-            print("S key was pressed");
+            GoBackwards();
+            //print("S key was pressed");
         }
         else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            send_motors_pwm(pwmLForward, pwmRBackward);
-            print("D key was pressed");
+            TurnRight();
+            //print("D key was pressed");
         }
         else
         {
-            print("Stop");
-            send_motors_pwm();
+            //print("Stop");
+            if(!facing)
+            Stop();
         }
+    }
+
+    public void TurnLeft()
+    {
+        send_motors_pwm(pwmLBackward, pwmRForward);
+    }
+
+    public void TurnRight()
+    {
+        send_motors_pwm(pwmLForward, pwmRBackward);
+    }
+
+    public void GoForward()
+    {
+        send_motors_pwm(pwmLForward, pwmRForward);
+    }
+
+    public void GoBackwards()
+    {
+        send_motors_pwm(pwmLBackward, pwmRBackward);
+    }
+
+    public void Stop()
+    {
+        send_motors_pwm();
     }
 
     void send_motors_pwm(float left = 0, float right = 0)
     {
-        StandardString msg = new StandardString();
-        msg.data = left.ToString() + "," + right.ToString();
+        StandardString msg = new StandardString
+        {
+            data = left.ToString() + "," + right.ToString()
+        };
         rosSocket.Publish(publicationId, msg);
     }
 }

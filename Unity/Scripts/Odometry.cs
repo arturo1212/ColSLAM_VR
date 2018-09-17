@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class Odometry : MonoBehaviour {
+public class Odometry : MonoBehaviour
+{
     //posicion anterior, posicion actual.
     // Promedio anterior y actual.
     public float alpha1 = 0.7f, alpha2 = 0.8f;   // Factores en las probabilidades.
@@ -25,7 +26,7 @@ public class Odometry : MonoBehaviour {
     public Vector3 position_avg(List<Vector3> positions)
     {   // Devuelve el promedio en cada coordenada.
         Vector3 result = new Vector3();
-        foreach(Vector3 position in positions)
+        foreach (Vector3 position in positions)
         {
             result = result + position;
         }
@@ -43,20 +44,21 @@ public class Odometry : MonoBehaviour {
     public float sample_normal(float b)
     {   // Distribucion normal.
         float aux = 0;
-        for (int i=0; i <12;i++){
+        for (int i = 0; i < 12; i++)
+        {
             aux += Random.Range(-b, b);
         }
-        return 1/2*aux;
+        return 1 / 2 * aux;
     }
 
     public Vector3 odometry_sampling(Vector3 pos_prev, Vector3 u)
-    {   
+    {
         //OJO comparr con las laminas
         float rota1 = u.x + sample_normal(alpha1 * u.x * u.x + (1 - alpha1) * u.z * u.z);
         float rota2 = u.y + sample_normal(alpha1 * u.y * u.y + (1 - alpha1) * u.z * u.z);
-        float trans = u.z + sample_normal(alpha2 * u.z + (1-alpha2)* (u.x*u.x + u.y*u.y));
+        float trans = u.z + sample_normal(alpha2 * u.z + (1 - alpha2) * (u.x * u.x + u.y * u.y));
 
-        float x_new = pos_prev.x + trans * Mathf.Cos(pos_prev.z + rota1); 
+        float x_new = pos_prev.x + trans * Mathf.Cos(pos_prev.z + rota1);
         float y_new = pos_prev.y + trans * Mathf.Sin(pos_prev.z + rota1);
         float w_new = pos_prev.z + rota1 + rota2;
         return new Vector3(x_new, y_new, w_new);
@@ -76,8 +78,8 @@ public class Odometry : MonoBehaviour {
         {
             diff = -(360 - diff);
         }
-        if(Mathf.Abs(diff) >= thresh)
-            print("Sendo espasmo: "+diff.ToString() + "    "  + prev_gyro_reading.ToString() + "    " + gyro_reading.ToString());
+        if (Mathf.Abs(diff) >= thresh)
+            print("Sendo espasmo: " + diff.ToString() + "    " + prev_gyro_reading.ToString() + "    " + gyro_reading.ToString());
         return Mathf.Abs(diff) >= thresh;
     }
 
@@ -103,8 +105,8 @@ public class Odometry : MonoBehaviour {
         prev_time = Time.realtimeSinceStartup;
         rosComm = GetComponent<NaiveMapping>();
         pos_pre = new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, transform.rotation.y); //new Vector3(transform.position.x, transform.position.z, transform.rotation.y);
-        Task stop_monitor = new Task(() => stop_detection());
-        Task quiet_task = new Task(() => quiet_handler());
+        //Task stop_monitor = new Task(() => stop_detection());
+        //Task quiet_task = new Task(() => quiet_handler());
         //stop_monitor.Start();
         //quiet_task.Start();
     }
@@ -115,17 +117,18 @@ public class Odometry : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void FixedUpdate ()
+    void FixedUpdate()
     {
         //print("POSPRE: " + pos_pre);
-        if (!rosComm.firstTime){
+        if (!rosComm.firstTime)
+        {
             //print()
             return;
         }
 
         gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
-        if (Time.realtimeSinceStartup - prev_time > 1f)
-        {   
+        if (Time.realtimeSinceStartup - prev_time > 0.1f)
+        {
             foreach (Vector3 lectura in pos_list)
             {
                 // Funciones del modelo.
@@ -134,7 +137,7 @@ public class Odometry : MonoBehaviour {
                 Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
 
                 //Actualizar transform y rotacion
-                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y)*(0.85f / rosComm.maxDistance);
+                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y) * (0.85f / rosComm.maxDistance);
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = AngleHelpers.angleToPositive(x_n.z) * Mathf.Rad2Deg;     // Asignar rotacion.
                 transform.rotation = Quaternion.Euler(rotationVector);

@@ -1,8 +1,9 @@
-using UnityEngine;
+﻿using UnityEngine;
 using RosSharp.RosBridgeClient;
 
 
-public class NaiveMapping : MonoBehaviour {
+public class NaiveMapping : MonoBehaviour
+{
     public float memesCalientes;
     public bool firstTime = false;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
@@ -11,7 +12,7 @@ public class NaiveMapping : MonoBehaviour {
     public float pointOrientation;   // Posicion del motor frontal. (Direccion del sensor de distancia).
     public GameObject sensorObject;
     public float sensorAngle;
-    public float LDistance, RDistance, lAngle=0, rAngle=0; //Para la derecha hacia adelante es mayor angulo. Alreves en la izquierda
+    public float LDistance, RDistance, lAngle = 0, rAngle = 0; //Para la derecha hacia adelante es mayor angulo. Alreves en la izquierda
 
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement;
@@ -39,7 +40,7 @@ public class NaiveMapping : MonoBehaviour {
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
         /* Si no es la primera vez, calcular cosas */
-        if(!firstTime)
+        if (!firstTime)
         {
             print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
             lAngle = laux;
@@ -47,17 +48,17 @@ public class NaiveMapping : MonoBehaviour {
             firstTime = true;
             return;
         }
-        if(Mathf.Abs(lAngle - laux) < angle_thresh || Mathf.Abs(rAngle - raux) < angle_thresh)
+        if (Mathf.Abs(lAngle - laux) < angle_thresh || Mathf.Abs(rAngle - raux) < angle_thresh)
         {
             displacement = 0f;
             return;
         }
         ldeltaW = AngleHelpers.angleDifference(lAngle, laux);
         rdeltaW = AngleHelpers.angleDifference(rAngle, raux);
-        RDistance = - rdeltaW * Mathf.Deg2Rad * wheelRadius;
+        RDistance = -rdeltaW * Mathf.Deg2Rad * wheelRadius;
         LDistance = ldeltaW * Mathf.Deg2Rad * wheelRadius;
         displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;    // Formula para no moverse rotando.
-        print("Distancias: " + RDistance.ToString() + "  " + LDistance.ToString() + "  " + displacement.ToString());
+        //print("Distancias: " + RDistance.ToString() + "  " + LDistance.ToString() + "  " + displacement.ToString());
         lAngle = laux;
         rAngle = raux;
         //Debug.Log(tokens[0]+ " Dist: " + tokens[1] + " SensDir: " + tokens[2] + " RW: " + tokens[3] + " LW: " + tokens[4]);
@@ -69,7 +70,8 @@ public class NaiveMapping : MonoBehaviour {
         ReadArduino(standardString.data);
     }
 
-    void Start () {
+    void Start()
+    {
         memesCalientes = transform.rotation.eulerAngles.y;
         auxPose = transform.position;
         RosSocket rosSocket = new RosSocket(robotIP);
@@ -77,7 +79,7 @@ public class NaiveMapping : MonoBehaviour {
     }
 
     void CreateCube()
-    {   
+    {
         float scaled = (sensorDistance / maxDistance);
         Vector3 rotationVector = transform.rotation.eulerAngles;
         tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * scaled;
