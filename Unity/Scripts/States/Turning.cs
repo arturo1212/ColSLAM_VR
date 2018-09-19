@@ -1,13 +1,30 @@
 ﻿using System;
+using UnityEngine;
 
 public class Turning: State
 {
-	public Turning()
+    Movement mov;
+	public Turning(GameObject owner):base(owner)
 	{
+        mov = owner.GetComponent<Movement>();
+    }
 
-	}
-    
+    public override void Circunloquio()
+    {
+        Debug.Log("Entrando en Turning");
+    }
+
     public override void Execute() {
         // Aplicar solo lo que aplique para rotacion (no traslacion) de Odometry
+        Vector3 targetDir = (Vector3)mov.clickedPoint - owner.transform.position;
+        float targetRot = Vector3.SignedAngle(owner.transform.forward, targetDir, Vector3.up) + owner.transform.rotation.eulerAngles[1];
+        targetRot = AngleHelpers.angleToPositive(targetRot);
+        Debug.Log("Quiero ver a " +targetRot);
+        SteeringBehaviours.Face(mov, targetRot, 5);
+    }
+
+    public override void Colofon()
+    {
+        mov.clickedPoint = null;
     }
 }

@@ -4,8 +4,6 @@ using RosSharp.RosBridgeClient;
 
 public class NaiveMapping : MonoBehaviour
 {
-    public float memesCalientes;
-    public bool firstTime = false;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
     public float rotation_robot;    // Rotacion del robot (Giroscopio).
@@ -17,10 +15,15 @@ public class NaiveMapping : MonoBehaviour
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement;
 
-    public Vector3 tpoint, actualPose, auxPose;
     public int maxDistance = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
+
+    [HideInInspector]
+    public int calibrtionSubcription_id, arduinoSubscription_id=-1;
+    public Vector3 tpoint, actualPose, auxPose;
+    public float memesCalientes;
+    RosSocket rosSocket;
 
     private void ReadArduino(string values)
     {
@@ -39,15 +42,6 @@ public class NaiveMapping : MonoBehaviour
         raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
-        /* Si no es la primera vez, calcular cosas */
-        if (!firstTime)
-        {
-            print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
-            lAngle = laux;
-            rAngle = raux;
-            firstTime = true;
-            return;
-        }
         if (Mathf.Abs(lAngle - laux) < angle_thresh || Mathf.Abs(rAngle - raux) < angle_thresh)
         {
             displacement = 0f;
@@ -64,18 +58,48 @@ public class NaiveMapping : MonoBehaviour
         //Debug.Log(tokens[0]+ " Dist: " + tokens[1] + " SensDir: " + tokens[2] + " RW: " + tokens[3] + " LW: " + tokens[4]);
     }
 
+    private void Calibrate(string values)
+    {
+        // Parsear argumentos
+        float laux, raux;
+        string[] tokens = values.Split(',');
+
+        // Modulo de Distancia (con angulo de motor)
+        sensorDistance = int.Parse(tokens[1]);
+        sensorAngle = int.Parse(tokens[2]);                         // ANGULO (del motor)
+        pointOrientation = (memesCalientes + sensorAngle - 90);     // ANGULO (Verificar rangos)
+
+        // Movimiento del robot
+        rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
+        raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
+        laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
+
+        /* Si no es la primera vez, calcular cosas */
+        print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
+        lAngle = laux;
+        rAngle = raux;
+        rosSocket.Unsubscribe(calibrtionSubcription_id);
+        arduinoSubscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
+    }
+
     private void SubscriptionHandler(Message message)
     {
         StandardString standardString = (StandardString)message;
         ReadArduino(standardString.data);
     }
 
+    private void CalibrationSubscritpionHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        Calibrate(standardString.data);
+    }
+
     void Start()
     {
         memesCalientes = transform.rotation.eulerAngles.y;
         auxPose = transform.position;
-        RosSocket rosSocket = new RosSocket(robotIP);
-        int subscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
+        rosSocket = new RosSocket(robotIP);
+        calibrtionSubcription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
     }
 
     void CreateCube()
@@ -99,16 +123,10 @@ public class NaiveMapping : MonoBehaviour
         //Vector3 rotationVector = transform.rotation.eulerAngles;
         //rotationVector.y = rotation_robot;
         //transform.rotation = Quaternion.Euler(rotationVector);
+        if (arduinoSubscription_id == -1) return;
+        CreateCube();
+        sensorObject.transform.rotation = Quaternion.AngleAxis(-sensorAngle, new Vector3(0, 1, 0));
+        auxPose += transform.forward * displacement;
     }
 
-    void FixedUpdate()
-    {
-        if (newReading)
-        {
-            CreateCube();
-            sensorObject.transform.rotation = Quaternion.AngleAxis(-sensorAngle, new Vector3(0, 1, 0));
-            auxPose += transform.forward * displacement;
-            newReading = false;
-        }
-    }
 }
