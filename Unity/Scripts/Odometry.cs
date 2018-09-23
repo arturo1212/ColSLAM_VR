@@ -13,12 +13,12 @@ public class Odometry : MonoBehaviour
     private NaiveMapping rosComm;
 
     // Cotas
-    public float threshold=0.2f, rotThreshold=0.2f;
+    public float threshold=0.2f, rotThreshold=0.2f, appliedRotation;
 
     // Variables de movimiento
     public float gyro_reading=0, prev_gyro_reading;       // Utilizados en isRotating()
     public float prevRotation, diffRot;                 // Correcion de la rotacion
-    public bool isQuiet = false, wasQuiet = false;
+    public bool isQuiet = false, wasQuiet = false, useGyro = false;
     bool running = true;
 
     #region modelo prob
@@ -117,8 +117,13 @@ public class Odometry : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        gyro_reading = rosComm.rotation_robot;
+        if (useGyro)
+        {
+            appliedRotation = gyro_reading;
+        }
 
-        gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
+        //gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
         if (Time.realtimeSinceStartup - prev_time > 1f)
         {
             foreach (Vector3 lectura in pos_list)
@@ -141,8 +146,8 @@ public class Odometry : MonoBehaviour
         }
         else
         {
-            float currentRotation = AngleHelpers.angleToPositive(gyro_reading + diffRot);
-            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, currentRotation * Mathf.Deg2Rad));
+            appliedRotation = AngleHelpers.angleToPositive(appliedRotation + diffRot);
+            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, appliedRotation * Mathf.Deg2Rad));
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rosComm.rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);

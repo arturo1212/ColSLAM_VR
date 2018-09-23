@@ -4,6 +4,7 @@ using UnityEngine;
 public class Turning: State
 {
     Movement mov;
+    Odometry odo;
 	public Turning(GameObject owner):base(owner)
 	{
         mov = owner.GetComponent<Movement>();
@@ -12,6 +13,8 @@ public class Turning: State
     public override void Circunloquio()
     {
         Debug.Log("Entrando en Turning");
+        odo = owner.GetComponent<Odometry>();
+        odo.useGyro = true;
     }
 
     public override void Execute() {
@@ -26,5 +29,6 @@ public class Turning: State
     public override void Colofon()
     {
         mov.clickedPoint = null;
+        odo.useGyro = false;
     }
 }

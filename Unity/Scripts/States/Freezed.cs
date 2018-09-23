@@ -15,6 +15,7 @@ public class Freezed: State
     {
         odo = owner.GetComponent<Odometry>();
         prevRotation = rosComm.rotation_robot;
+        odo.appliedRotation = prevRotation;
     }
 
     public override void Execute()

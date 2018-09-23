@@ -20,6 +20,9 @@ public class StateMachine : MonoBehaviour {
         Turning turningState = new Turning(gameObject);
         Going goingState = new Going(gameObject);
         GoingToGoal goToGoalState = new GoingToGoal(gameObject);
+        ManualTurning manualTurningState = new ManualTurning(gameObject);
+        ManualGoing manualGoingState = new ManualGoing(gameObject);
+
 
         states.Add(calibratorState);
         states.Add(freezedState);
@@ -30,10 +33,10 @@ public class StateMachine : MonoBehaviour {
         transitions.Add(new Stopped(turningState, freezedState));
         transitions.Add(new FacingTargetSet(freezedState, goToGoalState));
         transitions.Add(new Stopped(goToGoalState, freezedState));
+        transitions.Add(new ManualTurn(freezedState, manualTurningState));
+        transitions.Add(new ManualGo(freezedState, manualGoingState));
+        // TODO Hace falta salir de otros estados a los manuales ??
 
-
-        //states.Add(turningState);
-        //states.Add(goingState);
         move = GetComponent<Movement>();
         naiveMapper = GetComponent<NaiveMapping>();
 

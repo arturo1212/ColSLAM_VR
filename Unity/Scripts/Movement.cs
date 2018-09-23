@@ -35,7 +35,7 @@ public class Movement : MonoBehaviour {
 
     // Update is called once per frame
 
-    void WASD()
+    public void WASD()
     {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
@@ -87,7 +87,6 @@ public class Movement : MonoBehaviour {
 
     void Update()
     {
-        WASD();
         if (Input.GetMouseButtonDown(0))
         {
             clickedPoint = GetClickedPoint();

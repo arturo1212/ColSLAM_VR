@@ -20,7 +20,7 @@ public class Calibrator: State
     
     public override void Colofon()
     {
-        owner.AddComponent<Odometry>();
+        owner.AddComponent<Odometry>().appliedRotation = owner.GetComponent<NaiveMapping>().rotation_robot;
     }
 
 }
