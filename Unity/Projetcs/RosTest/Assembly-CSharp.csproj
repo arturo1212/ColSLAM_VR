@@ -92,18 +92,30 @@
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\JointLimitsManager.cs" />
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\RigidbodyUrdfDataManager.cs" />
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\UrdfPatcher.cs" />
-    <Compile Include="Assets\Scripts\AngleHelpers.cs" />
+    <Compile Include="Assets\Scripts\Basic Behaviours\SteeringBehaviours.cs" />
     <Compile Include="Assets\Scripts\ClawControl.cs" />
     <Compile Include="Assets\Scripts\CreateObstacles.cs" />
+    <Compile Include="Assets\Scripts\Helpers\AngleHelpers.cs" />
+    <Compile Include="Assets\Scripts\Helpers\PWMHelper.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\Scripts\NaiveMapping.cs" />
     <Compile Include="Assets\Scripts\Odometry.cs" />
-    <Compile Include="Assets\Scripts\State.cs" />
-    <Compile Include="Assets\Scripts\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\State.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transition.cs" />
+    <Compile Include="Assets\Scripts\States\Calibrator.cs" />
     <Compile Include="Assets\Scripts\States\Freezed.cs" />
     <Compile Include="Assets\Scripts\States\Going.cs" />
+    <Compile Include="Assets\Scripts\States\GoingToGoal.cs" />
+    <Compile Include="Assets\Scripts\States\ManualControl\ManualGoing.cs" />
+    <Compile Include="Assets\Scripts\States\ManualControl\ManualTurning.cs" />
     <Compile Include="Assets\Scripts\States\Turning.cs" />
-    <Compile Include="Assets\Scripts\Transition.cs" />
+    <Compile Include="Assets\Scripts\Transitions\CalibrationCompleted.cs" />
+    <Compile Include="Assets\Scripts\Transitions\FacingTargetSet.cs" />
+    <Compile Include="Assets\Scripts\Transitions\IsTurning.cs" />
+    <Compile Include="Assets\Scripts\Transitions\ManualGo.cs" />
+    <Compile Include="Assets\Scripts\Transitions\ManualTurn.cs" />
+    <Compile Include="Assets\Scripts\Transitions\Stopped.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/david/Documents/Tesis/RosTest/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>

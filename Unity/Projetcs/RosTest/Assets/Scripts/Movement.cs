@@ -11,13 +11,20 @@ public class Movement : MonoBehaviour {
     public string Topic = "movement";
     public int publicationId;
 
-    // Variables PWM en rueda.
-    public int pwmRForward = 1280;
-    public int pwmLForward = 1720;
-    public int pwmRBackward = 1720;
-    public int pwmLBackward = 1280;
+    public bool facing = false, turningRight = false, turningLeft = false, forward = false, backwards = false, stopped = false;
+    public Vector3? clickedPoint = null;
 
-    public bool facing = false;
+
+    // Variables PWM en rueda.
+    public float RVelocity, LVelocity;
+
+    [HideInInspector]
+    private int pwmRForward = 1280;
+    private int pwmLForward = 1720;
+    private int pwmRBackward = 1720;
+    private int pwmLBackward = 1280;
+
+
 
 
     // Use this for initialization
@@ -27,9 +34,9 @@ public class Movement : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update()
-    {
 
+    public void WASD()
+    {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             GoForward();
@@ -53,41 +60,83 @@ public class Movement : MonoBehaviour {
         else
         {
             //print("Stop");
-            if(!facing)
-            Stop();
+            if (!facing)
+                Stop();
         }
+    }
+
+    Vector3? GetClickedPoint()
+    {
+        /* Obtener punto seleccionado */
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit = new RaycastHit();
+        int layer_mask = LayerMask.GetMask("Floor");
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer_mask))
+        {
+            if (hit.collider.gameObject.name != "Piso")
+            {
+                Debug.Log("NO HAY NADA");
+                return null;
+            }
+            //Vector3 point  = transform.InverseTransformPoint(hit.point);
+            Debug.Log("PISO CLICKEADO");
+            return hit.point;
+        }
+        return null;
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            clickedPoint = GetClickedPoint();
+        }
+        
     }
 
     public void TurnLeft()
     {
-        send_motors_pwm(pwmLBackward, pwmRForward);
+        turningLeft = true;
+        stopped = false;
+        send_motors_pwm(-LVelocity, RVelocity);
     }
 
     public void TurnRight()
     {
-        send_motors_pwm(pwmLForward, pwmRBackward);
+        turningRight = true;
+        stopped = false;
+        send_motors_pwm(LVelocity, -RVelocity);
     }
 
     public void GoForward()
     {
-        send_motors_pwm(pwmLForward, pwmRForward);
+        forward = true;
+        stopped = false;
+        send_motors_pwm(RVelocity-7, RVelocity);
     }
 
     public void GoBackwards()
     {
-        send_motors_pwm(pwmLBackward, pwmRBackward);
+        backwards = true;
+        stopped = false;
+        send_motors_pwm(-LVelocity, -LVelocity+2);
     }
 
     public void Stop()
     {
+        stopped = true;
         send_motors_pwm();
+        backwards = forward = turningLeft = turningRight = false;
     }
 
-    void send_motors_pwm(float left = 0, float right = 0)
+    public void send_motors_pwm(float left = 0, float right = 0)
     {
+        int leftPWM = PWMHelper.Remap(left, -100, 100, pwmLBackward, pwmLForward);
+        int rightPWM = PWMHelper.Remap(right, -100, 100, pwmRBackward, pwmRForward);
+
         StandardString msg = new StandardString
         {
-            data = left.ToString() + "," + right.ToString()
+            data = leftPWM.ToString() + "," + rightPWM.ToString()
         };
         rosSocket.Publish(publicationId, msg);
     }
