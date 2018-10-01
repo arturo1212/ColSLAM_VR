@@ -54,13 +54,13 @@ float mido_angulo(int pin) {
   }
   dc = (100 * tHigh) / tCycle; //From Parallax spec sheet, you are trying to determine the percentage of the HIGH in the pulse
   angle = ((dc - dcMin) * 360) / (dcMax - dcMin + 1); //From Parallax spec sheet
-  if (angle < 0.0) {
+/*if (angle < 0.0) {
     angle = 0.0;
   }
   else 
   if (angle > 359.0) {
     angle = 359.0;
-  }
+  }*/
   return angle;
 }
 
@@ -123,11 +123,11 @@ void setup() {
         packetSize = mpu.dmpGetFIFOPacketSize();
     }
   myservo.write(0);
-  delay(1000);
+  delay(2000);
 }
 
 void loop() {
-  char copy[15];
+  //char copy[15];
   //Serial.println(String(getDistance()));
   for(int pos = 0; pos <= 180; pos += 1)
   {
