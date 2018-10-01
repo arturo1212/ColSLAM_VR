@@ -5,7 +5,7 @@ public class Odometry : MonoBehaviour
 {
     //posicion anterior, posicion actual.
     // Promedio anterior y actual.
-    public float alpha1 = 0.7f, alpha2 = 0.8f;   // Factores en las probabilidades.
+    public float alpha1 = 0.8f, alpha2 = 0.2f;   // Factores en las probabilidades.
     float prev_time;
     Vector3 pos_pre;
     Vector3 avg_pre = new Vector3(0f, 0f, 0f);
@@ -102,7 +102,8 @@ public class Odometry : MonoBehaviour
     {
         prev_time = Time.realtimeSinceStartup;
         rosComm = GetComponent<NaiveMapping>();
-        pos_pre = new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, transform.rotation.y); //new Vector3(transform.position.x, transform.position.z, transform.rotation.y);
+        //Debug.Log(transform.position);
+        pos_pre = new Vector3(transform.position.x, transform.position.z, transform.rotation.y); //new Vector3(transform.position.x, transform.position.z, transform.rotation.y);
         //Task stop_monitor = new Task(() => stop_detection());
         //Task quiet_task = new Task(() => quiet_handler());
         //stop_monitor.Start();
@@ -120,7 +121,7 @@ public class Odometry : MonoBehaviour
         gyro_reading = rosComm.rotation_robot;
         if (useGyro)
         {
-            appliedRotation = gyro_reading;
+            appliedRotation = rosComm.rotation_robot;
         }
 
         //gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
@@ -134,7 +135,11 @@ public class Odometry : MonoBehaviour
                 Vector3 x_n = odometry_sampling(pos_pre, u);    // Odometry sampling
 
                 //Actualizar transform y rotacion
-                transform.position = new Vector3(x_n.x, transform.position.y, x_n.y) * (0.85f / rosComm.maxDistance);
+                //Debug.Log("Calculated Pose " + x_n);
+                Vector3 wtf = new Vector3(x_n.x * 0.3f / rosComm.scale, transform.position.y, x_n.y * 0.3f / rosComm.scale);
+                transform.position = wtf;//0.3!!!
+                //rosComm.auxPose = wtf;
+
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = AngleHelpers.angleToPositive(x_n.z) * Mathf.Rad2Deg;     // Asignar rotacion.
                 transform.rotation = Quaternion.Euler(rotationVector);
@@ -146,11 +151,12 @@ public class Odometry : MonoBehaviour
         }
         else
         {
-            appliedRotation = AngleHelpers.angleToPositive(appliedRotation + diffRot);
-            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, appliedRotation * Mathf.Deg2Rad));
+            float used = AngleHelpers.angleToPositive(rosComm.rotation_robot + 0*diffRot);
+            //Debug.Log("AuxPose " + rosComm.auxPose);
+            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, used * Mathf.Deg2Rad));
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rosComm.rotation_robot;
-            transform.rotation = Quaternion.Euler(rotationVector);
+            //transform.rotation = Quaternion.Euler(rotationVector);
             //pos_list.Add(new Vector3(0f, 0f, 0f));
 
         }

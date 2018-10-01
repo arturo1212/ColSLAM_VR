@@ -14,8 +14,9 @@ public class NaiveMapping : MonoBehaviour
 
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement;
+    public float viewDistance;
 
-    public int maxDistance = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public int scale = 100;   // (Se usa para escalar las unidades de Unity).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
 
@@ -47,8 +48,8 @@ public class NaiveMapping : MonoBehaviour
             displacement = 0f;
             return;
         }
-        ldeltaW = AngleHelpers.angleDifference(lAngle, laux);
-        rdeltaW = AngleHelpers.angleDifference(rAngle, raux);
+        ldeltaW = Mathf.DeltaAngle(laux, lAngle);
+        rdeltaW = Mathf.DeltaAngle(raux, rAngle);
         RDistance = -rdeltaW * Mathf.Deg2Rad * wheelRadius;
         LDistance = ldeltaW * Mathf.Deg2Rad * wheelRadius;
         displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;    // Formula para no moverse rotando.
@@ -104,7 +105,8 @@ public class NaiveMapping : MonoBehaviour
 
     void CreateCube()
     {
-        float scaled = (sensorDistance / maxDistance);
+        if (sensorDistance >= viewDistance) return;
+        float scaled = (sensorDistance / scale);
         Vector3 rotationVector = transform.rotation.eulerAngles;
         tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * scaled;
         var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);

@@ -14,6 +14,7 @@ public class Freezed: State
     public override void Circunloquio()
     {
         odo = owner.GetComponent<Odometry>();
+        odo.useGyro = false;
         prevRotation = rosComm.rotation_robot;
         odo.appliedRotation = prevRotation;
     }
@@ -26,7 +27,9 @@ public class Freezed: State
 
     public override void Colofon()
     {
-        odo.diffRot += AngleHelpers.angleDifference(prevRotation, odo.gyro_reading); // Calcular diff
+        odo.diffRot += Mathf.DeltaAngle(prevRotation, odo.gyro_reading); //AngleHelpers.angleDifference(prevRotation, odo.gyro_reading);
+        Debug.Log("Calculada " +odo.diffRot);
         odo.diffRot = AngleHelpers.angleToPositive(odo.diffRot);
+        Debug.Log("Mappeada " + odo.diffRot);
     }
 }

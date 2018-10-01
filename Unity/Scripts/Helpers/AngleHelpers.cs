@@ -5,6 +5,7 @@ using UnityEngine;
 public class AngleHelpers : MonoBehaviour {
 
     // Use this for initialization
+    // Mathf.AngleDelta is the shit
     public static float angleDifference(float a, float b)
     {
         float result = a - b;
