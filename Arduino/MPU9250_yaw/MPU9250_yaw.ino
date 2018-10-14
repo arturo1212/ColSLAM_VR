@@ -11,10 +11,20 @@ void setup()
     delay(2000);
     mpu.setup();
     delay(5000);
+    
+    // Casa David
+    float accbias[] = {-134.83, -29.91, 33.02};
+    float gyrobias[] = {-0.42, 2.45, -0.50};
+    float magbias[] = {124.75, 95.20, -311.45};
+    float magscale[] = {1.09, 1.09, 0.86};
+    
+    /**GIA
     float accbias[] = {-61.71, 4.82, 16.11};
     float gyrobias[] = {-4.59, -0.35, 2.70};
     float magbias[] = {-40.68, 308.03, -92.67};
-    float magscale[] = {0.99, 1.05, 0.96};
+    float magscale[] = {0.99, 1.05, 0.96}; 
+     */
+    
 
     for(int i=0;i<3;i++){
       mpu.setAccBias(i,accbias[i]*0.001);
@@ -23,7 +33,7 @@ void setup()
       mpu.setMagScale(i,magscale[i]);
     }
     /*
-     *< calibration parameters >
+     *< calibration parameters > Valores en el GIA (suelto en la mesa)
       accel bias [g]: 
       -61.71, 4.82, 16.11
       gyro bias [deg/s]: 
@@ -32,7 +42,17 @@ void setup()
       -40.68, 308.03, -92.67
       mag scale []: 
       0.99, 1.05, 0.96
-     */
+     
+      < calibration parameters > Valores en casa de David (montado en robot)
+      accel bias [g]: 
+      -134.83, -29.91, 33.02
+      gyro bias [deg/s]: 
+      -0.42, 2.45, -0.50
+      mag bias [mG]: 
+      124.75, 95.20, -311.45
+      mag scale []: 
+      1.09, 1.09, 0.86
+      */
 
     //calibrate anytime you want to
     //mpu.calibrateAccelGyro();
