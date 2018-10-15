@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class Odometry : MonoBehaviour
@@ -14,12 +13,12 @@ public class Odometry : MonoBehaviour
     private NaiveMapping rosComm;
 
     // Cotas
-    public float threshold, rotThreshold;
+    public float threshold=0.2f, rotThreshold=0.2f, appliedRotation;
 
     // Variables de movimiento
-    public float gyro_reading, prev_gyro_reading;       // Utilizados en isRotating()
+    public float gyro_reading=0, prev_gyro_reading;       // Utilizados en isRotating()
     public float prevRotation, diffRot;                 // Correcion de la rotacion
-    public bool isQuiet = false, wasQuiet = false;
+    public bool isQuiet = false, wasQuiet = false, useGyro = false;
     bool running = true;
 
     #region modelo prob
@@ -83,14 +82,13 @@ public class Odometry : MonoBehaviour
         return Mathf.Abs(diff) >= thresh;
     }
 
-    bool isDisplacing()
+    bool IsDisplacing()
     {
         if (rosComm.displacement >= threshold)
             print("Desplazando!");
         return rosComm.displacement >= threshold;
     }
 
-    public float rot = 0;
     bool isRotating()
     {
         if (Mathf.Abs(prev_gyro_reading - gyro_reading) > rotThreshold)
@@ -119,15 +117,14 @@ public class Odometry : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        //print("POSPRE: " + pos_pre);
-        if (!rosComm.firstTime)
+        gyro_reading = rosComm.rotation_robot;
+        if (useGyro)
         {
-            //print()
-            return;
+            appliedRotation = gyro_reading;
         }
 
-        gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
-        if (Time.realtimeSinceStartup - prev_time > 0.1f)
+        //gyro_reading = rosComm.rotation_robot;    // fijar primera lectura.
+        if (Time.realtimeSinceStartup - prev_time > 1f)
         {
             foreach (Vector3 lectura in pos_list)
             {
@@ -149,8 +146,11 @@ public class Odometry : MonoBehaviour
         }
         else
         {
-            float currentRotation = AngleHelpers.angleToPositive(gyro_reading + diffRot);
-            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, currentRotation * Mathf.Deg2Rad));
+            appliedRotation = AngleHelpers.angleToPositive(appliedRotation + diffRot);
+            pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, appliedRotation * Mathf.Deg2Rad));
+            Vector3 rotationVector = transform.rotation.eulerAngles;
+            rotationVector.y = rosComm.rotation_robot;
+            transform.rotation = Quaternion.Euler(rotationVector);
             //pos_list.Add(new Vector3(0f, 0f, 0f));
 
         }
@@ -160,12 +160,8 @@ public class Odometry : MonoBehaviour
     {
         while (running)
         {
-            if (!rosComm.firstTime)
-            {
-                continue;
-            }
             bool cond1 = isRotating();
-            bool cond2 = isDisplacing();
+            bool cond2 = IsDisplacing();
             if (!cond1 && !cond2)
             {
                 print("Entro stop");
@@ -183,10 +179,6 @@ public class Odometry : MonoBehaviour
     {
         while (running)
         {
-            if (!rosComm.firstTime)
-            {
-                continue;
-            }
             float gyro_angle = rosComm.rotation_robot;
             if (isQuiet && !wasQuiet)
             {

@@ -263,9 +263,8 @@ GameObject:
   - component: {fileID: 598556690}
   - component: {fileID: 598556689}
   - component: {fileID: 598556688}
-  - component: {fileID: 598556693}
   - component: {fileID: 598556694}
-  - component: {fileID: 598556695}
+  - component: {fileID: 598556693}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -284,8 +283,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2892793ab15eedc4d95431c470600a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  memesCalientes: 0
-  firstTime: 0
   first_orientation: 0
   sensorDistance: 0
   rotation_robot: 0
@@ -299,11 +296,14 @@ MonoBehaviour:
   angle_thresh: 0.2
   wheelRadius: 2.25
   displacement: 0
+  maxDistance: 70
+  robotIP: ws://192.168.1.105:9090
+  calibrtionSubcription_id: 0
+  arduinoSubscription_id: -1
   tpoint: {x: 0, y: 0, z: 0}
   actualPose: {x: 0, y: 0, z: 0}
   auxPose: {x: 0, y: 0, z: 0}
-  maxDistance: 70
-  robotIP: ws://192.168.1.105:9090
+  memesCalientes: 0
 --- !u!65 &598556689
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -381,20 +381,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 598556687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22f925abde5e5904197453eb898040c7, type: 3}
+  m_Script: {fileID: 11500000, guid: a1d3e1ea57e6d4540b6c6dc5b47fffa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  alpha1: 0.5
-  alpha2: 0.5
-  threshold: 0.2
-  rotThreshold: 0.2
-  gyro_reading: 0
-  prev_gyro_reading: 0
-  prevRotation: 0
-  diffRot: 0
-  isQuiet: 0
-  wasQuiet: 0
-  rot: 0
+  targetRot: 999
+  tresh: 0
 --- !u!114 &598556694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,24 +400,14 @@ MonoBehaviour:
   robotIP: ws://192.168.1.105:9090
   Topic: movement
   publicationId: 0
-  pwmRForward: 1280
-  pwmLForward: 1720
-  pwmRBackward: 1720
-  pwmLBackward: 1280
   facing: 0
---- !u!114 &598556695
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 598556687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84302676a2675db4886fe22d3bba82d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetRot: 999
-  tresh: 20
+  turningRight: 0
+  turningLeft: 0
+  forward: 0
+  backwards: 0
+  stopped: 0
+  RVelocity: 50
+  LVelocity: 50
 --- !u!1 &732596214
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,8 +505,8 @@ GameObject:
   - component: {fileID: 2089167845}
   - component: {fileID: 2089167844}
   - component: {fileID: 2089167843}
-  m_Layer: 0
-  m_Name: Plane
+  m_Layer: 9
+  m_Name: Piso
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
