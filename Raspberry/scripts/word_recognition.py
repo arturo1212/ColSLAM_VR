@@ -6,6 +6,9 @@ from picamera.array import PiRGBArray
 from picamera import PiCamera
 import time
 import cv2
+# Problemas: Ejecutable de la raspberry
+# Problemas: Archivo de lenguajes (agregar en la carpeta de tessdata_dir_config)
+# Debug: Comentarios y argumento adicional de config
 
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
 
@@ -20,7 +23,7 @@ def recognition(image):
     result = pytesseract.image_to_string(arr) #config = tessdata_dir_config
     print(result)
 
-# initialize the camera and grab a reference to the raw camera capture
+# Inicializacion
 camera = PiCamera()
 camera.resolution = (640, 480)
 camera.framerate = 32
