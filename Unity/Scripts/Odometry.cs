@@ -151,7 +151,7 @@ public class Odometry : MonoBehaviour
         }
         else
         {
-            float used = AngleHelpers.angleToPositive(rosComm.rotation_robot + 0*diffRot);
+            float used = AngleHelpers.angleToPositive(rosComm.rotation_robot + diffRot);
             //Debug.Log("AuxPose " + rosComm.auxPose);
             pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, used * Mathf.Deg2Rad));
             Vector3 rotationVector = transform.rotation.eulerAngles;
