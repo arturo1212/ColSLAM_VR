@@ -4,7 +4,7 @@ from std_msgs.msg import String
 import sys
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 57600)
+ser = serial.Serial('/dev/ttyACM0', 115200)
 pub = rospy.Publisher('arduino', String, queue_size=1)
 rospy.init_node('arduino_talker', anonymous=True)
 rate = rospy.Rate(60) # 60hz
