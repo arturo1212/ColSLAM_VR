@@ -93,13 +93,20 @@ void setup() {
   delay(2000);
   mpu.setup();
   delay(5000);
+  
+  // GIA LIDAR
+  float accbias[] = {-65.86, -63.96, -1.16};
+  float gyrobias[] = {0.92, 0.52, 2.02};
+  float magbias[] = {22.99, 162.03, -468.49};
+  float magscale[] = {1.03, 1.14, 0.87}; 
 
-  // Casa David
+  /* Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
   float gyrobias[] = {-0.42, 2.45, -0.50};
   float magbias[] = {124.75, 95.20, -311.45};
   float magscale[] = {1.09, 1.09, 0.86};
-
+  */
+  
   /* GIA
   float accbias[] = {-61.71, 4.82, 16.11};
   float gyrobias[] = {-4.59, -0.35, 2.70};
@@ -107,7 +114,6 @@ void setup() {
   float magscale[] = {0.99, 1.05, 0.96}; 
     */
   
-
   for(int i=0;i<3;i++){
     mpu.setAccBias(i,accbias[i]*0.001);
     mpu.setGyroBias(i,gyrobias[i]);
@@ -134,15 +140,31 @@ void setup() {
     124.75, 95.20, -311.45
     mag scale []: 
     1.09, 1.09, 0.86
+    
+    < calibration parameters > Valores en el GIA, montado en robot (cerca cancha) LIDAR
+    accel bias [g]: 
+    -65.86, -63.96, -1.16
+    gyro bias [deg/s]: 
+    0.92, 0.52, 2.02
+    mag bias [mG]: 
+    22.99, 162.03, -468.49
+    mag scale []: 
+    1.03, 1.14, 0.87
     */
 
+    //mpu.calibrateAccelGyro();
+    //mpu.calibrateMag();
+
+    //mpu.printCalibration();
 }
 
 void loop() {
   //char copy[15];
   //Serial.println(String(getDistance()));
+  
   for(int pos = 0; pos <= 180; pos += 1)
-  { mpu.update();
+  { 
+    mpu.update();
     //Serial.println("Entro");
     odom1 = mido_angulo(pinFeedback_left);
     odom2 = mido_angulo(pinFeedback_right);
