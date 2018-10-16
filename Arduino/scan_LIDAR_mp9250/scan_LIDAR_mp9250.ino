@@ -75,9 +75,11 @@ int getDistance()
    }
 }
 
-float inline mapto360(float rotation){
-  return rotation < 0 ? 360 + rotation : rotation;
-}
+float Remap(float value, float from1, float to1, float from2, float to2)
+    {
+        if (value == 0) return (int)value;
+        return ((value - from1) / (to1 - from1) * (to2 - from2) + from2);
+    }
 
 void setup() {
   Serial.begin(115200); // Start serial communications
@@ -162,7 +164,7 @@ void loop() {
   //char copy[15];
   //Serial.println(String(getDistance()));
   
-  for(int pos = 0; pos <= 180; pos += 1)
+  for(int pos = 20; pos <= 180; pos += 1)
   { 
     mpu.update();
     //Serial.println("Entro");
@@ -170,17 +172,17 @@ void loop() {
     odom2 = mido_angulo(pinFeedback_right);
     //Serial.println("Angulos");
     myservo.write(pos);
-    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
+    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
     delay(16);
   }
-  for(int pos = 180; pos>=0; pos-=1)
+  for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();
     odom1 = mido_angulo(pinFeedback_left);
     odom2 = mido_angulo(pinFeedback_right);
     myservo.write(pos);
     //delay(10);
-    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
+    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
     delay(16);
   }
 }
