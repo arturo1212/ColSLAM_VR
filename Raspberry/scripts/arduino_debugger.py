@@ -2,7 +2,7 @@ import serial
 import sys
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 57600)
+ser = serial.Serial('/dev/ttyACM0', 115200)
 start = time.time()
 while True:
         result = str(ser.readline().strip())    # read up to one hundred bytes
