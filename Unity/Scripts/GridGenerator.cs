@@ -98,6 +98,21 @@ public class GridGenerator : MonoBehaviour {
         }
     }
 
+    // Extender para especificar color y timeout
+    public GameObject createCube(Vector3 point)
+    {
+        GameObject cube = Instantiate(Obstacle);
+        point.x = (step_x * Mathf.Floor(point.x / step_x) + step_x * Mathf.Ceil(point.x / step_x)) / 2;
+        point.z = (step_z * Mathf.Floor(point.z / step_z) + step_z * Mathf.Ceil(point.z / step_z)) / 2;
+        point.y = 0;
+        cube.transform.localPosition = point;
+        Vector3 new_scale = new Vector3(floorCollider.bounds.size.x / rows, 1, floorCollider.bounds.size.z / columns);
+        cube.transform.localScale = new_scale;
+        cube.transform.parent = transform;
+        return cube;
+    }
+
+    #region DEBUG cubos a mano
     Vector3? get_clicked_center()
     {
         /* Obtener punto seleccionado */
@@ -130,6 +145,8 @@ public class GridGenerator : MonoBehaviour {
             return;
         }
         Vector3 point = (Vector3)clicked_point;
+
+
         if (point_count.ContainsKey(point))
         {
             point_count[point] += 1;
@@ -170,14 +187,7 @@ public class GridGenerator : MonoBehaviour {
             current_marker = 0;
         }
     }
+    #endregion
 
-    public GameObject createCube(Vector3 point)
-    {
-        GameObject cube = Instantiate(Obstacle);
-        cube.transform.localPosition = point;
-        Vector3 new_scale = new Vector3(floorCollider.bounds.size.x / rows, 1, floorCollider.bounds.size.z / columns);
-        cube.transform.localScale = new_scale;
-        cube.transform.parent = transform;
-        return cube;
-    }
+
 }
