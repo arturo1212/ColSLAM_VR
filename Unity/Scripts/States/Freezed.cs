@@ -24,6 +24,10 @@ public class Freezed: State
     public override void Execute()
     {
         odo.diffRot = prev_diffrot + Mathf.DeltaAngle(prevRotation, odo.gyro_reading);
+        if(Mathf.Abs(Mathf.DeltaAngle(prevRotation, rosComm.rotation_robot)) > 8)
+        {
+            odo.appliedRotation = rosComm.rotation_robot;
+        }
         //Enviar nada a los motores
         // No hacer nada con la rotacion ni con traslacion (no aplicar modelo de odometria)
     }

@@ -71,7 +71,8 @@ int getDistance()
       }
    } 
    else {
-    return IRprom;
+    //return IRprom;
+    return LIDARprom;
    }
 }
 
@@ -97,10 +98,10 @@ void setup() {
   delay(5000);
   
   // GIA LIDAR
-  float accbias[] = {-176.82, 52.37, 93.81};
-  float gyrobias[] = {23.44, 20.99, -2.08};
-  float magbias[] = {-15.92, 268.86, -168.18};
-  float magscale[] = {1.04, 1.07, 0.90}; 
+  float accbias[] = {-115.05, 59.14, -7.39};
+  float gyrobias[] = {0.58, 1.07, 0.35};
+  float magbias[] = {35.38, 211.88, -372.39};
+  float magscale[] = {1.00, 1.17, 0.87}; 
 
   /* Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -142,24 +143,32 @@ void setup() {
     124.75, 95.20, -311.45
     mag scale []: 
     1.09, 1.09, 0.86
-    
-    < calibration parameters >
+
+  < calibration parameters > ULTIMOS BUENOS
     accel bias [g]: 
-    -176.82, 52.37, 93.81
+    -115.05, 59.14, -7.39
     gyro bias [deg/s]: 
-    23.44, 20.99, -2.08
+    0.58, 1.07, 0.35
     mag bias [mG]: 
-    -15.92, 268.86, -168.18
+    35.38, 211.88, -372.39
     mag scale []: 
-    1.04, 1.07, 0.90
+    1.00, 1.17, 0.87
+    
+    < calibration parameters > Calibracion en plano
+    accel bias [g]: 
+    -113.59, 53.41, -7.26
+    gyro bias [deg/s]: 
+    0.51, 1.03, 0.31
+    mag bias [mG]: 
+    12.38, 194.08, -233.39
+    mag scale []: 
+    0.81, 0.86, 1.65
 
     */
 
     //mpu.calibrateAccelGyro();
     //mpu.calibrateMag();
 
-    mpu.printCalibration();
-    
     //mpu.printCalibration();
 }
 

@@ -5,7 +5,7 @@ public class Odometry : MonoBehaviour
 {
     //posicion anterior, posicion actual.
     // Promedio anterior y actual.
-    public float alpha1 = 0.8f, alpha2 = 0.2f;   // Factores en las probabilidades.
+    public float alpha1 = 0f, alpha2 = 1f, alpha3 = 1f, alpha4 = 0.8f;   // Factores en las probabilidades.
     float prev_time;
     Vector3 pos_pre;
     Vector3 avg_pre = new Vector3(0f, 0f, 0f);
@@ -53,9 +53,9 @@ public class Odometry : MonoBehaviour
     public Vector3 odometry_sampling(Vector3 pos_prev, Vector3 u)
     {
         //OJO comparr con las laminas
-        float rota1 = u.x + sample_normal(alpha1 * u.x * u.x + (1 - alpha1) * u.z * u.z);
-        float rota2 = u.y + sample_normal(alpha1 * u.y * u.y + (1 - alpha1) * u.z * u.z);
-        float trans = u.z + sample_normal(alpha2 * u.z + (1 - alpha2) * (u.x * u.x + u.y * u.y));
+        float rota1 = u.x + sample_normal(alpha1 * u.x * u.x + (alpha2) * u.z * u.z);
+        float rota2 = u.y + sample_normal(alpha1 * u.y * u.y + (alpha2) * u.z * u.z);
+        float trans = u.z + sample_normal(alpha3 * u.z + (alpha4) * (u.x * u.x + u.y * u.y));
 
         float x_new = pos_prev.x + trans * Mathf.Cos(pos_prev.z + rota1);
         float y_new = pos_prev.y + trans * Mathf.Sin(pos_prev.z + rota1);
@@ -142,8 +142,9 @@ public class Odometry : MonoBehaviour
 
                 Vector3 rotationVector = transform.rotation.eulerAngles;
                 rotationVector.y = AngleHelpers.angleToPositive(x_n.z) * Mathf.Rad2Deg;     // Asignar rotacion.
-                transform.rotation = Quaternion.Euler(rotationVector);
+                //transform.rotation = Quaternion.Euler(rotationVector);
                 pos_pre = x_n;                              // Actualizar pre.
+                //pos_pre.z = rosComm.rotation_robot * Mathf.Deg2Rad;
             }
             pos_list.Clear();                               // Limpiar lista y agregar comienzo.
             prev_time = Time.realtimeSinceStartup;
@@ -151,7 +152,7 @@ public class Odometry : MonoBehaviour
         }
         else
         {
-            float used = AngleHelpers.angleToPositive(rosComm.rotation_robot + diffRot);
+            float used = AngleHelpers.angleToPositive(appliedRotation + 0f*diffRot);
             //Debug.Log("AuxPose " + rosComm.auxPose);
             pos_list.Add(new Vector3(rosComm.auxPose.x, rosComm.auxPose.z, used * Mathf.Deg2Rad));
             Vector3 rotationVector = transform.rotation.eulerAngles;

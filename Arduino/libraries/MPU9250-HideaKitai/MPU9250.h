@@ -450,7 +450,7 @@ private:
 
         // shoot for ~fifteen seconds of mag data
         if      (Mmode == 0x02) sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
-        else if (Mmode == 0x06) sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
+        else if (Mmode == 0x06) sample_count = 3000;  // at 100 Hz ODR, new mag data is available every 10 ms
 
         for(ii = 0; ii < sample_count; ii++)
         {

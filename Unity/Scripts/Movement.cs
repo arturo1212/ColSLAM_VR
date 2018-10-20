@@ -91,7 +91,7 @@ public class Movement : MonoBehaviour {
         {
             clickedPoint = GetClickedPoint();
         }
-        //WASD();
+        WASD();
     }
 
     public void TurnLeft()
