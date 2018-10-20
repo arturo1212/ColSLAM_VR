@@ -3,7 +3,6 @@ using RosSharp.RosBridgeClient;
 
 
 public class NaiveMapping : MonoBehaviour {
-    public float memesCalientes;
     public bool firstTime = false;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
@@ -16,14 +15,16 @@ public class NaiveMapping : MonoBehaviour {
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement;
 
-    public Vector3 tpoint, actualPose, auxPose;
     public int scale = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
 
-    /*Ajuste de la distancia*/
-    //Vector3 center_to_sensor
-
+    [HideInInspector]
+    public int calibrtionSubcription_id, arduinoSubscription_id=-1;
+    public Vector3 tpoint, actualPose, auxPose;
+    public float memesCalientes;
+    RosSocket rosSocket;
+    
     private void ReadArduino(string values)
     {
         // Parsear argumentos
