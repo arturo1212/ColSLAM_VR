@@ -27,14 +27,46 @@ public class NaiveMapping : MonoBehaviour {
     private void ReadArduino(string values)
     {
         // Parsear argumentos
-        float laux, raux, rdeltaW = 0, ldeltaW = 0; // 
-        string[] tokens = values.Split(',');        // 
+        float laux, raux, rdeltaW = 0, ldeltaW = 0;
+        string[] tokens = values.Split(',');
         newReading = true;  // Para que?
 
         // Modulo de Distancia (con angulo de motor)
-        sensorDistance  = float.Parse(tokens[1]);               // Distancia medida por los sensores. 
-        sensorAngle     = float.Parse(tokens[2]);               // ANGULO (del motor)
-        pointOrientation = (memesCalientes + sensorAngle - 90); // ANGULO (Verificar rangos)
+        sensorDistance = int.Parse(tokens[1]);
+        sensorAngle = int.Parse(tokens[2]);                         // ANGULO (del motor)
+        pointOrientation = (memesCalientes + sensorAngle - 90);     // ANGULO (Verificar rangos)
+
+        // Movimiento del robot
+        rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
+        raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
+        laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
+
+        if (Mathf.Abs(lAngle - laux) < angle_thresh || Mathf.Abs(rAngle - raux) < angle_thresh)
+        {
+            displacement = 0f;
+            return;
+        }
+        ldeltaW = Mathf.DeltaAngle(laux, lAngle);
+        rdeltaW = Mathf.DeltaAngle(raux, rAngle);
+        RDistance = -rdeltaW * Mathf.Deg2Rad * wheelRadius;
+        LDistance = ldeltaW * Mathf.Deg2Rad * wheelRadius;
+        displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;    // Formula para no moverse rotando.
+        //print("Distancias: " + RDistance.ToString() + "  " + LDistance.ToString() + "  " + displacement.ToString());
+        lAngle = laux;
+        rAngle = raux;
+        //Debug.Log(tokens[0]+ " Dist: " + tokens[1] + " SensDir: " + tokens[2] + " RW: " + tokens[3] + " LW: " + tokens[4]);
+    }
+
+    private void Calibrate(string values)
+    {
+        // Parsear argumentos
+        float laux, raux;
+        string[] tokens = values.Split(',');
+
+        // Modulo de Distancia (con angulo de motor)
+        sensorDistance = int.Parse(tokens[1]);
+        sensorAngle = int.Parse(tokens[2]);                         // ANGULO (del motor)
+        pointOrientation = (memesCalientes + sensorAngle - 90);     // ANGULO (Verificar rangos)
 
         // Movimiento del robot
         rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
@@ -42,28 +74,11 @@ public class NaiveMapping : MonoBehaviour {
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
         /* Si no es la primera vez, calcular cosas */
-        if(!firstTime)
-        {
-            print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
-            lAngle = laux;
-            rAngle = raux;
-            firstTime = true;
-            return;
-        }
-        if(Mathf.Abs(lAngle - laux) < angle_thresh || Mathf.Abs(rAngle - raux) < angle_thresh)
-        {
-            displacement = 0f;
-            return;
-        }
-
-        ldeltaW = AngleHelpers.angleDifference(lAngle, laux);
-        rdeltaW = AngleHelpers.angleDifference(rAngle, raux);
-        RDistance = - rdeltaW * Mathf.Deg2Rad * wheelRadius;
-        LDistance = ldeltaW * Mathf.Deg2Rad * wheelRadius;
-        displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;    // Formula para no moverse rotando.
-        print("Distancias: " + RDistance.ToString() + "  " + LDistance.ToString() + "  " + displacement.ToString());
+        print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
         lAngle = laux;
         rAngle = raux;
+        rosSocket.Unsubscribe(calibrtionSubcription_id);
+        arduinoSubscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
     }
 
     private void SubscriptionHandler(Message message)
@@ -72,13 +87,20 @@ public class NaiveMapping : MonoBehaviour {
         ReadArduino(standardString.data);
     }
 
-    void Start ()
+    private void CalibrationSubscritpionHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        Calibrate(standardString.data);
+    }
+
+    void Start()
     {
         memesCalientes = transform.rotation.eulerAngles.y;
         auxPose = transform.position;
-        RosSocket rosSocket = new RosSocket(robotIP);
-        int subscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
+        rosSocket = new RosSocket(robotIP);
+        calibrtionSubcription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
     }
+
 
     void CreateCube()
     {   
