@@ -17,7 +17,7 @@ public class NaiveMapping : MonoBehaviour {
     public float wheelRadius, displacement;
 
     public Vector3 tpoint, actualPose, auxPose;
-    public int maxDistance = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public int scale = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
 
