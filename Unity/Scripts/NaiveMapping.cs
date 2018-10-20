@@ -83,15 +83,15 @@ public class NaiveMapping : MonoBehaviour {
     void CreateCube()
     {   
         /* Vector Centro -> LIDAR -> Obstaculo */
-        var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 14 / maxDistance;               // Separacion entre Centro y LIDAR
-        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * sensorDistance / maxDistance;   // Punto de obstaculo
+        var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 9.5f / scale;               // Separacion entre Centro y LIDAR
+        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * sensorDistance / scale;   // Punto de obstaculo
 
         /* DEBUG */
         var center_point = tpoint - offset;
         print(tpoint);
 
         /* Crear obstaculo en la interfaz de Unity*/
-        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // CreaciÛn de cubo b·sico (CAMBIAR POR PREFAB)
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creaci√≥n de cubo b√°sico (CAMBIAR POR PREFAB)
         cube.transform.localScale = new Vector3(0.02f, 1f, 0.02f);      // Escala del cubito
         cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
 
@@ -107,16 +107,12 @@ public class NaiveMapping : MonoBehaviour {
 
     void Update()
     {
-        memesCalientes = transform.rotation.eulerAngles.y;
-        Vector3 rotationVector = transform.rotation.eulerAngles;
-        rotationVector.y = rotation_robot;
-        transform.rotation = Quaternion.Euler(rotationVector);
-    }
-
-    void FixedUpdate()
-    {
         if (newReading)
         {
+            memesCalientes = transform.rotation.eulerAngles.y;
+            Vector3 rotationVector = transform.rotation.eulerAngles;
+            rotationVector.y = rotation_robot;
+            transform.rotation = Quaternion.Euler(rotationVector);
             CreateCube();
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
@@ -125,4 +121,6 @@ public class NaiveMapping : MonoBehaviour {
             newReading = false;
         }
     }
+
+
 }
