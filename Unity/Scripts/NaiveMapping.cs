@@ -104,31 +104,46 @@ public class NaiveMapping : MonoBehaviour
     }
 
     void CreateCube()
-    {
-        if (sensorDistance >= viewDistance) return;
-        float scaled = (sensorDistance / scale);
-        Vector3 rotationVector = transform.rotation.eulerAngles;
-        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * scaled;
-        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-        cube.transform.position = transform.position + tpoint;
+    {   
+        /* Vector Centro -> LIDAR -> Obstaculo */
+        var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 9.5f / scale;               // Separacion entre Centro y LIDAR
+        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * sensorDistance / scale;   // Punto de obstaculo
+
+        /* DEBUG */
+        var center_point = tpoint - offset;
+        print(tpoint);
+
+        /* Crear obstaculo en la interfaz de Unity*/
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
+        cube.transform.localScale = new Vector3(0.02f, 1f, 0.02f);      // Escala del cubito
+        cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
+
+        /* Diferenciar SHARP del LIDAR */
         if (sensorDistance <= 35)
         {
             (cube.GetComponent<Renderer>()).material.color = new Color(0.5f, 1, 1);
         }
+
+        /* Delay de destruccion */
         Destroy(cube, 120.0f);
     }
 
     void Update()
     {
-        memesCalientes = transform.rotation.eulerAngles.y;
-        //Vector3 rotationVector = transform.rotation.eulerAngles;
-        //rotationVector.y = rotation_robot;
-        //transform.rotation = Quaternion.Euler(rotationVector);
-        if (arduinoSubscription_id == -1) return;
-        CreateCube();
-        sensorObject.transform.rotation = Quaternion.AngleAxis(-sensorAngle, new Vector3(0, 1, 0));
-        auxPose += transform.forward * displacement;
+        if (newReading)
+        {
+            memesCalientes = transform.rotation.eulerAngles.y;
+            Vector3 rotationVector = transform.rotation.eulerAngles;
+            rotationVector.y = rotation_robot;
+            transform.rotation = Quaternion.Euler(rotationVector);
+            CreateCube();
+            var rotation_sensor = transform.rotation.eulerAngles;
+            rotation_sensor.y = sensorAngle;
+            sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
+            auxPose += transform.forward * displacement;
+            newReading = false;
+        }
     }
+
 
 }
