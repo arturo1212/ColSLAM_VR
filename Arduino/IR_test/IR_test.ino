@@ -28,23 +28,22 @@ int getDistance()
 }
 
 void setup() {
-  Serial.begin(57600); // Start serial communications
+  Serial.begin(115200); // Start serial communications
   myservo.attach(9);
-  myservo.write(0);
+  //myservo.write(0);
   delay(1000);
 }
 
 void loop() {
-  char copy[15];
   //Serial.println(String(getDistance()));
   for(int pos = 0; pos <= 180; pos += 1)
   {
-    myservo.write(pos);
+    //myservo.write(pos);
     Serial.println( String(getDistance()) + "," + String(pos));
   }
   for(int pos = 180; pos>=0; pos-=1)
   {
-    myservo.write(pos);
+    //myservo.write(pos);
     //delay(10);
     Serial.println(String(getDistance()) + "," + String(pos));
   }

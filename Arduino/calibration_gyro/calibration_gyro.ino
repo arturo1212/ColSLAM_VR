@@ -26,9 +26,6 @@ void loop()
     if ((millis() - prev_ms) > 16)
     {
         mpu.update();
-        Serial.println("Merwebo");
-        Serial.println(mpu.getRoll());
-        Serial.println(mpu.getPitch());
         Serial.println(mpu.getYaw());
 
         prev_ms = millis();
