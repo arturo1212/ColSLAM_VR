@@ -10,8 +10,6 @@ public class StateMachine : MonoBehaviour {
 
     private Movement move;
     private NaiveMapping naiveMapper;
-    public float targetRot=999, tresh;
-
 
     // Use this for initialization
     void Start () {
@@ -26,15 +24,12 @@ public class StateMachine : MonoBehaviour {
 
         states.Add(calibratorState);
         states.Add(freezedState);
-        states.Add(turningState);
+        states.Add(goToGoalState);
         currentState = states[0];
 
         transitions.Add(new CalibrationCompleted(calibratorState, freezedState));
-        transitions.Add(new Stopped(turningState, freezedState));
-        transitions.Add(new FacingTargetSet(freezedState, goToGoalState));
+        transitions.Add(new GoalPointSet(freezedState, goToGoalState));
         transitions.Add(new Stopped(goToGoalState, freezedState));
-        transitions.Add(new ManualTurn(freezedState, manualTurningState));
-        transitions.Add(new ManualGo(freezedState, manualGoingState));
         // TODO Hace falta salir de otros estados a los manuales ??
 
         move = GetComponent<Movement>();
@@ -64,5 +59,6 @@ public class StateMachine : MonoBehaviour {
 	void Update () {
         currentState = EvalTransitions();
         currentState.Execute();
+        Debug.Log(currentState);
 	}
 }

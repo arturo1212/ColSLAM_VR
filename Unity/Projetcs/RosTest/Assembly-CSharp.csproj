@@ -95,8 +95,10 @@
     <Compile Include="Assets\Scripts\Basic Behaviours\SteeringBehaviours.cs" />
     <Compile Include="Assets\Scripts\ClawControl.cs" />
     <Compile Include="Assets\Scripts\CreateObstacles.cs" />
+    <Compile Include="Assets\Scripts\GridGenerator.cs" />
     <Compile Include="Assets\Scripts\Helpers\AngleHelpers.cs" />
     <Compile Include="Assets\Scripts\Helpers\PWMHelper.cs" />
+    <Compile Include="Assets\Scripts\MapMerge.cs" />
     <Compile Include="Assets\Scripts\Movement.cs" />
     <Compile Include="Assets\Scripts\NaiveMapping.cs" />
     <Compile Include="Assets\Scripts\Odometry.cs" />
@@ -112,6 +114,7 @@
     <Compile Include="Assets\Scripts\States\Turning.cs" />
     <Compile Include="Assets\Scripts\Transitions\CalibrationCompleted.cs" />
     <Compile Include="Assets\Scripts\Transitions\FacingTargetSet.cs" />
+    <Compile Include="Assets\Scripts\Transitions\GoalPointSet.cs" />
     <Compile Include="Assets\Scripts\Transitions\IsTurning.cs" />
     <Compile Include="Assets\Scripts\Transitions\ManualGo.cs" />
     <Compile Include="Assets\Scripts\Transitions\ManualTurn.cs" />

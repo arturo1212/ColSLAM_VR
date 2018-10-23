@@ -19,7 +19,6 @@ public class ManualTurning : State
 
     public override void Colofon()
     {
-        odo.useGyro = false;
 
     }
 

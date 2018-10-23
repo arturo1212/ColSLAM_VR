@@ -262,9 +262,9 @@ GameObject:
   - component: {fileID: 598556691}
   - component: {fileID: 598556690}
   - component: {fileID: 598556689}
+  - component: {fileID: 598556693}
   - component: {fileID: 598556688}
   - component: {fileID: 598556694}
-  - component: {fileID: 598556693}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -280,30 +280,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 598556687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2892793ab15eedc4d95431c470600a63, type: 3}
+  m_Script: {fileID: 11500000, guid: dc21c681b013b6047ba06a406f5d7367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  first_orientation: 0
-  sensorDistance: 0
-  rotation_robot: 0
-  pointOrientation: 0
-  sensorObject: {fileID: 732596214}
-  sensorAngle: 0
-  LDistance: 0
-  RDistance: 0
-  lAngle: -999
-  rAngle: -999
-  angle_thresh: 0.2
-  wheelRadius: 2.25
-  displacement: 0
-  maxDistance: 70
   robotIP: ws://192.168.1.105:9090
-  calibrtionSubcription_id: 0
-  arduinoSubscription_id: -1
-  tpoint: {x: 0, y: 0, z: 0}
-  actualPose: {x: 0, y: 0, z: 0}
-  auxPose: {x: 0, y: 0, z: 0}
-  memesCalientes: 0
+  Topic: movement
+  publicationId: 0
+  facing: 0
+  turningRight: 0
+  turningLeft: 0
+  forward: 0
+  backwards: 0
+  stopped: 0
+  RVelocity: 60
+  LVelocity: 60
 --- !u!65 &598556689
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -312,7 +302,7 @@ BoxCollider:
   m_GameObject: {fileID: 598556687}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -366,7 +356,7 @@ Transform:
   m_GameObject: {fileID: 598556687}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.89, y: 0, z: 13.5}
-  m_LocalScale: {x: 0.23, y: 0.23, z: 0.23}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children:
   - {fileID: 732596218}
   - {fileID: 282840814}
@@ -381,11 +371,32 @@ MonoBehaviour:
   m_GameObject: {fileID: 598556687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1d3e1ea57e6d4540b6c6dc5b47fffa3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2892793ab15eedc4d95431c470600a63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetRot: 999
-  tresh: 0
+  firstTime: 0
+  first_orientation: 0
+  sensorDistance: 0
+  rotation_robot: 0
+  pointOrientation: 0
+  sensorObject: {fileID: 732596214}
+  sensorAngle: 0
+  LDistance: 0
+  RDistance: 0
+  lAngle: 0
+  rAngle: 0
+  angle_thresh: 0.2
+  wheelRadius: 2.25
+  displacement: 0
+  minDistance: 8
+  maxDistance: 40000
+  scale: 100
+  robotIP: ws://192.168.1.105:9090
+  calibrtionSubcription_id: 0
+  arduinoSubscription_id: -1
+  tpoint: {x: 0, y: 0, z: 0}
+  actualPose: {x: 0, y: 0, z: 0}
+  auxPose: {x: 0, y: 0, z: 0}
 --- !u!114 &598556694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -394,20 +405,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 598556687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc21c681b013b6047ba06a406f5d7367, type: 3}
+  m_Script: {fileID: 11500000, guid: a1d3e1ea57e6d4540b6c6dc5b47fffa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  robotIP: ws://192.168.1.105:9090
-  Topic: movement
-  publicationId: 0
-  facing: 0
-  turningRight: 0
-  turningLeft: 0
-  forward: 0
-  backwards: 0
-  stopped: 0
-  RVelocity: 50
-  LVelocity: 50
 --- !u!1 &732596214
 GameObject:
   m_ObjectHideFlags: 0
@@ -434,7 +434,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 732596214}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1

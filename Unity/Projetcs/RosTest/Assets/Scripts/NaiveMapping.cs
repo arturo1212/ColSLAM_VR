@@ -1,9 +1,10 @@
-ï»¿using UnityEngine;
 using RosSharp.RosBridgeClient;
+using UnityEngine;
 
 
 public class NaiveMapping : MonoBehaviour
 {
+    public bool firstTime = false;
     public float first_orientation;  // Orientacion inicial del gyroscopio.
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
     public float rotation_robot;    // Rotacion del robot (Giroscopio).
@@ -12,17 +13,18 @@ public class NaiveMapping : MonoBehaviour
     public float sensorAngle;
     public float LDistance, RDistance, lAngle = 0, rAngle = 0; //Para la derecha hacia adelante es mayor angulo. Alreves en la izquierda
 
-    public float angle_thresh = 0.2f;
-    public float wheelRadius, displacement;
 
-    public int maxDistance = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public float angle_thresh = 0.2f;
+    public float wheelRadius, displacement, minDistance, maxDistance;
+
+    public int scale = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
+    private float time_stamp;
 
     [HideInInspector]
-    public int calibrtionSubcription_id, arduinoSubscription_id=-1;
+    public int calibrtionSubcription_id, arduinoSubscription_id = -1;
     public Vector3 tpoint, actualPose, auxPose;
-    public float memesCalientes;
     RosSocket rosSocket;
 
     private void ReadArduino(string values)
@@ -33,12 +35,12 @@ public class NaiveMapping : MonoBehaviour
         newReading = true;  // Para que?
 
         // Modulo de Distancia (con angulo de motor)
-        sensorDistance = int.Parse(tokens[1]);
-        sensorAngle = int.Parse(tokens[2]);                         // ANGULO (del motor)
-        pointOrientation = (memesCalientes + sensorAngle - 90);     // ANGULO (Verificar rangos)
+        sensorDistance = float.Parse(tokens[1]);
+        sensorAngle = float.Parse(tokens[2]);                         // ANGULO (del motor)
+        pointOrientation = (rotation_robot + sensorAngle - 90);     // ANGULO (Verificar rangos)
 
         // Movimiento del robot
-        rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
+        rotation_robot =float.Parse(tokens[0]);  // ANGULO (Gyroscopio)
         raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
@@ -47,8 +49,8 @@ public class NaiveMapping : MonoBehaviour
             displacement = 0f;
             return;
         }
-        ldeltaW = AngleHelpers.angleDifference(lAngle, laux);
-        rdeltaW = AngleHelpers.angleDifference(rAngle, raux);
+        ldeltaW = Mathf.DeltaAngle(laux, lAngle);
+        rdeltaW = Mathf.DeltaAngle(raux, rAngle);
         RDistance = -rdeltaW * Mathf.Deg2Rad * wheelRadius;
         LDistance = ldeltaW * Mathf.Deg2Rad * wheelRadius;
         displacement = Mathf.Abs(RDistance - LDistance) >= Mathf.Abs(RDistance + LDistance) ? 0 : RDistance + LDistance / 2;    // Formula para no moverse rotando.
@@ -65,9 +67,9 @@ public class NaiveMapping : MonoBehaviour
         string[] tokens = values.Split(',');
 
         // Modulo de Distancia (con angulo de motor)
-        sensorDistance = int.Parse(tokens[1]);
-        sensorAngle = int.Parse(tokens[2]);                         // ANGULO (del motor)
-        pointOrientation = (memesCalientes + sensorAngle - 90);     // ANGULO (Verificar rangos)
+        sensorDistance = float.Parse(tokens[1]);
+        sensorAngle = float.Parse(tokens[2]);                         // ANGULO (del motor)
+        pointOrientation = (rotation_robot + sensorAngle - 90);     // ANGULO (Verificar rangos)
 
         // Movimiento del robot
         rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
@@ -96,37 +98,61 @@ public class NaiveMapping : MonoBehaviour
 
     void Start()
     {
-        memesCalientes = transform.rotation.eulerAngles.y;
         auxPose = transform.position;
         rosSocket = new RosSocket(robotIP);
         calibrtionSubcription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
     }
 
+
     void CreateCube()
     {
-        float scaled = (sensorDistance / maxDistance);
-        Vector3 rotationVector = transform.rotation.eulerAngles;
-        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * scaled;
-        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        cube.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
-        cube.transform.position = transform.position + tpoint;
+        /* Vector Centro -> LIDAR -> Obstaculo */
+        var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
+        tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * sensorDistance / scale;   // Punto de obstaculo
+
+        /* DEBUG */
+        var center_point = tpoint - offset;
+        //print(tpoint);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance+10)/scale, -1))
+        {
+            Destroy(hit.transform.gameObject);
+        }
+
+            /* Crear obstaculo en la interfaz de Unity*/
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
+        cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
+        cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
+        cube.AddComponent<BoxCollider>();
+
+        /* Diferenciar SHARP del LIDAR */
         if (sensorDistance <= 35)
         {
             (cube.GetComponent<Renderer>()).material.color = new Color(0.5f, 1, 1);
         }
-        Destroy(cube, 120.0f);
+
+        /* Delay de destruccion */
+        //Destroy(cube, 120.0f);
     }
 
     void Update()
     {
-        memesCalientes = transform.rotation.eulerAngles.y;
-        //Vector3 rotationVector = transform.rotation.eulerAngles;
-        //rotationVector.y = rotation_robot;
-        //transform.rotation = Quaternion.Euler(rotationVector);
-        if (arduinoSubscription_id == -1) return;
-        CreateCube();
-        sensorObject.transform.rotation = Quaternion.AngleAxis(-sensorAngle, new Vector3(0, 1, 0));
-        auxPose += transform.forward * displacement;
+        if (newReading)
+        {
+            Vector3 rotationVector = transform.rotation.eulerAngles;
+            rotationVector.y = rotation_robot;
+            transform.rotation = Quaternion.Euler(rotationVector);
+            if (sensorDistance>minDistance && sensorDistance < maxDistance  )
+            {
+                CreateCube();
+            }
+            var rotation_sensor = transform.rotation.eulerAngles;
+            rotation_sensor.y = sensorAngle;
+            sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
+            transform.position = transform.position + transform.forward * 0.625f *displacement/scale;
+            newReading = false;
+        }
     }
+
 
 }

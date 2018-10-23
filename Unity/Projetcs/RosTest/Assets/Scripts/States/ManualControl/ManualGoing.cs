@@ -7,7 +7,7 @@ public class ManualGoing : State
     Odometry odo;
     public ManualGoing(GameObject owner) : base(owner)
     {
-        mov = mov.GetComponent<Movement>();
+        mov = owner.GetComponent<Movement>();
     }
 
     public override void Circunloquio()
@@ -18,7 +18,6 @@ public class ManualGoing : State
 
     public override void Colofon()
     {
-        odo.useGyro = false;
     }
 
     public override void Execute()
