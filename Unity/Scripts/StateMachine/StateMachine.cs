@@ -24,15 +24,12 @@ public class StateMachine : MonoBehaviour {
 
         states.Add(calibratorState);
         states.Add(freezedState);
-        states.Add(manualTurningState);
-        states.Add(manualGoingState);
+        states.Add(goToGoalState);
         currentState = states[0];
 
-        transitions.Add(new ManualTurn(freezedState, manualTurningState));
-        transitions.Add(new ManualGo(freezedState, manualGoingState));
-        transitions.Add(new Stopped(manualGoingState, freezedState));
-        transitions.Add(new Stopped(manualTurningState, freezedState));
         transitions.Add(new CalibrationCompleted(calibratorState, freezedState));
+        transitions.Add(new GoalPointSet(freezedState, goToGoalState));
+        transitions.Add(new Stopped(goToGoalState, freezedState));
         // TODO Hace falta salir de otros estados a los manuales ??
 
         move = GetComponent<Movement>();

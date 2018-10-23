@@ -112,7 +112,7 @@ public class NaiveMapping : MonoBehaviour
 
         /* DEBUG */
         var center_point = tpoint - offset;
-        print(tpoint);
+        //print(tpoint);
         RaycastHit hit;
         if (Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance+10)/scale, -1))
         {
@@ -120,8 +120,8 @@ public class NaiveMapping : MonoBehaviour
         }
 
             /* Crear obstaculo en la interfaz de Unity*/
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
-        cube.transform.localScale = new Vector3(0.02f, 0.5f, 0.02f);      // Escala del cubito
+        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
+        cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
         cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
         cube.AddComponent<BoxCollider>();
 
@@ -142,14 +142,14 @@ public class NaiveMapping : MonoBehaviour
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);
-            if (sensorDistance>minDistance && sensorDistance < maxDistance)
+            if (sensorDistance>minDistance && sensorDistance < maxDistance  )
             {
                 CreateCube();
             }
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
             sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
-            transform.position = transform.position + transform.forward * displacement/scale;
+            transform.position = transform.position + transform.forward * 0.625f *displacement/scale;
             newReading = false;
         }
     }

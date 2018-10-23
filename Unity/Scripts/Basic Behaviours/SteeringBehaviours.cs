@@ -82,22 +82,24 @@ public static class SteeringBehaviours{
         Vector3 targetDir = goal - mov.transform.position;
         float deltaRot = Vector3.SignedAngle(mov.transform.forward, targetDir, Vector3.up);
         //Debug.Log("DeltaRot " + deltaRot);
-        if (Mathf.Abs(deltaRot) > facingThresh && targetDir.magnitude > radius)
+        if (Mathf.Abs(deltaRot) > facingThresh)
         {
             deltaRot += mov.transform.rotation.eulerAngles[1];
             deltaRot = AngleHelpers.angleToPositive(deltaRot);
             Debug.Log("A rotar a" + deltaRot);
-            ForwardFace(mov, deltaRot, facingThresh);
+            Face(mov, deltaRot, facingThresh);
         }
         else
         {
             Debug.Log("Quiza me mueva, me faltan "+ targetDir.magnitude);
             if (targetDir.magnitude > radius)
             {
+                Debug.Log("Mevoamove");
                 mov.GoForward();
             }
             else
             {
+                Debug.Log("LLEGUE!");
                 mov.Stop();
             }
         }

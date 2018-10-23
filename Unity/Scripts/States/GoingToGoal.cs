@@ -14,11 +14,15 @@ public class GoingToGoal : State
     {
         Debug.Log("Quiero ir al goal");
         mov.stopped = false;
+        mov.facing = true;
+
     }
 
     public override void Colofon()
     {
         mov.clickedPoint = null;
+        mov.facing = false;
+
     }
 
     public override void Execute()
