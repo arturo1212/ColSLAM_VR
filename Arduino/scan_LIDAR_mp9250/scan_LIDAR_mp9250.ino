@@ -59,20 +59,21 @@ int getDistance()
     iter++;
   }
   LIDARprom = LIDARprom/window;
-  //Serial.println("LIDAR:" + String(LIDARprom));
+  
   IRprom = IRprom/window;
-  //Serial.println("Hola " + String(IRprom) + " " + String(LIDARprom));
+  Serial.println("IR: " + String(IRprom));
   if(IRprom > 35 ){
     LIDARprom = LIDARprom - 15;
     if (LIDARprom > 85 ){
+      Serial.println("LIDAR: " + String(LIDARprom+5));
         return LIDARprom + 5;
       }else {
+        Serial.println("LIDAR: " + String(LIDARprom));
         return LIDARprom;
       }
    } 
    else {
-    //return IRprom;
-    return LIDARprom;
+    return IRprom;
    }
 }
 

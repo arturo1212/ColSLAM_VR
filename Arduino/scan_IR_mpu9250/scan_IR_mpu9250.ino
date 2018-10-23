@@ -78,16 +78,16 @@ void setup() {
   pinMode(pinFeedback_right, INPUT);
 
   Wire.begin();
-  myservo.write(0);
+  myservo.write(20);
   delay(2000);
   mpu.setup();
   delay(5000);
 
   // GIA Gyro 1
-  float accbias[] = {-183.47, 54.02, -2.93};
-  float gyrobias[] = {0.59, 1.18, 0.42};
-  float magbias[] = {-15.92, 236.81, -267.71};
-  float magscale[] = {1.09, 1.09, 0.86}; 
+  float accbias[] = {-115.05, 59.14, -7.39};
+  float gyrobias[] = {0.58, 1.07, 0.35};
+  float magbias[] = {35.38, 211.88, -372.39};
+  float magscale[] = {1.00, 1.17, 0.87}; 
 
   /*// Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
