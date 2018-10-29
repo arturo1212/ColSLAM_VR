@@ -9,7 +9,7 @@ public class NaiveMapping : MonoBehaviour
     public float sensorDistance;          // Distancia medida entre el sharp y el lidar.
     public float rotation_robot;    // Rotacion del robot (Giroscopio).
     public float pointOrientation;   // Posicion del motor frontal. (Direccion del sensor de distancia).
-    public GameObject sensorObject;
+    public GameObject sensorObject, obstaclePrefab;
     public float sensorAngle;
     public float LDistance, RDistance, lAngle = 0, rAngle = 0; //Para la derecha hacia adelante es mayor angulo. Alreves en la izquierda
 
@@ -17,7 +17,7 @@ public class NaiveMapping : MonoBehaviour
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement, minDistance, maxDistance;
 
-    public int scale = 100;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public int scale = 100, scanNumber=0;   // Maxima distancia leida por los sensores (Se usa para escalar).
     public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
     private float time_stamp;
@@ -40,7 +40,7 @@ public class NaiveMapping : MonoBehaviour
         pointOrientation = (rotation_robot + sensorAngle - 90);     // ANGULO (Verificar rangos)
 
         // Movimiento del robot
-        rotation_robot =float.Parse(tokens[0]);  // ANGULO (Gyroscopio)
+        rotation_robot = AngleHelpers.angleToPositive(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
         raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
@@ -72,7 +72,7 @@ public class NaiveMapping : MonoBehaviour
         pointOrientation = (rotation_robot + sensorAngle - 90);     // ANGULO (Verificar rangos)
 
         // Movimiento del robot
-        rotation_robot = AngleHelpers.Among360(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
+        rotation_robot = AngleHelpers.angleToPositive(float.Parse(tokens[0]));  // ANGULO (Gyroscopio)
         raux = float.Parse(tokens[4]);  // Angulo (Rueda derecha)
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
@@ -114,31 +114,42 @@ public class NaiveMapping : MonoBehaviour
         var center_point = tpoint - offset;
         //print(tpoint);
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance+10)/scale, -1))
+        if (sensorDistance>19 && Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance+10)/scale, -1))
         {
             Destroy(hit.transform.gameObject);
         }
 
-            /* Crear obstaculo en la interfaz de Unity*/
-        var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
-        cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
-        cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
-        cube.AddComponent<BoxCollider>();
+        /* Crear obstaculo en la interfaz de Unity*/
+        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.identity);
+        //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
+        //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
+        //cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
+        //cube.AddComponent<BoxCollider>();
 
         /* Diferenciar SHARP del LIDAR */
-        if (sensorDistance <= 35)
-        {
-            (cube.GetComponent<Renderer>()).material.color = new Color(0.5f, 1, 1);
-        }
+        //if (sensorDistance <= 35)
+        //{
+        //    (cube.GetComponent<Renderer>()).material.color = new Color(0.5f, 1, 1);
+        //}
 
         /* Delay de destruccion */
         //Destroy(cube, 120.0f);
+    }
+
+    private void UpdateScanNumber(float scanAngle)
+    {
+        if (scanAngle == 90)
+        {
+            scanNumber += 1;
+        }
+        scanNumber = scanNumber % 4;
     }
 
     void Update()
     {
         if (newReading)
         {
+            UpdateScanNumber(sensorAngle);
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);

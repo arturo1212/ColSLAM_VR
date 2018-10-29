@@ -124,7 +124,7 @@ public class Movement : MonoBehaviour {
 
     public void Stop()
     {
-        stopped = true;
+        //stopped = true;
         send_motors_pwm();
         backwards = forward = turningLeft = turningRight = false;
     }

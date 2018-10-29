@@ -13,6 +13,14 @@ public class AngleHelpers : MonoBehaviour {
         return a - b;
     }
 
+    public static float angleToLookTo(Transform me, Vector3 goal)
+    {
+        Vector3 targetDir = goal - me.position;
+        float diff = Vector3.SignedAngle(me.forward, targetDir, Vector3.up);
+        //Debug.Log("angle to look"+diff);
+        return diff;
+    }
+
     public static float angleToPositive(float a)
     {
         float signo = a<0 ? -1f : 1f;
@@ -24,7 +32,7 @@ public class AngleHelpers : MonoBehaviour {
 
     public static float Among360(float a)
     {
-        float result = a < 0 ? 360 + a : a;
+        float result = a < 0 ? 360 + a : a%360;
         return result;
     }
 
