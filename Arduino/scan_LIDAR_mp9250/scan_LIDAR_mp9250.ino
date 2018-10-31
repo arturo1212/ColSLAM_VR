@@ -93,16 +93,16 @@ void setup() {
   pinMode(5, INPUT); // Set pin 5 as monitor pin LIDAR
   
   Wire.begin();
-  myservo.write(0);
+  myservo.write(20);
   delay(2000);
   mpu.setup();
   delay(5000);
   
   // GIA LIDAR
-  float accbias[] = {-115.05, 59.14, -7.39};
-  float gyrobias[] = {0.58, 1.07, 0.35};
-  float magbias[] = {35.38, 211.88, -372.39};
-  float magscale[] = {1.00, 1.17, 0.87}; 
+  float accbias[] = {-121.95, 62.44, -1.34};
+  float gyrobias[] = {0.54, 1.12, 0.36};
+  float magbias[] = {-38.91, 293.79, -133.86};
+  float magscale[] = {1.02, 1.11, 0.90}; 
 
   /* Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -147,13 +147,13 @@ void setup() {
 
   < calibration parameters > ULTIMOS BUENOS
     accel bias [g]: 
-    -115.05, 59.14, -7.39
+    -121.95, 62.44, -1.34
     gyro bias [deg/s]: 
-    0.58, 1.07, 0.35
+    0.54, 1.12, 0.36
     mag bias [mG]: 
-    35.38, 211.88, -372.39
+    -38.91, 293.79, -133.86
     mag scale []: 
-    1.00, 1.17, 0.87
+    1.02, 1.11, 0.90
     
     < calibration parameters > Calibracion en plano
     accel bias [g]: 
