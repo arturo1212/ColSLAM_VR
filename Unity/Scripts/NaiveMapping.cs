@@ -77,7 +77,7 @@ public class NaiveMapping : MonoBehaviour
         laux = float.Parse(tokens[3]);  // Angulo (Rueda izquierda)
 
         /* Si no es la primera vez, calcular cosas */
-        print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
+        //print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
         lAngle = laux;
         rAngle = raux;
         rosSocket.Unsubscribe(calibrtionSubcription_id);

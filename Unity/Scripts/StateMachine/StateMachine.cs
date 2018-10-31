@@ -45,6 +45,7 @@ public class StateMachine : MonoBehaviour {
             {
                 if (t.Eval())
                 {
+                    Debug.Log("Transicionando");
                     currentState.Colofon();
                     t.target.Circunloquio();
                     return t.target;

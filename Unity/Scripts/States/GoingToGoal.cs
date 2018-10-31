@@ -6,7 +6,6 @@ using UnityEngine;
 public class GoingToGoal : State
 {
     Movement mov;
-    NavMeshAgent agent;
     NavMeshPath path;
     NaiveMapping naiv;
     int nscans=0,scanid=-1;
@@ -16,7 +15,6 @@ public class GoingToGoal : State
     public GoingToGoal(GameObject owner) : base(owner)
     {
         mov = owner.GetComponent<Movement>();
-        agent = owner.GetComponent<NavMeshAgent>();
         naiv = owner.GetComponent<NaiveMapping>();
         path = new NavMeshPath();
     }
@@ -26,7 +24,7 @@ public class GoingToGoal : State
         Debug.Log("Quiero ir al goal");
         nscans = 0;
         path.ClearCorners();
-        agent.CalculatePath((Vector3)mov.clickedPoint, path);
+        NavMesh.CalculatePath(owner.transform.position,(Vector3)mov.clickedPoint, NavMesh.AllAreas, path);
         faced = false;
         destiny = new Vector3(-1, -1, -1);
     }
@@ -34,7 +32,7 @@ public class GoingToGoal : State
     public override void Colofon()
     {
         mov.clickedPoint = null;
-        mov.facing = false;
+        mov.behaviourIsRunning = false;
     }
 
     private Vector3 nextPoint(float radius)
@@ -62,45 +60,47 @@ public class GoingToGoal : State
 
     public override void Execute()
     {
-        updateNScans();
+        float radius = 0.2f, angleThresh = 20;
         if (destiny.y == -1)
         {
-            destiny = nextPoint(0.1f);
+            destiny = nextPoint(radius);
             if (destiny.y == -1)
             {
-                mov.Stop();
-                mov.stopped = true;
+                mov.Stop(true);
                 nscans = 0;
                 return;
             }
             initialDist = (destiny - owner.transform.position).magnitude;
-            mov.facing = true;
+            mov.behaviourIsRunning = true;
         }
 
-        float radius = 0.2f, angleThresh = 20 ;
         //Debug.Log(faced);
         if (!faced)
         {
             Debug.Log("Facing");
-            SteeringBehaviours.Face(mov, destiny, angleThresh);
+            SteeringBehaviours.Face(mov, destiny, angleThresh, true);
             faced = !mov.facing;
         }
-        if (nscans >= 2)
+
+        if (faced)
         {
-            owner.GetComponent<NavMeshAgent>().enabled = false;
+            updateNScans();
+        }
+
+        if (nscans >= 2 && faced)
+        {
             //Debug.Log("Now Going");
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = destiny;
             sphere.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             (sphere.GetComponent<Renderer>()).material.color = new Color(1, 0, 0);
-            SteeringBehaviours.GoToGoal(mov, destiny, radius, 25);
+            SteeringBehaviours.GoToGoal(mov, destiny, radius, 25, true);
         }
-        if ((mov.transform.position - destiny ).magnitude < radius)
+        if ( (mov.transform.position - destiny).magnitude < radius)
         {
             Debug.Log("Litso GoToGoal State");
-            owner.GetComponent<NavMeshAgent>().enabled = true;
-            mov.stopped = true;
-            mov.facing = false;
+            mov.behaviourIsRunning = false;
+            mov.Stop(true);
         }
         
     }

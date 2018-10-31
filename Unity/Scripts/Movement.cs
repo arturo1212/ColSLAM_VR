@@ -11,7 +11,8 @@ public class Movement : MonoBehaviour {
     public string Topic = "movement";
     public int publicationId;
 
-    public bool facing = false, turningRight = false, turningLeft = false, forward = false, backwards = false, stopped = false;
+    public bool behaviourIsRunning = false, turningRight = false, turningLeft = false, forward = false, backwards = false, stopped = false;
+    public bool facing=false, goingToGoal=false;
     public Vector3? clickedPoint = null;
 
 
@@ -60,8 +61,12 @@ public class Movement : MonoBehaviour {
         else
         {
             //print("Stop");
-            if (!facing)
+            if (!behaviourIsRunning)
+            {
+                Debug.Log("NO BEHAVIPUR RUNING");
                 Stop();
+            }
+                
         }
     }
 
@@ -94,42 +99,60 @@ public class Movement : MonoBehaviour {
         WASD();
     }
 
-    public void TurnLeft()
+    public void TurnLeft(bool notify=false)
     {
-        turningLeft = true;
-        stopped = false;
-        send_motors_pwm(-LVelocity, RVelocity);
+        if (notify)
+        {
+            turningLeft = true;
+            stopped = false;
+        }
+        Send_motors_pwm(-LVelocity, RVelocity);
     }
 
-    public void TurnRight()
+    public void TurnRight( bool notify=false )
     {
-        turningRight = true;
-        stopped = false;
-        send_motors_pwm(LVelocity, -RVelocity);
+        if (notify)
+        {
+            turningRight = true;
+            stopped = false;
+        }
+        
+        Send_motors_pwm(LVelocity, -RVelocity);
     }
 
-    public void GoForward()
+    public void GoForward(bool notify=false)
     {
-        forward = true;
-        stopped = false;
-        send_motors_pwm(RVelocity-7, RVelocity);
+        if (notify)
+        {
+            forward = true;
+            stopped = false;
+        }
+        
+        Send_motors_pwm(RVelocity-7, RVelocity);
     }
 
-    public void GoBackwards()
+    public void GoBackwards(bool notify = false)
     {
-        backwards = true;
-        stopped = false;
-        send_motors_pwm(-LVelocity, -LVelocity+2);
+        if (notify)
+        {
+            backwards = true;
+            stopped = false;
+        }
+        Send_motors_pwm(-LVelocity, -LVelocity+2);
     }
 
-    public void Stop()
-    {
-        //stopped = true;
-        send_motors_pwm();
+    public void Stop(bool notify=false)
+    {   
+        if (notify)
+        {
+            stopped = true;
+        }
+
+        Send_motors_pwm();
         backwards = forward = turningLeft = turningRight = false;
     }
 
-    public void send_motors_pwm(float left = 0, float right = 0)
+    public void Send_motors_pwm(float left = 0, float right = 0)
     {
         int leftPWM = PWMHelper.Remap(left, -100, 100, pwmLBackward, pwmLForward);
         int rightPWM = PWMHelper.Remap(right, -100, 100, pwmRBackward, pwmRForward);

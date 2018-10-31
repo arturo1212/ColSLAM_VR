@@ -3,17 +3,18 @@
 public class Freezed: State
 {
     public float prevRotation;
-    private Odometry odo;
     private NaiveMapping rosComm;
+    Movement mov;
     float prev_diffrot; 
 	public Freezed(GameObject owner ) : base(owner)
 	{
         rosComm = owner.GetComponent<NaiveMapping>();
+        mov = owner.GetComponent<Movement>(); 
 	}
 
     public override void Circunloquio()
     {
-        Debug.Log("Me paro");
+        //Debug.Log("Me paro");
         /*odo = owner.GetComponent<Odometry>();
         prev_diffrot = odo.diffRot;
 
@@ -37,7 +38,8 @@ public class Freezed: State
 
     public override void Colofon()
     {
-        Debug.Log("Me dejo de parar");
+        mov.stopped = false;
+        //Debug.Log("Me dejo de parar");
         //Debug.Log("Calculada " +odo.diffRot);
         //odo.diffRot = AngleHelpers.angleToPositive(odo.diffRot);
         //Debug.Log("Mappeada " + odo.diffRot);
