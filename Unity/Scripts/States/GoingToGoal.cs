@@ -12,6 +12,7 @@ public class GoingToGoal : State
     int nscans=0,scanid=-1;
     Vector3 destiny=new Vector3(-1,-1,-1);
     bool faced=false;
+    float initialDist;
     public GoingToGoal(GameObject owner) : base(owner)
     {
         mov = owner.GetComponent<Movement>();
@@ -72,9 +73,11 @@ public class GoingToGoal : State
                 nscans = 0;
                 return;
             }
+            initialDist = (destiny - owner.transform.position).magnitude;
+            mov.facing = true;
         }
 
-        float radius = 0.1f, angleThresh = 10 ;
+        float radius = 0.2f, angleThresh = 20 ;
         //Debug.Log(faced);
         if (!faced)
         {
@@ -85,18 +88,19 @@ public class GoingToGoal : State
         if (nscans >= 2)
         {
             owner.GetComponent<NavMeshAgent>().enabled = false;
-            Debug.Log("Now Going");
+            //Debug.Log("Now Going");
             GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             sphere.transform.position = destiny;
             sphere.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
             (sphere.GetComponent<Renderer>()).material.color = new Color(1, 0, 0);
-            SteeringBehaviours.GoToGoal(mov, destiny, radius, 15);
+            SteeringBehaviours.GoToGoal(mov, destiny, radius, 25);
         }
         if ((mov.transform.position - destiny ).magnitude < radius)
         {
             Debug.Log("Litso GoToGoal State");
             owner.GetComponent<NavMeshAgent>().enabled = true;
             mov.stopped = true;
+            mov.facing = false;
         }
         
     }

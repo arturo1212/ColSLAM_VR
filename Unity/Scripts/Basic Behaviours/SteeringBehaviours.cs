@@ -23,7 +23,7 @@ public static class SteeringBehaviours{
         
         if (Mathf.Abs(diffRot) > tresh)
         {
-            move.facing = true;
+            //move.facing = true;
             if (diffRot > 0)
             {
                 move.TurnRight();
@@ -36,7 +36,7 @@ public static class SteeringBehaviours{
         else
         {
             //Debug.Log("Ya lo miro");
-            move.facing = false;
+            //move.facing = false;
             //move.stopped = true;
             move.Stop();
         }
@@ -84,14 +84,13 @@ public static class SteeringBehaviours{
 
     public static void GoToGoal(Movement mov, Vector3 goal, float radius, float facingThresh)
     {
-        Debug.Log("Yendo al goal");
+        //Debug.Log("Yendo al goal");
         Vector3 targetDir = goal - mov.transform.position;
         float deltaRot = Vector3.SignedAngle(mov.transform.forward, targetDir.normalized, Vector3.up);
         Debug.Log("DeltaRot " + deltaRot);
-        if (Mathf.Abs(deltaRot) > facingThresh)
+        if (Mathf.Abs(deltaRot) > facingThresh && targetDir.magnitude > radius )
         {
-            deltaRot += mov.transform.rotation.eulerAngles[1];
-            deltaRot = AngleHelpers.angleToPositive(deltaRot);
+
             Debug.Log("Face del gotogoal");
             Face(mov, goal, facingThresh);
         }
@@ -100,7 +99,7 @@ public static class SteeringBehaviours{
             //Debug.Log("Quiza me mueva, me faltan "+ targetDir.magnitude);
             if (targetDir.magnitude > radius)
             {
-                //Debug.Log("Mevoamove");
+                Debug.Log("Mevoamove");
                 mov.GoForward();
             }
             else
