@@ -83,11 +83,11 @@ void setup() {
   mpu.setup();
   delay(5000);
 
-  // GIA Gyro 1
-  float accbias[] = {-115.05, 59.14, -7.39};
-  float gyrobias[] = {0.58, 1.07, 0.35};
-  float magbias[] = {35.38, 211.88, -372.39};
-  float magscale[] = {1.00, 1.17, 0.87}; 
+  // David 2
+  float accbias[] = {-148.13, 34.48, 26.06};
+  float gyrobias[] = {-0.10, -0.50, 0.34};
+  float magbias[] = {243.13, 354.86, -260.02};
+  float magscale[] = { 1.07, 1.08, 0.87}; 
 
   /*// Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -151,6 +151,16 @@ void setup() {
     124.75, 95.20, -311.45
     mag scale []: 
     1.09, 1.09, 0.86
+
+    < calibration parameters > Calibracion casa de David inalambrica
+    accel bias [g]:
+    -148.13, 34.48, 26.06
+    gyro bias [deg/s]:
+    -0.10, -0.50, 0.34
+    mag bias [mG]:
+    243.13, 354.86, -260.02
+    mag scale []:
+    1.07, 1.08, 0.87
 
   < calibration parameters > ULTIMOS BUENOS
     accel bias [g]: 
