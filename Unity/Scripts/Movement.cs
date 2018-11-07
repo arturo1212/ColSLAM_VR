@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Movement : MonoBehaviour {
 
@@ -12,26 +13,27 @@ public class Movement : MonoBehaviour {
     public int publicationId;
 
     public bool behaviourIsRunning = false, turningRight = false, turningLeft = false, forward = false, backwards = false, stopped = false;
-    public bool facing=false, goingToGoal=false;
+    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false;
     public Vector3? clickedPoint = null;
 
 
     // Variables PWM en rueda.
     public float RVelocity, LVelocity;
 
-    [HideInInspector]
     private int pwmRForward = 1280;
     private int pwmLForward = 1720;
     private int pwmRBackward = 1720;
     private int pwmLBackward = 1280;
 
-
+    public NavMeshPath explorePath; // Path del que surge la explroacion
+    public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
 
 
     // Use this for initialization
     void Start () {
         rosSocket = new RosSocket(robotIP);
         publicationId = rosSocket.Advertise(Topic, "std_msgs/String");
+        explorePath = new NavMeshPath();
     }
 
     // Update is called once per frame
@@ -63,7 +65,7 @@ public class Movement : MonoBehaviour {
             //print("Stop");
             if (!behaviourIsRunning)
             {
-                Debug.Log("NO BEHAVIPUR RUNING");
+                //Debug.Log("NO BEHAVIPUR RUNING");
                 Stop();
             }
                 

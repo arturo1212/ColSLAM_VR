@@ -23,7 +23,12 @@ public static class SteeringBehaviours{
         
         if (Mathf.Abs(diffRot) > tresh)
         {
-            if (notify) move.facing = true;
+            Debug.Log("Rotandito");
+
+            if (notify)
+            {
+                move.facing = true;
+            }
             if (diffRot > 0)
             {
                 move.TurnRight();
@@ -36,7 +41,10 @@ public static class SteeringBehaviours{
         else
         {
             Debug.Log("Ya lo miro");
-            if (notify) move.facing = false;
+            if (notify)
+            {
+                move.facing = false;
+            }
             //move.stopped = true;
             move.Stop();
         }
@@ -46,8 +54,8 @@ public static class SteeringBehaviours{
     public static void Face(Movement move, Vector3 target, float tresh, bool notify=false)
     {
         float myRot = move.transform.rotation.eulerAngles[1];
-        //Debug.Log(myRot);
-        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, (Vector3)move.clickedPoint) + myRot), tresh, notify);
+        //Debug.Log("Facing point: " + target);
+        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), tresh, notify);
     }
 
     // La forma en la que esta funcion controla el robot esta deprecada

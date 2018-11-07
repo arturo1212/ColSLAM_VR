@@ -1,6 +1,8 @@
 using RosSharp.RosBridgeClient;
 using UnityEngine;
-
+using UnityEditor;
+using System.Collections.Generic;
+using UnityEngine.AI;
 
 public class NaiveMapping : MonoBehaviour
 {
@@ -23,7 +25,7 @@ public class NaiveMapping : MonoBehaviour
     private float time_stamp;
 
     [HideInInspector]
-    public int calibrtionSubcription_id, arduinoSubscription_id = -1;
+    public int calibrtionSubcription_id, arduinoSubscription_id = -1, auxScan=-1;
     public Vector3 tpoint, actualPose, auxPose;
     RosSocket rosSocket;
 
@@ -103,6 +105,29 @@ public class NaiveMapping : MonoBehaviour
         calibrtionSubcription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
     }
 
+    void CreateTag(string s)
+    {
+        SerializedObject tagManager = new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset")[0]);
+        SerializedProperty tagsProp = tagManager.FindProperty("tags");
+        for (int i = 0; i < tagsProp.arraySize; i++)
+        {
+            SerializedProperty t = tagsProp.GetArrayElementAtIndex(i);
+            if (t.stringValue.Equals(s)) { return; }
+        }
+        tagsProp.InsertArrayElementAtIndex(0);
+        SerializedProperty n = tagsProp.GetArrayElementAtIndex(0);
+        n.stringValue = s;
+        tagManager.ApplyModifiedProperties();
+    }
+
+    void DestroyGOList(List<GameObject> l)
+    {
+        foreach(GameObject g in l)
+        {
+            Debug.Log("Cleaned");
+            Destroy(g);
+        }
+    }
 
     void CreateCube()
     {
@@ -113,18 +138,44 @@ public class NaiveMapping : MonoBehaviour
         /* DEBUG */
         var center_point = tpoint - offset;
         //print(tpoint);
-        RaycastHit hit;
-        if (sensorDistance>19 && Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance+10)/scale, -1))
+
+        RaycastHit[] hits;
+
+        hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, -1);
+
+        if (hits.Length > 0)
         {
-            Destroy(hit.transform.gameObject);
+
+            RaycastHit hit;
+            List<GameObject> todelete = new List<GameObject>();
+            for(int i = 0; i<hits.Length; i++)
+            {
+                hit = hits[i];
+                if ( hit.transform.gameObject.name != gameObject.name + scanNumber)
+                {
+                    todelete.Add(hit.transform.gameObject);
+                }
+            }
+            DestroyGOList(todelete);
         }
 
+        //RaycastHit hit;
+        //if (sensorDistance > 19 && Physics.Raycast(transform.position + offset, tpoint.normalized, out hit, (sensorDistance + 10) / scale, -1)) 
+        //{
+        //    Destroy(hit.transform.gameObject);
+        //    hit.
+        //}
+
         /* Crear obstaculo en la interfaz de Unity*/
-        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.identity);
+        string tag = gameObject.name + scanNumber;
+        //CreateTag(tag);
+        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.identity).name = tag;
         //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
         //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
         //cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
         //cube.AddComponent<BoxCollider>();
+        //cube.AddComponent<NavMeshObstacle>().carving = true;
+        //cube.name = tag;
 
         /* Diferenciar SHARP del LIDAR */
         //if (sensorDistance <= 35)
@@ -140,9 +191,14 @@ public class NaiveMapping : MonoBehaviour
     {
         if (scanAngle == 90)
         {
-            scanNumber += 1;
+            auxScan += 1;
+            auxScan = auxScan % 3;
         }
-        scanNumber = scanNumber % 4;
+        if (auxScan == 2)
+        {
+            scanNumber += 1;
+            auxScan = -1;
+        }
     }
 
     void Update()
