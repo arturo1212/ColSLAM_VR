@@ -20,14 +20,14 @@ public class NaiveMapping : MonoBehaviour
     public float wheelRadius, displacement, minDistance, maxDistance;
 
     public int scale = 100, scanNumber=0;   // Maxima distancia leida por los sensores (Se usa para escalar).
-    public string robotIP = "ws://192.168.1.105:9090";  // IP del robot.
     private bool newReading = false;
-    private float time_stamp;
 
     [HideInInspector]
     public int calibrtionSubcription_id, arduinoSubscription_id = -1, auxScan=-1;
+    [HideInInspector]
     public Vector3 tpoint, actualPose, auxPose;
-    RosSocket rosSocket;
+    [HideInInspector]
+    Robot robot;
 
     private void ReadArduino(string values)
     {
@@ -82,8 +82,8 @@ public class NaiveMapping : MonoBehaviour
         //print("First time: " + lAngle.ToString() + "   " + rAngle.ToString());
         lAngle = laux;
         rAngle = raux;
-        rosSocket.Unsubscribe(calibrtionSubcription_id);
-        arduinoSubscription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
+        robot.rosSocket.Unsubscribe(calibrtionSubcription_id);
+        arduinoSubscription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
     }
 
     private void SubscriptionHandler(Message message)
@@ -101,8 +101,8 @@ public class NaiveMapping : MonoBehaviour
     void Start()
     {
         auxPose = transform.position;
-        rosSocket = new RosSocket(robotIP);
-        calibrtionSubcription_id = rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
+        robot = gameObject.GetComponent<Robot>();
+        calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
     }
 
     void CreateTag(string s)
@@ -140,8 +140,7 @@ public class NaiveMapping : MonoBehaviour
         //print(tpoint);
 
         RaycastHit[] hits;
-
-        hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, -1);
+        hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, LayerMask.GetMask("Obstacles"));
 
         if (hits.Length > 0)
         {
@@ -170,6 +169,7 @@ public class NaiveMapping : MonoBehaviour
         string tag = gameObject.name + scanNumber;
         //CreateTag(tag);
         Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.identity).name = tag;
+        GetComponentInParent<GridGenerator>().ObstacleFound(transform.position + offset + tpoint);
         //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
         //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
         //cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto

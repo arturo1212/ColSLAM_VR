@@ -29,6 +29,7 @@ public class GridGenerator : MonoBehaviour {
         start_x = floorCollider.bounds.center.x - floorCollider.bounds.size.x / 2;
         start_z = floorCollider.bounds.center.z - floorCollider.bounds.size.z / 2;
 
+        
         for (float i = start_x; i <= start_x + floorCollider.bounds.size.x; i+=step_x )
         {
             LineRenderer lineRenderer = new GameObject().AddComponent<LineRenderer> () as LineRenderer;
@@ -40,7 +41,7 @@ public class GridGenerator : MonoBehaviour {
             lineRenderer.SetPosition(1, new Vector3(i, 0.01f, floorCollider.bounds.size.z / 2));
         }
 
-        for (float i = start_z; i <= start_z + floorCollider.bounds.size.z; i += step_z)
+        /*for (float i = start_z; i <= start_z + floorCollider.bounds.size.z; i += step_z)
         {
             LineRenderer lineRenderer = new GameObject().AddComponent<LineRenderer>() as LineRenderer;
             lineRenderer.transform.parent = transform;
@@ -49,7 +50,7 @@ public class GridGenerator : MonoBehaviour {
             lineRenderer.positionCount = 2;
             lineRenderer.SetPosition(0, new Vector3(floorCollider.bounds.center.x - floorCollider.bounds.size.x / 2, 0.01f, i));
             lineRenderer.SetPosition(1, new Vector3(floorCollider.bounds.center.x + floorCollider.bounds.size.x / 2, 0.01f, i));
-        }
+        }*/
     }
 
 	// Use this for initialization
@@ -63,7 +64,7 @@ public class GridGenerator : MonoBehaviour {
     {
         if (Input.GetMouseButtonDown(0))
         {
-            ObstacleFound();
+            //ObstacleFound();
         }
         if (Input.GetMouseButtonDown(1))
         {
@@ -93,7 +94,7 @@ public class GridGenerator : MonoBehaviour {
                     return;
                 }
                 cube.GetComponent<Renderer>().material.color = new Color(c.r + 0.01f, c.g + 0.01f, c.b + 0.01f, c.a - 0.01f);
-                print("Color" + cube.GetComponent<Renderer>().material.color);
+                //print("Color" + cube.GetComponent<Renderer>().material.color);
             }
         }
     }
@@ -110,6 +111,15 @@ public class GridGenerator : MonoBehaviour {
         cube.transform.localScale = new_scale;
         cube.transform.parent = transform;
         return cube;
+    }
+
+    Vector3 GetCellCenter(Vector3 p)
+    {
+        Vector3 point = p;
+        point.x = (step_x * Mathf.Floor(point.x / step_x) + step_x * Mathf.Ceil(point.x / step_x)) / 2;
+        point.z = (step_z * Mathf.Floor(point.z / step_z) + step_z * Mathf.Ceil(point.z / step_z)) / 2;
+        point.y = 0;
+        return point;
     }
 
     #region DEBUG cubos a mano
@@ -136,15 +146,16 @@ public class GridGenerator : MonoBehaviour {
         //return point;
     }
 
-    public void ObstacleFound()
+    public void ObstacleFound(Vector3 location)
     {
-        /* Obtener punto seleccionado */
+        /* Obtener punto seleccionado 
         var clicked_point = get_clicked_center();
         if (clicked_point == null)
         {
             return;
-        }
-        Vector3 point = (Vector3)clicked_point;
+        }*/
+
+        Vector3 point = GetCellCenter(location);
 
 
         if (point_count.ContainsKey(point))

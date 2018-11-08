@@ -78,11 +78,11 @@ public static class SteeringBehaviours{
             move.behaviourIsRunning = true;
             if (diffRot > 0)
             {
-                move.Send_motors_pwm(move.LVelocity,0);
+                //move.Send_motors_pwm(move.LVelocity,0);
             }
             else
             {
-                move.Send_motors_pwm(0, move.RVelocity);
+                //move.Send_motors_pwm(0, move.RVelocity);
             }
         }
         else

@@ -10,6 +10,8 @@ public class TracingExplore : State
     NaiveMapping naiv;
     int nscans = 0, scanid = -1;
     Vector3 destiny = new Vector3(-1, -1, -1);
+    NavMeshSurface surface;
+
     bool faced = false;
     float initialDist;
     public TracingExplore(GameObject owner) : base(owner)
@@ -91,6 +93,12 @@ public class TracingExplore : State
     public override void Execute()
     {
         //Debug.Log(faced);
+        if(path.status == NavMeshPathStatus.PathInvalid)
+        {
+            Debug.Log("NO PATH FOUND");
+            mov.Stop(true);
+            return;
+        }
         if (path.status != NavMeshPathStatus.PathComplete)
         {
             Debug.Log("Calculating path...");
@@ -125,7 +133,7 @@ public class TracingExplore : State
         }
 
         /* Esperar a estar detenido y acumular N iteraciones */
-        if (nscans >= 3 && faced)
+        if (nscans >= 1 && faced)
         {
 
             Debug.Log("Now Going");

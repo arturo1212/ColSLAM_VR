@@ -1,20 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Configuration : MonoBehaviour {
 
     public List<GameObject> agents; // Agentes.
-    public GameObject selectedAgent;       
+    public GameObject selectedAgent;
     int separation = 12;         // Separacion entre entornos.
     public int index = 0, agent_count = 0;     // Varible auxiliar para mantener el ultimo tamano de lista.
 
-	// Use this for initialization
+    // Use this for initialization
 	void Start () {
 		for(int i =0; i < agents.Count; i++)
         {
             GameObject dummy = Instantiate(agents[i], new Vector3(i*separation, 0, 0), Quaternion.identity); // Instanciar prefab[i] en x=i*separation
-            print(dummy.transform.position);
+            dummy.GetComponent<NavMeshSurface>().BuildNavMesh();
+            print("Buildeameste");
+            //print(dummy.transform.position);
         }
         index = 0;
         selectedAgent = agents[index];
@@ -29,8 +32,11 @@ public class Configuration : MonoBehaviour {
             for (int i = agent_count; i < agents.Count; i++)
             {
                 GameObject dummy = Instantiate(agents[i], new Vector3(i * separation, 0, 0), Quaternion.identity); // Instanciar prefab[i] en x=i*separation
+                dummy.GetComponent<NavMeshSurface>().BuildNavMesh();
+                //print("Buildeameste");
             }
             agent_count = agents.Count;
+            
         }
     }
 

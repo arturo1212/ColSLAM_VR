@@ -11,9 +11,6 @@ public class Movement : MonoBehaviour {
     public Vector3? clickedPoint = null;
 
 
-    // Variables PWM en rueda.
-    public float RVelocity, LVelocity;
-
     private Robot robot;
 
     private int pwmRForward = 1280;
@@ -75,7 +72,7 @@ public class Movement : MonoBehaviour {
         int layer_mask = LayerMask.GetMask("Floor");
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, layer_mask))
         {
-            if (hit.collider.gameObject.name != "Piso")
+            if (!hit.collider.gameObject.name.Contains("Environment"))
             {
                 Debug.Log("NO HAY NADA");
                 return null;
@@ -102,7 +99,7 @@ public class Movement : MonoBehaviour {
         {
             stopped = false;
         }
-        Send_motors_pwm(-LVelocity, RVelocity);
+        Send_motors_pwm(-robot.LTurnVelocity, robot.RTurnVelocity);
     }
 
     public void TurnRight( bool notify=false )
@@ -112,7 +109,7 @@ public class Movement : MonoBehaviour {
             stopped = false;
         }
         
-        Send_motors_pwm(LVelocity, -RVelocity);
+        Send_motors_pwm(robot.LTurnVelocity, -robot.RTurnVelocity);
     }
 
     public void GoForward(bool notify=false)
@@ -122,7 +119,7 @@ public class Movement : MonoBehaviour {
             stopped = false;
         }
         
-        Send_motors_pwm(RVelocity-7, RVelocity);
+        Send_motors_pwm(robot.RVelocity -7, robot.RVelocity);
     }
 
     public void GoBackwards(bool notify = false)
@@ -131,7 +128,7 @@ public class Movement : MonoBehaviour {
         {
             stopped = false;
         }
-        Send_motors_pwm(-LVelocity, -LVelocity+2);
+        Send_motors_pwm(-robot.LVelocity, -robot.LVelocity +2);
     }
 
     public void Stop(bool notify=false)
@@ -142,7 +139,6 @@ public class Movement : MonoBehaviour {
         }
 
         Send_motors_pwm();
-        backwards = forward = turningLeft = turningRight = false;
     }
 
     public void Send_motors_pwm(float left = 0, float right = 0)

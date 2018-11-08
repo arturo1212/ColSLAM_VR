@@ -28,8 +28,8 @@ public class Robot:MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        rosSocket = new RosSocket(Ip);
-        rosSocket.Advertise("movement", "std_msgs/String");
+        rosSocket = new RosSocket("ws://"+Ip+":9090");
+        movementPublisherId = rosSocket.Advertise("movement", "std_msgs/String");
     }
 
     // Update is called once per frame
