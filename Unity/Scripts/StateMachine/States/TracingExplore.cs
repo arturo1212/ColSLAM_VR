@@ -51,7 +51,7 @@ public class TracingExplore : State
         // TODO esto es mientras no se escoge un punto aleatorio
         if (!mov.pathObstructed)
         {
-            mov.clickedPoint = null;
+            //mov.clickedPoint = null;
         }
         Debug.Log("RIP trace");
         mov.facing = false;
@@ -137,10 +137,10 @@ public class TracingExplore : State
         {
 
             Debug.Log("Now Going");
-            RaycastHit hit;
             // Si hay algo en el medio RIP
             Debug.DrawRay(owner.transform.position, (mov.proximatePoint - owner.transform.position), Color.green,30);
-            if (Physics.Raycast(owner.transform.position, (mov.proximatePoint - owner.transform.position).normalized, out hit, (owner.transform.position - mov.proximatePoint).magnitude)) 
+
+            if (Physics.Raycast(owner.transform.position, (mov.proximatePoint - owner.transform.position).normalized, (owner.transform.position - mov.proximatePoint).magnitude, LayerMask.GetMask("Ghobstacles"))) 
             {
                 Debug.Log("Path Obstructed");
                 mov.pathObstructed = true;

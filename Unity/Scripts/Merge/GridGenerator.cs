@@ -78,6 +78,11 @@ public class GridGenerator : MonoBehaviour {
         }
         lastInterval = timeNow;
 
+        
+    }
+
+    public void UpdateCubesColor()
+    {
         /* Actualizar todos los cubos cada N segundos*/
         foreach (Vector3 point in placed_cubes.Keys)
         {
@@ -172,12 +177,40 @@ public class GridGenerator : MonoBehaviour {
                 else
                 {
                     GameObject cube = placed_cubes[point];
-                    cube.GetComponent<Renderer>().material.color = Color.black;
+                    //cube.GetComponent<Renderer>().material.color = Color.black;
                 }
             }
             return;
         }
         point_count[point] = 1;
+    }
+
+    public void ObstacleLost(Vector3 location)
+    {
+        /* Obtener punto seleccionado 
+        var clicked_point = get_clicked_center();
+        if (clicked_point == null)
+        {
+            return;
+        }*/
+
+        Vector3 point = GetCellCenter(location);
+
+
+        if (point_count.ContainsKey(point))
+        {
+            point_count[point] -= 1;
+            if (point_count[point] < cloud_min_count)
+            {
+                if (placed_cubes.ContainsKey(point))
+                {
+                    GameObject cube = placed_cubes[point];
+                    placed_cubes.Remove(point);
+                    point_count.Remove(point);
+                    Destroy(cube);
+                }
+            }
+        }
     }
 
     void MarkerFound()

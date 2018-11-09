@@ -120,11 +120,13 @@ public class NaiveMapping : MonoBehaviour
         tagManager.ApplyModifiedProperties();
     }
 
-    void DestroyGOList(List<GameObject> l)
+    void DestroyObstacleList(List<GameObject> l)
     {
         foreach(GameObject g in l)
         {
             Debug.Log("Cleaned");
+            //aqui deberia estar el trigger a reducir el contador; ObtsalceLost
+            GetComponentInParent<GridGenerator>().ObstacleLost(g.transform.position);
             Destroy(g);
         }
     }
@@ -155,7 +157,7 @@ public class NaiveMapping : MonoBehaviour
                     todelete.Add(hit.transform.gameObject);
                 }
             }
-            DestroyGOList(todelete);
+            DestroyObstacleList(todelete);
         }
 
         //RaycastHit hit;
