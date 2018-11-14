@@ -1,11 +1,10 @@
 from bridge_publisher import BridgeClient
-from camera_calibration import best_camera_config
+from camera_calibration import *
 from marker_homography import getDRotation, getCameraMatrix, getHomography
 import datetime
 import cv2
 import numpy as np
 import picamera
-import picamera.array
 import os
 
 def color_detection(frame, lower, upper, min_size):
@@ -28,18 +27,18 @@ def get_center_segment(image, half_width):
 
 def take_snapshot(images, names, img_counter, dirname):
     for i in range(len(images)):
-        img_name = dirname + "/" names[i] + "_{}.png".format(img_counter)
+        img_name = dirname + "/" + names[i] + "_{}.png".format(img_counter)
         cv2.imwrite(img_name, images[i])
 
 img_counter = 0
 dir_name_found = "FOUND" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 dir_name_miss = "MISS"  + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
-if not os.path.exists(dir_name):
-    os.makedirs(dir_name)
+#if not os.path.exists(dir_name):
+#    os.makedirs(dir_name)
 
 with picamera.PiCamera() as camera:
-    camera.awb_gains = white_balance(camera)
+    camera = best_camera_config(camera)
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
         # Imagenes y espacios de colores
@@ -53,7 +52,7 @@ with picamera.PiCamera() as camera:
         upper = np.array([60 + sensitivity, 255, 255])
         green_img, cnts, color_found = color_detection(crop_img, lower, upper, 300)
         
-        if(color_found and not marker_found):
+        if(color_found): #and not marker_found):
             K = getCameraMatrix("chessboard.png")
             M = getHomography(frame, reference, True)  
             if(M is None):
@@ -63,13 +62,13 @@ with picamera.PiCamera() as camera:
             ys = getDRotation(K, M)
             # Publicar DRot
             # Captura de pantalla
-            take_snapshot(images, names, img_counter, dirname_found)
+            #take_snapshot(images, names, img_counter, dirname_found)
             img_counter += 1
 
         # Mostrar imagenes
-        #cv2.imshow("Frame", image)
-        #cv2.imshow("Centro", crop_img)
-        #cv2.imshow("Filtro verde", green_img)
+        cv2.imshow("Frame", image)
+        cv2.imshow("Centro", crop_img)
+        cv2.imshow("Filtro verde", green_img)
         
         k = cv2.waitKey(1)
         if k%256 == 27:

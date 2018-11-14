@@ -7,7 +7,7 @@ def takeSecond(elem):
     return elem[1]
 
 def RMatrixToEuler(R):
-    """ Transforma la matriz de rotación en angulos de Euler """
+    """ Transforma la matriz de rotacion en angulos de Euler """
     sy = math.sqrt(R[0][0] * R[0][0] +  R[1][0] * R[1][0])
     singular = sy < 1e-6
     if  not singular :
@@ -21,7 +21,7 @@ def RMatrixToEuler(R):
     return [x, y, z]
 
 def getHomography(frame, reference, DEBUG=False):
-    """ Obtiene la homografía a partir de dos imagenes """
+    """ Obtiene la homografia a partir de dos imagenes """
     MIN_MATCH_COUNT = 10
     FLANN_INDEX_KDTREE = 0
     # Initiate SIFT detector

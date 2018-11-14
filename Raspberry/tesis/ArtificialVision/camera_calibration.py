@@ -1,6 +1,8 @@
 import numpy as np
 import cv2
 import glob
+import picamera
+import picamera.array
 
 # termination criteria
 def getCameraMatrix(fname, DEBUG=False):
