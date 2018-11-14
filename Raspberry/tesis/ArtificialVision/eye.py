@@ -39,6 +39,7 @@ dir_name_miss = "MISS"  + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
 with picamera.PiCamera() as camera:
     camera = best_camera_config(camera)
+    reference = cv2.imread('reference1.png',0)          # queryImage
     rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
     for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
         # Imagenes y espacios de colores
@@ -54,7 +55,7 @@ with picamera.PiCamera() as camera:
         
         if(color_found): #and not marker_found):
             K = getCameraMatrix("chessboard.png")
-            M = getHomography(frame, reference, True)  
+            M = getHomography(image, reference, True)  
             if(M is None):
                 #take_snapshot(images, names, img_counter, dirname_miss)
                 #img_counter += 1
