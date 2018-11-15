@@ -19,7 +19,6 @@ def color_detection(frame, lower, upper, min_size):
             cv2.drawContours(frame, [c], -1, 0, -1)
             result.append(c)
             found = True
-            print("ENCONTRADO", cv2.contourArea(c)) 
     return mask, result, found
     
 def get_center_segment(image, half_width):
