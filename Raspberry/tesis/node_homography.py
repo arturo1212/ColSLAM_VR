@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
-def callback():
+def callback(data):
     pass    
 
 def listener():

@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import rospy
 from std_msgs.msg import String
-def callback():
-    pass    
+def callback(data):
+    pass     
     
 def listener():
     rospy.init_node('streamN', anonymous=True)
