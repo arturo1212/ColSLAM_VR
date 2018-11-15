@@ -7,6 +7,7 @@ import numpy as np
 import picamera
 import os
 
+
 def color_detection(frame, lower, upper, min_size):
     found = False
     result = []
@@ -30,59 +31,75 @@ def take_snapshot(images, names, img_counter, dirname):
         img_name = dirname + "/" + names[i] + "_{}.png".format(img_counter)
         cv2.imwrite(img_name, images[i])
 
-img_counter = 0
-dir_name_found = "FOUND" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-dir_name_miss = "MISS"  + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-
+#img_counter = 0
+#dir_name_found = "FOUND" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+#dir_name_miss = "MISS"  + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 #if not os.path.exists(dir_name):
 #    os.makedirs(dir_name)
 
-with picamera.PiCamera() as camera:
-    camera = best_camera_config(camera)
-    reference = cv2.imread('reference1.png',0)          # queryImage
-    rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
-    for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-        # Imagenes y espacios de colores
-        image = frame.array                                         # Imagen sin procesar.
-        image_hsv = hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
-        crop_img = get_center_segment(image_hsv, 50)                # Obtener imagen del centro.
-        
-        # Filtrar por color
-        sensitivity = 30
-        lower = np.array([60 - sensitivity, 100, 60])
-        upper = np.array([60 + sensitivity, 255, 255])
-        green_img, cnts, color_found = color_detection(crop_img, lower, upper, 300)
-        
-        if(color_found): #and not marker_found):
-            K = getCameraMatrix("chessboard.png")
-            M = getHomography(image, reference, True)  
-            if(M is None):
-                print("No hay marca")
-                #take_snapshot(images, names, img_counter, dirname_miss)
-                #img_counter += 1
-                continue 
-            ys = getDRotation(K, M)
-            print("HAY MARCA: ", ys)
-            # Publicar DRot
-            # Captura de pantalla
-            #take_snapshot(images, names, img_counter, dirname_found)
-            img_counter += 1
+class VisionMonitor:
+    def __init__(self, ip, port):
+        self.ros = roslibpy.Ros(host='rosnodes', port=9090)
+        self.color_found = False
+        self.topic_homography = None
+        self.topic_reset = None
 
-        # Mostrar imagenes
-        cv2.imshow("Frame", image)
-        cv2.imshow("Centro", crop_img)
-        cv2.imshow("Filtro verde", green_img)
-        
-        k = cv2.waitKey(1)
-        if k%256 == 27:
-            print("Escape hit, closing...")
-            break
+    def resetme(self, data):
+        self.color_found = True    
 
-        elif k%256 == 32:
-            # SPACE pressed
-            images, names = [image, crop_img, green_img], ["original", "center", "color"]
-            take_snapshot(images, names, img_counter, dirname_miss)
-            img_counter += 1
-        # clear the stream in preparation for the next frame
-        rawCapture.truncate(0)
+    def create_topics(self):
+        topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
+        topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
+        topic_homography.advertise()
+
+    def run(self):
+        self.create_topics()                        # Crear conexion con topicos
+        K = getCameraMatrix("chessboard.png")       # Obtener matriz de calibracion
+        reference = cv2.imread('reference1.png',0)  # Cargar imagen de referencia para homografia
+        with picamera.PiCamera() as camera:     
+            camera = best_camera_config(camera)
+            rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+
+            # Ciclo de lecturas de frames
+            for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+                # Imagenes y espacios de colores
+                image = frame.array                                         # Imagen sin procesar.
+                image_hsv = hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
+                crop_img = get_center_segment(image_hsv, 50)                # Obtener imagen del centro.
+                
+                # Filtrar por color
+                sensitivity = 30
+                lower = np.array([60 - sensitivity, 100, 60])
+                upper = np.array([60 + sensitivity, 255, 255])
+                green_img, cnts, color_found = color_detection(crop_img, lower, upper, 300)
+                
+                if(color_found and not marker_found):                   # Si encontramos color y no hemos visto marca.
+                    self.topic_homography.publish("hold_"+str(None))    # Notificar inicio de procesamiento al servidor.
+                    M = getHomography(image, reference, True)           # Obtener matriz de homografia
+                    if(M is None):                  # Si no hay suficientes atributos coincidentes
+                        print("MISS")
+                        continue 
+                    else:                           # Si hay suficientes atributos coincidentes
+                        ys = getDRotation(K, M)
+                        print("FOUND: ", ys)
+                        self.topic_homography.publish("found_"+str(ys)) # Publicar vector y cambiar booleano
+                        self.color_found = True
+
+                # Mostrar imagenes
+                cv2.imshow("Frame", image)
+                cv2.imshow("Centro", crop_img)
+                cv2.imshow("Filtro verde", green_img)
+                
+                k = cv2.waitKey(1)
+                if k%256 == 27:
+                    print("Escape hit, closing...")
+                    break
+
+                elif k%256 == 32:
+                    # SPACE pressed
+                    images, names = [image, crop_img, green_img], ["original", "center", "color"]
+                    take_snapshot(images, names, img_counter, dirname_miss)
+                    img_counter += 1
+                # clear the stream in preparation for the next frame
+                rawCapture.truncate(0)
 
