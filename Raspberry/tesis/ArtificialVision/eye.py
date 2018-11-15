@@ -16,7 +16,7 @@ def color_detection(frame, lower, upper, min_size):
     im2, conts, h = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     for c in conts:
         if cv2.contourArea(c) > min_size:
-            cv2.drawContours(crop_img, [c], -1, 0, -1)
+            cv2.drawContours(frame, [c], -1, 0, -1)
             result.append(c)
             found = True
             print("ENCONTRADO", cv2.contourArea(c)) 
@@ -35,13 +35,13 @@ def take_snapshot(images, names, img_counter, dirname):
 class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host=ip, port=port)
-        self.color_found  = False
+        self.marker_found  = False
         self.topic_homography = None
         self.topic_reset  = None
         self.topic_stream = None
     
     def resetme(self, data):
-        self.color_found = True    
+        self.marker_found = True    
 
     def create_topics(self):
         self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
@@ -82,7 +82,7 @@ class VisionMonitor:
                 green_img, cnts, color_found = color_detection(crop_img, lower, upper, MIN_CONTOUR_SIZE) # Filtro por color
                 
                 # Verificacion de colores y marcas
-                if(color_found and not marker_found):                   # Si encontramos color y no hemos visto marca.
+                if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
                     self.topic_homography.publish({"data":"hold_nada"})          # Notificar inicio de procesamiento al servidor.
                     M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                     if(M is None):                                      # Si no hay suficientes atributos coincidentes
@@ -90,7 +90,7 @@ class VisionMonitor:
                     else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
                         self.topic_homography.publish({"data":"found_"+str(ys)}) # Publicar vector y cambiar booleano
-                        self.color_found = True
+                        self.marker_found = True
                         print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
