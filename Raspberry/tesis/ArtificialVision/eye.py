@@ -83,13 +83,13 @@ class VisionMonitor:
                 
                 # Verificacion de colores y marcas
                 if(color_found and not marker_found):                   # Si encontramos color y no hemos visto marca.
-                    self.topic_homography.publish("hold_nada")          # Notificar inicio de procesamiento al servidor.
+                    self.topic_homography.publish({"data":"hold_nada"})          # Notificar inicio de procesamiento al servidor.
                     M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                     if(M is None):                                      # Si no hay suficientes atributos coincidentes
                         print("MISS: ", str(count)) 
                     else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
-                        self.topic_homography.publish("found_"+str(ys)) # Publicar vector y cambiar booleano
+                        self.topic_homography.publish({"data":"found_"+str(ys)}) # Publicar vector y cambiar booleano
                         self.color_found = True
                         print("FOUND: ", str(ys), str(count))
 
