@@ -32,9 +32,6 @@ def take_snapshot(images, names, img_counter, dirname):
         img_name = dirname + "/" + names[i] + "_{}.png".format(img_counter)
         cv2.imwrite(img_name, images[i])
 
-def connected_advisor():
-    print("CONECTADISIMO")
-
 class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host=ip, port=port)
@@ -78,7 +75,7 @@ class VisionMonitor:
             # Ciclo de lecturas de frames
             for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
                 # Imagenes y espacios de colores
-                print("CONN: " + str(self.ros.is_connected))
+                #print("CONN: " + str(self.ros.is_connected))
                 image = frame.array                                         # Imagen sin procesar.
                 retval, buff = cv2.imencode('.jpg', image)
                 jpg_as_text = base64.b64encode(buff)
@@ -90,13 +87,17 @@ class VisionMonitor:
                 
                 # Verificacion de colores y marcas
                 if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
-                    self.topic_homography.publish({"data":"hold_nada"})          # Notificar inicio de procesamiento al servidor.
+                    msg = roslibpy.Message()
+                    msg.data = {"hold_nada"}
+                    self.topic_homography.publish(msg)         # Notificar inicio de procesamiento al servidor.
                     M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                     if(M is None):                                      # Si no hay suficientes atributos coincidentes
                         print("MISS: ", str(count)) 
                     else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
-                        self.topic_homography.publish({"data":"found_"+str(ys)}) # Publicar vector y cambiar booleano
+                        msg = roslibpy.Message()
+                        msg.data = {"found_"+str(ys)}
+                        self.topic_homography.publish(msg) # Publicar vector y cambiar booleano
                         self.marker_found = True
                         print("FOUND: ", str(ys), str(count))
 
