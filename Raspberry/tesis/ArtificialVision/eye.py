@@ -38,6 +38,7 @@ class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host=ip, port=port)
         self.ros.on_ready(connected_advisor)
+        self.ros.connect()
         self.marker_found  = False
         self.topic_homography = None
         self.topic_reset  = None
