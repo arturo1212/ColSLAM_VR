@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import picamera
 import os
-
+import base64
 
 def color_detection(frame, lower, upper, min_size):
     found = False
@@ -50,32 +50,40 @@ class VisionMonitor:
         topic_stream.advertise()
 
     def run(self):
-        self.create_topics()                        # Crear conexion con topicos
+        self.create_topics()                        # Configuracion de ROS
         K = getCameraMatrix("chessboard.png")       # Obtener matriz de calibracion
         reference = cv2.imread('reference1.png',0)  # Cargar imagen de referencia para homografia
+        center_width = 50
+        resolution = (640,480)
+
+        # Valores del rango de color (VERDE)
+        sensitivity = 30
+        lower = np.array([60 - sensitivity, 100, 60])
+        upper = np.array([60 + sensitivity, 255, 255])
+        MIN_MATCH_COUNT = 50
+        MIN_CONTOUR_SIZE = 300
+
         with picamera.PiCamera() as camera:     
             camera = best_camera_config(camera)
-            rawCapture = picamera.array.PiRGBArray(camera, size=(640, 480))
+            rawCapture = picamera.array.PiRGBArray(camera, size=resolution)
 
             # Ciclo de lecturas de frames
             for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
                 # Imagenes y espacios de colores
                 image = frame.array                                         # Imagen sin procesar.
-                image_hsv = hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
-                crop_img = get_center_segment(image_hsv, 50)                # Obtener imagen del centro.
-                
-                # Filtrar por color
-                sensitivity = 30
-                lower = np.array([60 - sensitivity, 100, 60])
-                upper = np.array([60 + sensitivity, 255, 255])
-                green_img, cnts, color_found = color_detection(crop_img, lower, upper, 300)
+                retval, buff = cv2.imencode('.jpg', image)
+                jpg_as_text = base64.b64encode(buff)
+                self.topic_stream.publish(jpg_as_text)
+                image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
+                crop_img = get_center_segment(image_hsv, center_width)      # Obtener imagen del centro.
+                green_img, cnts, color_found = color_detection(crop_img, lower, upper, MIN_CONTOUR_SIZE) # Filtro por color
                 
                 # Verificacion de colores y marcas
                 if(color_found and not marker_found):                   # Si encontramos color y no hemos visto marca.
-                    self.topic_homography.publish("hold_"+str(None))    # Notificar inicio de procesamiento al servidor.
-                    M, count = getHomography(image, reference, 50, True)       # Obtener matriz de homografia
+                    self.topic_homography.publish("hold_nada")          # Notificar inicio de procesamiento al servidor.
+                    M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                     if(M is None):                                      # Si no hay suficientes atributos coincidentes
-                        print("MISS: " + str(count)) 
+                        print("MISS: ", str(count)) 
                     else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
                         self.topic_homography.publish("found_"+str(ys)) # Publicar vector y cambiar booleano
@@ -83,15 +91,10 @@ class VisionMonitor:
                         print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
-                cv2.imshow("Frame", image)
-                cv2.imshow("Centro", crop_img)
-                cv2.imshow("Filtro verde", green_img)
-                
+                #cv2.imshow("Frame", image)
+                #cv2.imshow("Centro", crop_img)
+                #cv2.imshow("Filtro verde", green_img)
                 k = cv2.waitKey(1)
                 if k%256 == 27:
-                    print("Escape hit, closing...")
                     break
-                
-                # clear the stream in preparation for the next frame
-                rawCapture.truncate(0)
-
+                rawCapture.truncate(0) # Limpiar stream

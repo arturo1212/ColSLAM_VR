@@ -20,8 +20,7 @@ def RMatrixToEuler(R):
         z = 0
     return [x, y, z]
 
-def getHomography(frame, reference, DEBUG=False):
-    MIN_MATCH_COUNT = 10
+def getHomography(frame, reference, MIN_MATCH_COUNT, DEBUG=False):
     FLANN_INDEX_KDTREE = 0
     sift = cv2.xfeatures2d.SIFT_create()
     kp1, des1 = sift.detectAndCompute(reference,None)
@@ -36,7 +35,7 @@ def getHomography(frame, reference, DEBUG=False):
         if m.distance < 0.7*n.distance:
             good.append(m)
 
-    if len(good)>MIN_MATCH_COUNT:
+    if len(good)> MIN_MATCH_COUNT:
         src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
         dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
