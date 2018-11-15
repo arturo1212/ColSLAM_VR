@@ -1,3 +1,4 @@
+from __future__ import print_function
 from bridge_publisher import BridgeClient
 from camera_calibration import *
 from marker_homography import getDRotation, getCameraMatrix, getHomography
@@ -37,13 +38,14 @@ def connected_advisor():
 class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host=ip, port=port)
-        self.ros.on_ready(connected_advisor)
+        self.ros.on_ready(self.run)
         self.ros.connect()
         self.marker_found  = False
         self.topic_homography = None
         self.topic_reset  = None
         self.topic_stream = None
-    
+        self.ros.run_forever()
+
     def resetme(self, data):
         self.marker_found = True    
 
@@ -108,4 +110,3 @@ class VisionMonitor:
                 rawCapture.truncate(0) # Limpiar stream
 
 vm = VisionMonitor("rosnodes", 9090)
-vm.run()

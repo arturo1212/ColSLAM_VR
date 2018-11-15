@@ -24,6 +24,9 @@ def callback(data):
     
 def listener():
     rospy.init_node('muevemeste', anonymous=True)
+    rospy.init_node('homography', anonymous=True)
+    rospy.init_node('stream', anonymous=True)
+    rospy.init_node('reset', anonymous=True)
     rospy.Subscriber("movement", String, callback)
     rospy.spin()
 
