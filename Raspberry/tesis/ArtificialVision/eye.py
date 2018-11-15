@@ -65,7 +65,7 @@ class VisionMonitor:
         sensitivity = 30
         lower = np.array([60 - sensitivity, 100, 60])
         upper = np.array([60 + sensitivity, 255, 255])
-        MIN_MATCH_COUNT = 50
+        MIN_MATCH_COUNT = 20
         MIN_CONTOUR_SIZE = 300
 
         with picamera.PiCamera() as camera:     
@@ -87,17 +87,13 @@ class VisionMonitor:
                 
                 # Verificacion de colores y marcas
                 if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
-                    msg = roslibpy.Message()
-                    msg.data = {"hold_nada"}
-                    self.topic_homography.publish(msg)         # Notificar inicio de procesamiento al servidor.
+                    self.topic_homography.publish({"data" : "hold_nada"})         # Notificar inicio de procesamiento al servidor.
                     M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                     if(M is None):                                      # Si no hay suficientes atributos coincidentes
                         print("MISS: ", str(count)) 
                     else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
-                        msg = roslibpy.Message()
-                        msg.data = {"found_"+str(ys)}
-                        self.topic_homography.publish(msg) # Publicar vector y cambiar booleano
+                        self.topic_homography.publish({"data":"found_"+str(ys)}) # Publicar vector y cambiar booleano
                         self.marker_found = True
                         print("FOUND: ", str(ys), str(count))
 
