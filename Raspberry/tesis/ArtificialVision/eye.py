@@ -7,6 +7,7 @@ import numpy as np
 import picamera
 import os
 import base64
+import roslibpy
 
 def color_detection(frame, lower, upper, min_size):
     found = False
@@ -43,12 +44,12 @@ class VisionMonitor:
         self.color_found = True    
 
     def create_topics(self):
-        topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
-        topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
-        topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
-        topic_reset.subscribe(self.resetme)
-        topic_homography.advertise()
-        topic_stream.advertise()
+        self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
+        self.topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
+        self.topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
+        self.topic_reset.subscribe(self.resetme)
+        self.topic_homography.advertise()
+        self.topic_stream.advertise()
 
     def run(self):
         self.create_topics()                        # Configuracion de ROS
