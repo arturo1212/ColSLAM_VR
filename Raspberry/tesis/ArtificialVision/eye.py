@@ -31,9 +31,13 @@ def take_snapshot(images, names, img_counter, dirname):
         img_name = dirname + "/" + names[i] + "_{}.png".format(img_counter)
         cv2.imwrite(img_name, images[i])
 
+def connected_advisor():
+    print("CONECTADISIMO")
+
 class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host=ip, port=port)
+        self.ros.on_ready(connected_advisor)
         self.marker_found  = False
         self.topic_homography = None
         self.topic_reset  = None
@@ -71,6 +75,7 @@ class VisionMonitor:
             # Ciclo de lecturas de frames
             for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
                 # Imagenes y espacios de colores
+                print("CONN: " + str(self.ros.is_connected))
                 image = frame.array                                         # Imagen sin procesar.
                 retval, buff = cv2.imencode('.jpg', image)
                 jpg_as_text = base64.b64encode(buff)
