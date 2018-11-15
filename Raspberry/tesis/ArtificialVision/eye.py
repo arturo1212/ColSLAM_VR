@@ -75,7 +75,8 @@ class VisionMonitor:
                 image = frame.array                                         # Imagen sin procesar.
                 retval, buff = cv2.imencode('.jpg', image)
                 jpg_as_text = base64.b64encode(buff)
-                self.topic_stream.publish(jpg_as_text)
+                stream_data = {"data" : jpg_as_text}
+                self.topic_stream.publish(stream_data)
                 image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
                 crop_img = get_center_segment(image_hsv, center_width)      # Obtener imagen del centro.
                 green_img, cnts, color_found = color_detection(crop_img, lower, upper, MIN_CONTOUR_SIZE) # Filtro por color
