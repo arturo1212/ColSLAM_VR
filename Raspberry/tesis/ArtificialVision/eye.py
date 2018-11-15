@@ -33,7 +33,7 @@ def take_snapshot(images, names, img_counter, dirname):
 
 class VisionMonitor:
     def __init__(self, ip, port):
-        self.ros = roslibpy.Ros(host='rosnodes', port=9090)
+        self.ros = roslibpy.Ros(host=ip, port=port)
         self.color_found  = False
         self.topic_homography = None
         self.topic_reset  = None
@@ -46,6 +46,7 @@ class VisionMonitor:
         topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
         topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
         topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
+        topic_reset.subscribe(self.resetme)
         topic_homography.advertise()
         topic_stream.advertise()
 
@@ -98,3 +99,6 @@ class VisionMonitor:
                 if k%256 == 27:
                     break
                 rawCapture.truncate(0) # Limpiar stream
+
+vm = VisionMonitor("rosnodes", 9090)
+vm.run()
