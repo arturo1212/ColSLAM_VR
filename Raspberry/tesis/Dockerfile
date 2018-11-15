@@ -2,9 +2,9 @@ FROM colslam:base_ros
 
 RUN apt-get update && apt-get -y install python3-serial python-serial
 ADD PIGPIO/ /.
-ADD *.py /home/
 RUN make \
     && make install
+ADD *.py /home/
 ADD run.sh .
 CMD ["source", "/opt/ros/kinetic/setup.bash"]
 CMD ["/bin/bash", "-c", "chmod 777 run.sh && ./run.sh"]
