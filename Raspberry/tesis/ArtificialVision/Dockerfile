@@ -1,9 +1,10 @@
-FROM raspi-opencv
+FROM tdicola/pi_python_opencv_contrib
 
-ENV DEBIAN_FRONTEND noninteractive
-RUN sudo apt-get update && sudo apt-get upgrade -y
-RUN sudo apt-get install nginx libraspberrypi-bin -y
-RUN pip install --upgrade pip && pip install websocket-client roslibpy
+RUN apt-get update
+RUN apt-get -y upgrade
+RUN apt-get install python-picamera python3-picamera nginx nano vim 
+RUN pip install websocket-client roslibpy
+
 
 ADD *.py ./
 ADD *.png ./ 
