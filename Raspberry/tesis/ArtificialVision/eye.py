@@ -55,14 +55,14 @@ with picamera.PiCamera() as camera:
         
         if(color_found): #and not marker_found):
             K = getCameraMatrix("chessboard.png")
-            M = getHomography(image, reference, True)  
+            M, count = getHomography(image, reference, True)  
             if(M is None):
-                print("No hay marca")
+                print("No hay marca", count)
                 #take_snapshot(images, names, img_counter, dirname_miss)
                 #img_counter += 1
-                continue 
-            ys = getDRotation(K, M)
-            print("HAY MARCA: ", ys)
+            else: 
+            	ys = getDRotation(K, M)
+            	print("HAY MARCA: ", ys, count)
             # Publicar DRot
             # Captura de pantalla
             #take_snapshot(images, names, img_counter, dirname_found)
