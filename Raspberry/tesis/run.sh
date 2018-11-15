@@ -1,6 +1,4 @@
 #roscore &
-make
-make install
 pigpiod 
 roslaunch rosbridge_server rosbridge_websocket.launch & 
 sleep 15

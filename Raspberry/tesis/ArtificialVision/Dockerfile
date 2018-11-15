@@ -1,6 +1,4 @@
-FROM raspi-opencv
+FROM colslam:base_vision
 
-RUN sudo apt-get update && sudo apt-get upgrade -y
-RUN pip install --upgrade pip && pip install websocket-client roslibpy
-
-ADD *.py ./ 
+ADD *.py ./
+ADD *.png ./ 

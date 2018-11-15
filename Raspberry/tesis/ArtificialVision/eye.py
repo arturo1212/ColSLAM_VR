@@ -31,26 +31,23 @@ def take_snapshot(images, names, img_counter, dirname):
         img_name = dirname + "/" + names[i] + "_{}.png".format(img_counter)
         cv2.imwrite(img_name, images[i])
 
-#img_counter = 0
-#dir_name_found = "FOUND" + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-#dir_name_miss = "MISS"  + datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-#if not os.path.exists(dir_name):
-#    os.makedirs(dir_name)
-
 class VisionMonitor:
     def __init__(self, ip, port):
         self.ros = roslibpy.Ros(host='rosnodes', port=9090)
-        self.color_found = False
+        self.color_found  = False
         self.topic_homography = None
-        self.topic_reset = None
-
+        self.topic_reset  = None
+        self.topic_stream = None
+    
     def resetme(self, data):
         self.color_found = True    
 
     def create_topics(self):
         topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
+        topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
         topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
         topic_homography.advertise()
+        topic_stream.advertise()
 
     def run(self):
         self.create_topics()                        # Crear conexion con topicos
@@ -73,17 +70,17 @@ class VisionMonitor:
                 upper = np.array([60 + sensitivity, 255, 255])
                 green_img, cnts, color_found = color_detection(crop_img, lower, upper, 300)
                 
+                # Verificacion de colores y marcas
                 if(color_found and not marker_found):                   # Si encontramos color y no hemos visto marca.
                     self.topic_homography.publish("hold_"+str(None))    # Notificar inicio de procesamiento al servidor.
-                    M = getHomography(image, reference, True)           # Obtener matriz de homografia
-                    if(M is None):                  # Si no hay suficientes atributos coincidentes
-                        print("MISS")
-                        continue 
-                    else:                           # Si hay suficientes atributos coincidentes
+                    M, count = getHomography(image, reference, 50, True)       # Obtener matriz de homografia
+                    if(M is None):                                      # Si no hay suficientes atributos coincidentes
+                        print("MISS: " + str(count)) 
+                    else:                                               # Si hay suficientes atributos coincidentes
                         ys = getDRotation(K, M)
-                        print("FOUND: ", ys)
                         self.topic_homography.publish("found_"+str(ys)) # Publicar vector y cambiar booleano
                         self.color_found = True
+                        print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
                 cv2.imshow("Frame", image)
@@ -94,12 +91,7 @@ class VisionMonitor:
                 if k%256 == 27:
                     print("Escape hit, closing...")
                     break
-
-                elif k%256 == 32:
-                    # SPACE pressed
-                    images, names = [image, crop_img, green_img], ["original", "center", "color"]
-                    take_snapshot(images, names, img_counter, dirname_miss)
-                    img_counter += 1
+                
                 # clear the stream in preparation for the next frame
                 rawCapture.truncate(0)
 

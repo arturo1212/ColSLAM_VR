@@ -1,6 +1,14 @@
 #include <Servo.h>
 #include "MPU9250.h"
-
+< calibration parameters >
+accel bias [g]:
+-104.13, 56.21, 9.58
+gyro bias [deg/s]:
+0.63, 1.20, 0.34
+mag bias [mG]:
+5.31, 210.10, -312.33
+mag scale []:
+1.02, 0.98, 0.99
 #define window 7
 Servo myservo;
 // Variables del MPU6050

@@ -42,7 +42,7 @@ def getHomography(frame, reference, DEBUG=False):
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
     else:
         print("No hay suficientes coincidencias - %d/%d" % (len(good), MIN_MATCH_COUNT))
-        return None
+        return None, len(good)
 
     if(DEBUG):
         matchesMask = mask.ravel().tolist()
@@ -66,7 +66,7 @@ def getHomography(frame, reference, DEBUG=False):
         v1 = np.append(dst[0][0], [0]) - np.append(dst[1][0], [0])
         v2 = np.append(dst[1][0], [0]) - np.append(dst[2][0], [0])
         cv2.imwrite("hola.jpg", img3)
-    return M 
+    return M, len(good)
 
 def test(): 
     frame = cv2.imread('dummy4.jpg',0)                   # trainImage    

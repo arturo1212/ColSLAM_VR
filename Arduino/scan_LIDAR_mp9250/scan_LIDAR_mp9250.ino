@@ -99,10 +99,10 @@ void setup() {
   delay(5000);
   
   // GIA LIDAR
-  float accbias[] = {-121.95, 62.44, -1.34};
-  float gyrobias[] = {0.54, 1.12, 0.36};
-  float magbias[] = {-38.91, 293.79, -133.86};
-  float magscale[] = {1.02, 1.11, 0.90}; 
+  float accbias[] = {-104.13, 56.21, 9.58};
+  float gyrobias[] = {0.63, 1.20, 0.34};
+  float magbias[] = {5.31, 210.10, -312.336};
+  float magscale[] = {1.02, 0.98, 0.99}; 
 
   /* Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -145,15 +145,15 @@ void setup() {
     mag scale []: 
     1.09, 1.09, 0.86
 
-  < calibration parameters > ULTIMOS BUENOS
-    accel bias [g]: 
-    -121.95, 62.44, -1.34
-    gyro bias [deg/s]: 
-    0.54, 1.12, 0.36
-    mag bias [mG]: 
-    -38.91, 293.79, -133.86
-    mag scale []: 
-    1.02, 1.11, 0.90
+    < calibration parameters >
+    accel bias [g]:
+    -104.13, 56.21, 9.58
+    gyro bias [deg/s]:
+    0.63, 1.20, 0.34
+    mag bias [mG]:
+    5.31, 210.10, -312.33
+    mag scale []:
+    1.02, 0.98, 0.99
     
     < calibration parameters > Calibracion en plano
     accel bias [g]: 
