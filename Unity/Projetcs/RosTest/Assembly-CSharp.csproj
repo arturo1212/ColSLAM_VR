@@ -93,32 +93,37 @@
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\RigidbodyUrdfDataManager.cs" />
     <Compile Include="Assets\RosSharp\Scripts\UrdfComponents\UrdfPatcher.cs" />
     <Compile Include="Assets\Scripts\Basic Behaviours\SteeringBehaviours.cs" />
-    <Compile Include="Assets\Scripts\ClawControl.cs" />
-    <Compile Include="Assets\Scripts\CreateObstacles.cs" />
-    <Compile Include="Assets\Scripts\GridGenerator.cs" />
     <Compile Include="Assets\Scripts\Helpers\AngleHelpers.cs" />
     <Compile Include="Assets\Scripts\Helpers\PWMHelper.cs" />
-    <Compile Include="Assets\Scripts\MapMerge.cs" />
-    <Compile Include="Assets\Scripts\Movement.cs" />
-    <Compile Include="Assets\Scripts\NaiveMapping.cs" />
-    <Compile Include="Assets\Scripts\Odometry.cs" />
+    <Compile Include="Assets\Scripts\Mapping\NaiveMapping.cs" />
+    <Compile Include="Assets\Scripts\Mapping\Odometry.cs" />
+    <Compile Include="Assets\Scripts\Merge\GridGenerator.cs" />
+    <Compile Include="Assets\Scripts\Merge\MapMerge.cs" />
+    <Compile Include="Assets\Scripts\Robots\Robot.cs" />
     <Compile Include="Assets\Scripts\StateMachine\State.cs" />
     <Compile Include="Assets\Scripts\StateMachine\StateMachine.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\Calibrator.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\ExploreMove.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\Freezed.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\Going.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\GoingToGoal.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\ManualControl\ManualGoing.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\ManualControl\ManualTurning.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\TracingExplore.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\Turning.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transition.cs" />
-    <Compile Include="Assets\Scripts\States\Calibrator.cs" />
-    <Compile Include="Assets\Scripts\States\Freezed.cs" />
-    <Compile Include="Assets\Scripts\States\Going.cs" />
-    <Compile Include="Assets\Scripts\States\GoingToGoal.cs" />
-    <Compile Include="Assets\Scripts\States\ManualControl\ManualGoing.cs" />
-    <Compile Include="Assets\Scripts\States\ManualControl\ManualTurning.cs" />
-    <Compile Include="Assets\Scripts\States\Turning.cs" />
-    <Compile Include="Assets\Scripts\Transitions\CalibrationCompleted.cs" />
-    <Compile Include="Assets\Scripts\Transitions\FacingTargetSet.cs" />
-    <Compile Include="Assets\Scripts\Transitions\GoalPointSet.cs" />
-    <Compile Include="Assets\Scripts\Transitions\IsTurning.cs" />
-    <Compile Include="Assets\Scripts\Transitions\ManualGo.cs" />
-    <Compile Include="Assets\Scripts\Transitions\ManualTurn.cs" />
-    <Compile Include="Assets\Scripts\Transitions\Stopped.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\CalibrationCompleted.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ExplorePathIsObstructed.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ExploreTraced.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\FacingTargetSet.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\GoalIsTooFar.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\GoalPointSet.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ManualGo.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ManualTurn.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\Stopped.cs" />
+    <Compile Include="Assets\Scripts\UserInput\ClawControl.cs" />
+    <Compile Include="Assets\Scripts\UserInput\Configuration.cs" />
+    <Compile Include="Assets\Scripts\UserInput\Movement.cs" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/david/Documents/Tesis/RosTest/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
@@ -380,6 +385,16 @@
     <Reference Include="Boo.Lang">
       <HintPath>D:/Programs/Unity/Editor/Data/MonoBleedingEdge/lib/mono/unity/Boo.Lang.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="NavMeshComponentsEditor.csproj">
+      <Project>{DC5450AC-0D78-1A1E-B242-52DF3AE4C62D}</Project>
+      <Name>NavMeshComponentsEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="NavMeshComponents.csproj">
+      <Project>{56C3BBC9-742D-BFF7-0B39-21BAA1D837F9}</Project>
+      <Name>NavMeshComponents</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

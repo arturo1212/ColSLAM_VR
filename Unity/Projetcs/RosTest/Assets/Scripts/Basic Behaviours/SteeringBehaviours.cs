@@ -12,22 +12,23 @@ public static class SteeringBehaviours{
 		
 	}
 
-    public static void Face(Movement move, float targetRot, float tresh)
+    public static void Face(Movement move, float targetRot, float tresh, bool notify=false)
     {
         float myrotation = move.transform.rotation.eulerAngles[1];
         float diffRot;
-        if (Mathf.Abs(targetRot - myrotation) > 180)
-        {
-
-            diffRot = (360 - (targetRot - myrotation)) * ((targetRot > myrotation) ? -1 : 1);
-        }
-        else
-        {
-            diffRot = targetRot - myrotation;
-        }
+        //Debug.Log("TargetRot "+targetRot);
+        //Debug.Log("MyRotation " + myrotation);
+        diffRot = Mathf.DeltaAngle(myrotation, targetRot);
+        //Debug.Log("Deiffrot con modulo " + diffRot);
+        
         if (Mathf.Abs(diffRot) > tresh)
         {
-            move.facing = true;
+            Debug.Log("Rotandito");
+
+            if (notify)
+            {
+                move.facing = true;
+            }
             if (diffRot > 0)
             {
                 move.TurnRight();
@@ -39,11 +40,25 @@ public static class SteeringBehaviours{
         }
         else
         {
-            move.facing = false;
+            Debug.Log("Ya lo miro");
+            if (notify)
+            {
+                move.facing = false;
+            }
+            //move.stopped = true;
             move.Stop();
         }
     }
 
+
+    public static void Face(Movement move, Vector3 target, float tresh, bool notify=false)
+    {
+        float myRot = move.transform.rotation.eulerAngles[1];
+        //Debug.Log("Facing point: " + target);
+        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), tresh, notify);
+    }
+
+    // La forma en la que esta funcion controla el robot esta deprecada
     public static void ForwardFace(Movement move, float targetRot, float tresh)
     {
         Debug.Log("Forwardfacing");
@@ -60,46 +75,56 @@ public static class SteeringBehaviours{
         }
         if (Mathf.Abs(diffRot) > tresh)
         {
-            move.facing = true;
+            move.behaviourIsRunning = true;
             if (diffRot > 0)
             {
-                move.send_motors_pwm(move.LVelocity,0);
+                //move.Send_motors_pwm(move.LVelocity,0);
             }
             else
             {
-                move.send_motors_pwm(0, move.RVelocity);
+                //move.Send_motors_pwm(0, move.RVelocity);
             }
         }
         else
         {
-            move.facing = false;
+            move.behaviourIsRunning = false;
         }
     }
 
-    public static void GoToGoal(Movement mov, Vector3 goal, float radius, float facingThresh)
+    public static void GoToGoal(Movement mov, Vector3 goal, float radius, float facingThresh, bool notify=false)
     {
-        Debug.Log("Yendo al goal");
+        //Debug.Log("Yendo al goal");
         Vector3 targetDir = goal - mov.transform.position;
-        float deltaRot = Vector3.SignedAngle(mov.transform.forward, targetDir, Vector3.up);
+        float deltaRot = Vector3.SignedAngle(mov.transform.forward, targetDir.normalized, Vector3.up);
         //Debug.Log("DeltaRot " + deltaRot);
-        if (Mathf.Abs(deltaRot) > facingThresh)
+        if (Mathf.Abs(deltaRot) > facingThresh && targetDir.magnitude > radius )
         {
-            deltaRot += mov.transform.rotation.eulerAngles[1];
-            deltaRot = AngleHelpers.angleToPositive(deltaRot);
-            Debug.Log("A rotar a" + deltaRot);
-            Face(mov, deltaRot, facingThresh);
+            Debug.Log("Face del gotogoal");
+            if (notify)
+            {
+                mov.goingToGoal = true;
+            }
+            Face(mov, goal, facingThresh);
         }
         else
         {
-            Debug.Log("Quiza me mueva, me faltan "+ targetDir.magnitude);
+            //Debug.Log("Quiza me mueva, me faltan "+ targetDir.magnitude);
             if (targetDir.magnitude > radius)
             {
                 Debug.Log("Mevoamove");
+                if (notify)
+                {
+                    mov.goingToGoal = true;
+                }
                 mov.GoForward();
             }
             else
             {
                 Debug.Log("LLEGUE!");
+                if (notify)
+                {
+                    mov.goingToGoal = false;
+                }
                 mov.Stop();
             }
         }
