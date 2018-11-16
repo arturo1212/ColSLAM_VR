@@ -61,14 +61,14 @@ int getDistance()
   LIDARprom = LIDARprom/window;
   
   IRprom = IRprom/window;
-  Serial.println("IR: " + String(IRprom));
+  //Serial.println("IR: " + String(IRprom));
   if(IRprom > 35 ){
     LIDARprom = LIDARprom - 15;
     if (LIDARprom > 85 ){
-      Serial.println("LIDAR: " + String(LIDARprom+5));
+      //Serial.println("LIDAR: " + String(LIDARprom+5));
         return LIDARprom + 5;
       }else {
-        Serial.println("LIDAR: " + String(LIDARprom));
+        //Serial.println("LIDAR: " + String(LIDARprom));
         return LIDARprom;
       }
    } 
