@@ -8,7 +8,7 @@ public class TracingExplore : State
     Movement mov;
     NavMeshPath path;
     NaiveMapping naiv;
-    int nscans = 0, scanid = -1;
+    int nscans = 0, auxScan=-1;
     Vector3 destiny = new Vector3(-1, -1, -1);
     NavMeshSurface surface;
 
@@ -39,10 +39,12 @@ public class TracingExplore : State
         
         mov.proximatePoint = new Vector3(-1, -1, -1);
         nscans = 0;
+        auxScan = -1;
         faced = false;
         mov.behaviourIsRunning = true;
         mov.traceDone = false;
         mov.pathObstructed = false;
+        mov.tooFar = false;
         mov.facing = false;
     }
 
@@ -82,11 +84,15 @@ public class TracingExplore : State
 
     void updateNScans()
     {
-        scanid = scanid == -1 ? naiv.scanNumber : scanid;
-        if (scanid != naiv.scanNumber)
+        if (naiv.sensorAngle == 90)
+        {
+            auxScan += 1;
+            auxScan = auxScan % 3;
+        }
+        if (auxScan == 2)
         {
             nscans++;
-            scanid = naiv.scanNumber;
+            auxScan = -1;
         }
     }
 
@@ -117,6 +123,7 @@ public class TracingExplore : State
                 return;
             }
             initialDist = (mov.proximatePoint - owner.transform.position).magnitude;
+            
         }
 
         //Debug.Log(faced);
@@ -135,7 +142,11 @@ public class TracingExplore : State
         /* Esperar a estar detenido y acumular N iteraciones */
         if (nscans >= 1 && faced)
         {
-
+            if (initialDist > 1.5f)
+            {
+                mov.tooFar = true;
+                return;
+            }
             Debug.Log("Now Going");
             // Si hay algo en el medio RIP
             Debug.DrawRay(owner.transform.position, (mov.proximatePoint - owner.transform.position), Color.green,30);

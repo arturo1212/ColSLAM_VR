@@ -35,6 +35,7 @@ public class StateMachine : MonoBehaviour {
         transitions.Add(new ExplorePathIsObstructed(tracingExploreState, tracingExploreState));
         transitions.Add(new ExploreTraced(tracingExploreState, exploreMoveState));
         transitions.Add(new Stopped(exploreMoveState, freezedState));
+        transitions.Add(new GoalIsTooFar(tracingExploreState, tracingExploreState));
 
         // TODO Hace falta salir de otros estados a los manuales ??
 
@@ -68,8 +69,9 @@ public class StateMachine : MonoBehaviour {
         currentState.Execute();
         if(prevState != currentState)
         {
-            Debug.Log(currentState);
             prevState = currentState;
         }
+        Debug.Log(currentState);
+
     }
 }

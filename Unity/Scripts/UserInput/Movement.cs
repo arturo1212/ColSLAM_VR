@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class Movement : MonoBehaviour {
 
     public bool behaviourIsRunning = false, stopped = false;
-    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false;
+    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar=false;
     public Vector3? clickedPoint = null;
 
 
@@ -21,11 +21,14 @@ public class Movement : MonoBehaviour {
     public NavMeshPath explorePath; // Path del que surge la explroacion
     public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
 
+    [HideInInspector]
+    NaiveMapping naiv;
 
     // Use this for initialization
     void Start () {
         robot = gameObject.GetComponent<Robot>();
         explorePath = new NavMeshPath();
+        naiv = GetComponent<NaiveMapping>();
     }
 
     // Update is called once per frame
@@ -143,6 +146,11 @@ public class Movement : MonoBehaviour {
 
     public void Send_motors_pwm(float left = 0, float right = 0)
     {
+        if(left != 0 && right != 0)
+        {
+            naiv.UpdateScanNumber();
+        }
+
         int leftPWM = PWMHelper.Remap(left, -100, 100, pwmLBackward, pwmLForward);
         int rightPWM = PWMHelper.Remap(right, -100, 100, pwmRBackward, pwmRForward);
 

@@ -124,7 +124,7 @@ public class NaiveMapping : MonoBehaviour
     {
         foreach(GameObject g in l)
         {
-            Debug.Log("Cleaned");
+            //Debug.Log("Cleaned");
             //aqui deberia estar el trigger a reducir el contador; ObtsalceLost
             GetComponentInParent<GridGenerator>().ObstacleLost(g.transform.position);
             Destroy(g);
@@ -170,7 +170,7 @@ public class NaiveMapping : MonoBehaviour
         /* Crear obstaculo en la interfaz de Unity*/
         string tag = gameObject.name + scanNumber;
         //CreateTag(tag);
-        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.identity).name = tag;
+        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(tpoint.normalized,Vector3.up)).name = tag;
         GetComponentInParent<GridGenerator>().ObstacleFound(transform.position + offset + tpoint);
         //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
         //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
@@ -189,9 +189,9 @@ public class NaiveMapping : MonoBehaviour
         //Destroy(cube, 120.0f);
     }
 
-    private void UpdateScanNumber(float scanAngle)
+    public void UpdateScanNumber()
     {
-        if (scanAngle == 90)
+        /*if (scanAngle == 90)
         {
             auxScan += 1;
             auxScan = auxScan % 3;
@@ -200,14 +200,15 @@ public class NaiveMapping : MonoBehaviour
         {
             scanNumber += 1;
             auxScan = -1;
-        }
+        }*/
+        scanNumber++;
+
     }
 
     void Update()
     {
         if (newReading)
         {
-            UpdateScanNumber(sensorAngle);
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);
