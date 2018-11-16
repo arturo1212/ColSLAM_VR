@@ -44,6 +44,7 @@ class VisionMonitor:
         self.ros.run_forever()
 
     def resetme(self, data):
+        print("RESETEADO")
         self.marker_found = True    
 
     def create_topics(self):
