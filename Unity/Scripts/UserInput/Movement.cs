@@ -7,9 +7,9 @@ using UnityEngine.AI;
 public class Movement : MonoBehaviour {
 
     public bool behaviourIsRunning = false, stopped = false;
-    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar=false;
-    public Vector3? clickedPoint = null;
-
+    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar = false, prision=false;
+    public Vector3? metaPoint = null;
+    public Vector3? greenPoint = null;
 
     private Robot robot;
 
@@ -21,8 +21,12 @@ public class Movement : MonoBehaviour {
     public NavMeshPath explorePath; // Path del que surge la explroacion
     public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
 
+    public List<GameObject> metaPoints;
     [HideInInspector]
     NaiveMapping naiv;
+    public int counter = -1;
+    [HideInInspector]
+    int index = 0;
 
     // Use this for initialization
     void Start () {
@@ -87,13 +91,35 @@ public class Movement : MonoBehaviour {
         return null;
     }
 
+    void calculateMetaPoint()
+    {
+        if (greenPoint != null)
+        {
+            metaPoint = (Vector3)greenPoint;
+        }
+        else
+        {
+            // Alguno
+            Debug.Log("METAPOINTS");
+            metaPoint = metaPoints[index].transform.position;
+        }
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            clickedPoint = GetClickedPoint();
+            metaPoint = GetClickedPoint();
         }
         WASD();
+        if (counter == 0)
+        {
+            index++;
+            index = index % metaPoints.Count;
+            counter++;
+        }
+        counter = counter % 5;
+        calculateMetaPoint();
     }
 
     public void TurnLeft(bool notify=false)

@@ -22,20 +22,25 @@ public class StateMachine : MonoBehaviour {
         ManualGoing manualGoingState = new ManualGoing(gameObject);
         TracingExplore tracingExploreState = new TracingExplore(gameObject);
         ExploreMove exploreMoveState = new ExploreMove(gameObject);
-
+        Greenlooker greenLookerState = new Greenlooker(gameObject);
+        Cleaning cleaningState = new Cleaning(gameObject);
 
         states.Add(calibratorState);
-        states.Add(exploreMoveState);
-        states.Add(tracingExploreState);
+        //states.Add(exploreMoveState);
+        //states.Add(tracingExploreState);
         currentState = states[0];
 
         transitions.Add(new CalibrationCompleted(calibratorState, freezedState));
         transitions.Add(new GoalPointSet(freezedState, tracingExploreState));
-        transitions.Add(new Stopped(tracingExploreState, freezedState));
         transitions.Add(new ExplorePathIsObstructed(tracingExploreState, tracingExploreState));
         transitions.Add(new ExploreTraced(tracingExploreState, exploreMoveState));
         transitions.Add(new Stopped(exploreMoveState, freezedState));
+        transitions.Add(new Stopped(tracingExploreState, freezedState));
+        transitions.Add(new Stopped(greenLookerState, freezedState));
+        transitions.Add(new Stopped(cleaningState, freezedState));
         transitions.Add(new GoalIsTooFar(tracingExploreState, tracingExploreState));
+        transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
+        transitions.Add(new ShouldClean(tracingExploreState, cleaningState));
 
         // TODO Hace falta salir de otros estados a los manuales ??
 
@@ -52,7 +57,7 @@ public class StateMachine : MonoBehaviour {
             {
                 if (t.Eval())
                 {
-                    Debug.Log("Transicionando");
+                    //Debug.Log("Transicionando");
                     currentState.Colofon();
                     t.target.Circunloquio();
                     return t.target;

@@ -23,11 +23,16 @@ public class NaiveMapping : MonoBehaviour
     private bool newReading = false;
 
     [HideInInspector]
-    public int calibrtionSubcription_id, arduinoSubscription_id = -1, auxScan=-1;
+    public int calibrtionSubcription_id, arduinoSubscription_id = -1, markerSubcription_id, auxScan=-1;
     [HideInInspector]
     public Vector3 tpoint, actualPose, auxPose;
     [HideInInspector]
     Robot robot;
+    [HideInInspector]
+    Vector3 savedPosition;
+    [HideInInspector]
+    public GameObject lastCube, holdCube=null;
+
 
     private void ReadArduino(string values)
     {
@@ -86,6 +91,43 @@ public class NaiveMapping : MonoBehaviour
         arduinoSubscription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
     }
 
+    private void MarkerReader(string message)
+    {
+        float y1, y2;
+        string[] tokens = message.Split('_');
+        if (tokens[0].Contains("hold") )// Guarda desde donde lo leiste
+        {
+            if (holdCube != null)
+            {
+                Destroy(holdCube);
+            }
+            holdCube = lastCube;
+            holdCube.name = "keep";
+
+            var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
+            GetComponent<Movement>().greenPoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * (sensorDistance - 10) / scale;   // Punto de obstaculo
+        }
+        else if(tokens[0].Contains("found"))
+        {
+            string[] retokens = tokens[1].Split(',');
+            y1 = float.Parse(retokens[0]) * Mathf.Rad2Deg;
+            y2 = float.Parse(retokens[1]) * Mathf.Rad2Deg;
+
+            holdCube.name = "marker";
+            holdCube.transform.Rotate(Vector3.up, y2);
+            GetComponent<Movement>().greenPoint = null;
+
+            //Detach del handler
+            robot.rosSocket.Unsubscribe(markerSubcription_id);
+        }
+    }
+
+    private void SubscriptionMarkHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        MarkerReader(standardString.data);
+    }
+
     private void SubscriptionHandler(Message message)
     {
         StandardString standardString = (StandardString)message;
@@ -103,6 +145,8 @@ public class NaiveMapping : MonoBehaviour
         auxPose = transform.position;
         robot = gameObject.GetComponent<Robot>();
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
+        markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
+
     }
 
     void CreateTag(string s)
@@ -152,7 +196,7 @@ public class NaiveMapping : MonoBehaviour
             for(int i = 0; i<hits.Length; i++)
             {
                 hit = hits[i];
-                if ( hit.transform.gameObject.name != gameObject.name + scanNumber)
+                if ( hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker")
                 {
                     todelete.Add(hit.transform.gameObject);
                 }
@@ -170,7 +214,8 @@ public class NaiveMapping : MonoBehaviour
         /* Crear obstaculo en la interfaz de Unity*/
         string tag = gameObject.name + scanNumber;
         //CreateTag(tag);
-        Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(tpoint.normalized,Vector3.up)).name = tag;
+        lastCube = Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(tpoint.normalized, Vector3.up));
+        lastCube.name = tag;
         GetComponentInParent<GridGenerator>().ObstacleFound(transform.position + offset + tpoint);
         //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
         //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
@@ -219,7 +264,7 @@ public class NaiveMapping : MonoBehaviour
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
             sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
-            transform.position = transform.position + transform.forward * 0.625f *displacement/scale;
+            transform.position = transform.position + transform.forward * 0.7f *displacement/scale;
             newReading = false;
         }
     }

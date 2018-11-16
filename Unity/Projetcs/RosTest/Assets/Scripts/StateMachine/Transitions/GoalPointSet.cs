@@ -13,7 +13,7 @@ public class GoalPointSet : Transition
 
     public override bool Eval()
     {
-        //Debug.Log("Me setearon el target "+(mov.clickedPoint != null).ToString());
-        return mov.clickedPoint != null;
+        //Debug.Log("Me setearon el target "+(mov.metaPoint != null).ToString());
+        return mov.metaPoint != null;
     }
 }

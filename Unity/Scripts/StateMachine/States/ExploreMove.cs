@@ -21,6 +21,10 @@ public class ExploreMove : State
     public override void Colofon()
     {
         mov.behaviourIsRunning = false;
+        if (mov.greenPoint == null)
+        {
+            mov.counter++;
+        }
     }
 
     public override void Execute()
@@ -37,7 +41,10 @@ public class ExploreMove : State
         {
             Debug.Log("Litso ExploreMove State");
             mov.behaviourIsRunning = false;
-            mov.Stop(true);
+            if (mov.greenPoint == null)
+            {
+                mov.Stop(true);
+            }
         }
 
     }

@@ -19,7 +19,7 @@ public class Turning: State
 
     public override void Execute() {
         // Aplicar solo lo que aplique para rotacion (no traslacion) de Odometry
-        Vector3 targetDir = (Vector3)mov.clickedPoint - owner.transform.position;
+        Vector3 targetDir = (Vector3)mov.metaPoint - owner.transform.position;
         float targetRot = Vector3.SignedAngle(owner.transform.forward, targetDir, Vector3.up) + owner.transform.rotation.eulerAngles[1];
         targetRot = AngleHelpers.angleToPositive(targetRot);
         Debug.Log("Quiero ver a " +targetRot);
@@ -28,7 +28,7 @@ public class Turning: State
 
     public override void Colofon()
     {
-        mov.clickedPoint = null;
+        mov.metaPoint = null;
         odo.useGyro = false;
     }
 }
