@@ -45,7 +45,7 @@ class VisionMonitor:
 
     def resetme(self, data):
         print("RESETEADO")
-        self.marker_found = True    
+        self.marker_found = False    
 
     def create_topics(self):
         self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
@@ -102,6 +102,7 @@ class VisionMonitor:
                 #cv2.imshow("Frame", image)
                 #cv2.imshow("Centro", crop_img)
                 #cv2.imshow("Filtro verde", green_img)
+                
                 k = cv2.waitKey(1)
                 if k%256 == 27:
                     break
