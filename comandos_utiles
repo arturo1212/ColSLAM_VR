@@ -1,4 +1,3 @@
-docker run -it --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --privile
-ged opencvtest bash
+docker run -it --net=host --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" --privileged opencvtest bash
 
 docker ruun -it --device=/dev/ttyAACM0 -p 9090:9090 ros:tesis
