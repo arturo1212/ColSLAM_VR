@@ -70,7 +70,7 @@ def getHomography(frame, reference, MIN_MATCH_COUNT, DEBUG=False):
 def getDRotation(K, M):
     num, Rs, Ts, Ns  = cv2.decomposeHomographyMat(M, K)
     R1, R2 = Rs[0], Rs[2]
-    lista = [RMatrixToEuler(R1)[1], RMatrixToEuler(R1)[1]]
+    lista = [RMatrixToEuler(R1)[1], RMatrixToEuler(R2)[1]]
     return lista
 
 def test():
