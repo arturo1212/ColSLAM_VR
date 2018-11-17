@@ -98,6 +98,8 @@ class VisionMonitor:
                 # Verificacion de colores y marcas
                 if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
                     self.topic_homography.publish({"data" : "hold"})         # Notificar inicio de procesamiento al servidor.
+                    print("Distance: "+str(self.distance))
+
                     if(self.close_distance >= self.distance):
                         M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                         if(M is None):                                      # Si no hay suficientes atributos coincidentes
