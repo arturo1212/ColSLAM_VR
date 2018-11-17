@@ -99,6 +99,8 @@ class VisionMonitor:
                         print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
+                filename = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+".jpg"
+                cv2.imwrite("photos/"+ filename, image) 
                 #cv2.imshow("Frame", image)
                 #cv2.imshow("Centro", crop_img)
                 #cv2.imshow("Filtro verde", green_img)
