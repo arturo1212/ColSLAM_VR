@@ -96,11 +96,13 @@ class VisionMonitor:
                         ys = getDRotation(K, M)
                         self.topic_homography.publish({"data":"found," + str(ys[0]) + "," + str(ys[1])}) # Publicar vector y cambiar booleano
                         self.marker_found = True
+                        filename = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+".jpg"
+
+                        cv2.imwrite("photos/"+ filename, image) 
+
                         print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
-                filename = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+".jpg"
-                cv2.imwrite("photos/"+ filename, image) 
                 #cv2.imshow("Frame", image)
                 #cv2.imshow("Centro", crop_img)
                 #cv2.imshow("Filtro verde", green_img)
