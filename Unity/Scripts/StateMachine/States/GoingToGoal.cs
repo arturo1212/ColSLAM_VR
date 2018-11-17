@@ -24,14 +24,14 @@ public class GoingToGoal : State
         Debug.Log("Quiero ir al goal");
         nscans = 0;
         path.ClearCorners();
-        NavMesh.CalculatePath(owner.transform.position,(Vector3)mov.clickedPoint, NavMesh.AllAreas, path);
+        NavMesh.CalculatePath(owner.transform.position,(Vector3)mov.metaPoint, NavMesh.AllAreas, path);
         faced = false;
         destiny = new Vector3(-1, -1, -1);
     }
 
     public override void Colofon()
     {
-        mov.clickedPoint = null;
+        mov.metaPoint = null;
         mov.behaviourIsRunning = false;
     }
 

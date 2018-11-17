@@ -13,7 +13,7 @@ public class TracingExplore : State
     NavMeshSurface surface;
 
     bool faced = false;
-    float initialDist;
+    float initialDist, initialTime;
     public TracingExplore(GameObject owner) : base(owner)
     {
         mov = owner.GetComponent<Movement>();
@@ -35,7 +35,8 @@ public class TracingExplore : State
     {
         Debug.Log("Init Explore");
         path.ClearCorners();
-        NavMesh.CalculatePath(owner.transform.position, (Vector3)mov.clickedPoint, NavMesh.AllAreas, path);
+        initialTime = Time.realtimeSinceStartup;
+        NavMesh.CalculatePath(owner.transform.position, (Vector3)mov.metaPoint, NavMesh.AllAreas, path);
         
         mov.proximatePoint = new Vector3(-1, -1, -1);
         nscans = 0;
@@ -53,7 +54,7 @@ public class TracingExplore : State
         // TODO esto es mientras no se escoge un punto aleatorio
         if (!mov.pathObstructed)
         {
-            //mov.clickedPoint = null;
+            //mov.metaPoint = null;
         }
         Debug.Log("RIP trace");
         mov.facing = false;
@@ -102,12 +103,19 @@ public class TracingExplore : State
         if(path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("NO PATH FOUND");
-            mov.Stop(true);
+            mov.Stop();
+            mov.prision = true;
             return;
         }
-        if (path.status != NavMeshPathStatus.PathComplete)
+        if (path.status != NavMeshPathStatus.PathComplete)// TODO pegado calculando path
         {
+
             Debug.Log("Calculating path...");
+            float diff = Time.realtimeSinceStartup - initialTime;
+            if ( diff < 5)
+            {
+                mov.prision = true;
+            }
             return;
         }
         DrawPath();

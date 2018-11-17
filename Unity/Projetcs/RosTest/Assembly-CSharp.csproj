@@ -105,10 +105,12 @@
     <Compile Include="Assets\Scripts\StateMachine\State.cs" />
     <Compile Include="Assets\Scripts\StateMachine\StateMachine.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\Calibrator.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\Cleaning.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\ExploreMove.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\Freezed.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\Going.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\GoingToGoal.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\States\GreenLooker.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\ManualControl\ManualGoing.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\ManualControl\ManualTurning.cs" />
     <Compile Include="Assets\Scripts\StateMachine\States\TracingExplore.cs" />
@@ -122,6 +124,8 @@
     <Compile Include="Assets\Scripts\StateMachine\Transitions\GoalPointSet.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\ManualGo.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\ManualTurn.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ShouldClean.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\ShouldLookGreen.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\Stopped.cs" />
     <Compile Include="Assets\Scripts\UserInput\ClawControl.cs" />
     <Compile Include="Assets\Scripts\UserInput\Configuration.cs" />

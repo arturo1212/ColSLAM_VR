@@ -13,7 +13,7 @@ public class ExplorePathIsObstructed : Transition
 
     public override bool Eval()
     {
-        //Debug.Log("Me setearon el target "+(mov.clickedPoint != null).ToString());
+        //Debug.Log("Me setearon el target "+(mov.metaPoint != null).ToString());
         return mov.pathObstructed;
     }
 }
