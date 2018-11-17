@@ -66,7 +66,7 @@ class VisionMonitor:
         sensitivity = 30
         lower = np.array([60 - sensitivity, 100, 60])
         upper = np.array([60 + sensitivity, 255, 255])
-        MIN_MATCH_COUNT = 20
+        MIN_MATCH_COUNT = 25
         MIN_CONTOUR_SIZE = 300
 
         with picamera.PiCamera() as camera:     
