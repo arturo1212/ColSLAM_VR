@@ -58,7 +58,7 @@ class VisionMonitor:
         self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
         self.topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
         self.topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
-        self.topc_near = roslibpy.Topic(self.ros, "near", "std_msgs/String")
+        self.topic_near = roslibpy.Topic(self.ros, "arduino", "std_msgs/String")
         self.topic_near.subscribe(self.getDistance)
         self.topic_reset.subscribe(self.resetme)
         self.topic_homography.advertise()
