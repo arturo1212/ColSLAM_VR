@@ -72,7 +72,7 @@ class VisionMonitor:
         resolution = (640,480)
 
         # Valores del rango de color (VERDE)
-        sensitivity = 30
+        sensitivity = 50
         lower = np.array([60 - sensitivity, 100, 60])
         upper = np.array([60 + sensitivity, 255, 255])
         MIN_MATCH_COUNT = 25
@@ -121,4 +121,4 @@ class VisionMonitor:
                 rawCapture.truncate(0) # Limpiar stream
 
 
-vm = VisionMonitor("rosnodes", 9090, 80)
+vm = VisionMonitor("rosnodes", 9090, 40)
