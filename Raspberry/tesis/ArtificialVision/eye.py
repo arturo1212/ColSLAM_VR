@@ -51,7 +51,6 @@ class VisionMonitor:
         self.marker_found = False   
 
     def getDistance(self, data):
-        print(data["data"])
         splited = data["data"].split(",")
         self.distance = int(splited[1])  
 
