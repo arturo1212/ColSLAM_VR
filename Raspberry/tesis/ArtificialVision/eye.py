@@ -41,6 +41,7 @@ class VisionMonitor:
         self.topic_homography = None
         self.topic_reset  = None
         self.topic_stream = None
+        self.topic_near = None
         self.close_distance = close_distance
         self.distance = 999
         self.ros.run_forever()
