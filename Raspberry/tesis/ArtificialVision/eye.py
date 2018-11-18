@@ -68,11 +68,11 @@ class VisionMonitor:
         self.create_topics()                        # Configuracion de ROS
         K = getCameraMatrix("chessboard.png")       # Obtener matriz de calibracion
         reference = cv2.imread('reference1.png',0)  # Cargar imagen de referencia para homografia
-        center_width = 30#50
+        center_width = 50
         resolution = (640,480)
 
         # Valores del rango de color (VERDE)
-        sensitivity = 50
+        sensitivity = 30
         lower = np.array([60 - sensitivity, 100, 60])
         upper = np.array([60 + sensitivity, 255, 255])
         MIN_MATCH_COUNT = 25
