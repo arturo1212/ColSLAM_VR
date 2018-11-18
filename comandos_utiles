@@ -1,6 +1,6 @@
 
-# PAra levantar visison
-docker run -it -v $HOME/Documents/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# PAra levantar visison sin display
+docker run -it -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 
 # Para levantar vision con display
 docker run -it --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" -v $HOME/Documents/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
