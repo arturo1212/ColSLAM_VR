@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 from camera_calibration import getCameraMatrix
 import math
+import datetime
 
 def takeSecond(elem):
     return elem[1]
@@ -64,7 +65,8 @@ def getHomography(frame, reference, MIN_MATCH_COUNT, DEBUG=False):
         # Vector normal
         v1 = np.append(dst[0][0], [0]) - np.append(dst[1][0], [0])
         v2 = np.append(dst[1][0], [0]) - np.append(dst[2][0], [0])
-        #cv2.imwrite("hola.jpg", img3)
+        filename = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")+".jpg"
+        cv2.imwrite("photos/"+ filename, img3)
     return M, len(good)
 
 def getDRotation(K, M):
