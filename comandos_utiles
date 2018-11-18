@@ -1,11 +1,15 @@
 
-# PAra levantar visison sin display
-docker run -it -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# PAra levantar visison sin display LIDAR
+docker run -it -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# Para levantar vision con display LIDAR
+docker run -it -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" -v $HOME/Documents/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 
-# Para levantar vision con display
-docker run -it --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" -v $HOME/Documents/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# PAra levantar visison sin display IR
+docker run -it -e CLOSEDIS=40 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# Para levantar vision con display IR
+docker run -it -e CLOSEDIS=40 -e CSENSITIVITY=30 -e MINMATCH=25 --env="DISPLAY" --volume="$HOME/.Xauthority:/root/.Xauthority:rw" -v $HOME/Documents/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+
 
 #Para levantar rosnodes
 # DEPRECADO docker ruun -it --device=/dev/ttyAACM0 -p 9090:9090 ros:tesis
 docker run --rm -dit --name rosnodes --network robotnet -p 9090:9090 --privileged colslam:rosnodes
-
