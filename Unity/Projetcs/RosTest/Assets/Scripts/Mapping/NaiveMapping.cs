@@ -31,7 +31,11 @@ public class NaiveMapping : MonoBehaviour
     [HideInInspector]
     Vector3 savedPosition;
     [HideInInspector]
-    public GameObject lastCube, holdCube=null;
+    public GameObject lastCube;
+    public GameObject holdCube=null;
+    [HideInInspector]
+    public string visionstate="";
+    float y1, y2;
 
 
     private void ReadArduino(string values)
@@ -89,37 +93,16 @@ public class NaiveMapping : MonoBehaviour
         rAngle = raux;
         robot.rosSocket.Unsubscribe(calibrtionSubcription_id);
         arduinoSubscription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", SubscriptionHandler);
+        StandardString msg = new StandardString
+        {
+            data = "reset"
+        };
+        robot.rosSocket.Publish(robot.resetPublisherId, msg);
     }
 
     private void MarkerReader(string message)
     {
-        float y1, y2;
-        string[] tokens = message.Split('_');
-        if (tokens[0].Contains("hold") )// Guarda desde donde lo leiste
-        {
-            if (holdCube != null)
-            {
-                Destroy(holdCube);
-            }
-            holdCube = lastCube;
-            holdCube.name = "keep";
-
-            var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
-            GetComponent<Movement>().greenPoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * (sensorDistance - 10) / scale;   // Punto de obstaculo
-        }
-        else if(tokens[0].Contains("found"))
-        {
-            string[] retokens = tokens[1].Split(',');
-            y1 = float.Parse(retokens[0]) * Mathf.Rad2Deg;
-            y2 = float.Parse(retokens[1]) * Mathf.Rad2Deg;
-
-            holdCube.name = "marker";
-            holdCube.transform.Rotate(Vector3.up, y2);
-            GetComponent<Movement>().greenPoint = null;
-
-            //Detach del handler
-            robot.rosSocket.Unsubscribe(markerSubcription_id);
-        }
+        visionstate = message;
     }
 
     private void SubscriptionMarkHandler(Message message)
@@ -146,7 +129,6 @@ public class NaiveMapping : MonoBehaviour
         robot = gameObject.GetComponent<Robot>();
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
-
     }
 
     void CreateTag(string s)
@@ -214,7 +196,7 @@ public class NaiveMapping : MonoBehaviour
         /* Crear obstaculo en la interfaz de Unity*/
         string tag = gameObject.name + scanNumber;
         //CreateTag(tag);
-        lastCube = Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(tpoint.normalized, Vector3.up));
+        lastCube = Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(-tpoint.normalized, Vector3.up));
         lastCube.name = tag;
         GetComponentInParent<GridGenerator>().ObstacleFound(transform.position + offset + tpoint);
         //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
@@ -264,8 +246,49 @@ public class NaiveMapping : MonoBehaviour
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
             sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
-            transform.position = transform.position + transform.forward * 0.7f *displacement/scale;
+            transform.position = transform.position + transform.forward * 0.8f *displacement/scale;
             newReading = false;
+        }
+
+        // VISION
+        if ( visionstate.Contains("hold"))// Guarda desde donde lo leiste
+        {
+            Debug.Log("Vi VERDE");
+            if (holdCube != null)
+            {
+                //Debug.Log("Destruyemeste");
+                Destroy(holdCube);
+            }
+            //Debug.Log("DESPUES DEL IF");
+            holdCube = lastCube;
+            holdCube.name = "keep";
+            Vector3 newScale = holdCube.transform.localScale;
+            newScale.y = 3;
+            holdCube.transform.localScale = newScale;
+            //Debug.Log("hold " + holdCube + " last " + lastCube);
+            Movement mov = GetComponent<Movement>();
+            var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
+            mov.greenPoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * (sensorDistance - 30) / scale;   // Punto de obstaculo
+            //Debug.Log("Green Point seteado " + mov.greenPoint);
+            visionstate = "";
+        }
+        else if (visionstate.Contains("found"))
+        {
+            Debug.Log("VI LA MARCA");
+
+            string[] tokens = visionstate.Split(',');
+            y1 = float.Parse(tokens[1]) * Mathf.Rad2Deg;
+            y2 = float.Parse(tokens[2]) * Mathf.Rad2Deg;
+
+            holdCube.name = "marker";
+            Debug.Log("Antes: " + holdCube.transform.rotation.eulerAngles);
+            holdCube.transform.Rotate(Vector3.up, y2);
+            Debug.Log("Despues: " + holdCube.transform.rotation.eulerAngles);
+            GetComponent<Movement>().greenPoint = null;
+
+            //Detach del handler
+            robot.rosSocket.Unsubscribe(markerSubcription_id);
+            visionstate = "";
         }
     }
 

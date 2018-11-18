@@ -112,14 +112,14 @@ public class TracingExplore : State
 
             Debug.Log("Calculating path...");
             float diff = Time.realtimeSinceStartup - initialTime;
-            if ( diff < 5)
+            if ( diff > 5)
             {
                 mov.prision = true;
             }
             return;
         }
         DrawPath();
-        float radius = 0.2f, angleThresh = 20;
+        float radius = mov.greenPoint != null ? 0.1f : 0.2f, angleThresh = 20;
         if (mov.proximatePoint.y == -1)
         {
             mov.proximatePoint = nextPoint(radius);
@@ -137,7 +137,7 @@ public class TracingExplore : State
         //Debug.Log(faced);
         if (!faced)
         {
-            Debug.Log("Facing proximate point: " + mov.proximatePoint);
+            //Debug.Log("Facing proximate point: " + mov.proximatePoint);
             SteeringBehaviours.Face(mov, mov.proximatePoint, angleThresh, true);
             faced = !mov.facing;
         }

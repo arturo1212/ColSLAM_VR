@@ -118,6 +118,7 @@
     <Compile Include="Assets\Scripts\StateMachine\Transitions\ExplorePathIsObstructed.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\ExploreTraced.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\FacingTargetSet.cs" />
+    <Compile Include="Assets\Scripts\StateMachine\Transitions\FromCleanToGreenLooker.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\GoalIsTooFar.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\GoalPointSet.cs" />
     <Compile Include="Assets\Scripts\StateMachine\Transitions\ManualGo.cs" />

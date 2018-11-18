@@ -16,6 +16,6 @@ public class ShouldLookGreen : Transition
     public override bool Eval()
     {
         //Debug.Log("Me setearon el target "+(mov.metaPoint != null).ToString());
-        return naiv.holdCube != null && naiv.holdCube.name != "marker";
+        return naiv.holdCube != null && naiv.holdCube.name != "marker" && mov.arrivedGreen;
     }
 }

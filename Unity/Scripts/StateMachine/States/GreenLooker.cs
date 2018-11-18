@@ -6,30 +6,16 @@ using UnityEngine;
 public class Greenlooker : State
 {
     Movement mov;
-    NavMeshPath path;
     NaiveMapping naiv;
-    int nscans = 0, auxScan = -1;
-    Vector3 destiny = new Vector3(-1, -1, -1);
-    NavMeshSurface surface;
 
     bool faced = false;
     float initialDist;
+    int nscans = 0, auxScan = -1;
+
     public Greenlooker(GameObject owner) : base(owner)
     {
         mov = owner.GetComponent<Movement>();
         naiv = owner.GetComponent<NaiveMapping>();
-        path = mov.explorePath;
-    }
-
-
-    public override void Circunloquio()
-    {
-    }
-
-    public override void Colofon()
-    {
-
-        mov.behaviourIsRunning = false;
     }
 
     void updateNScans()
@@ -46,34 +32,54 @@ public class Greenlooker : State
         }
     }
 
+    public override void Circunloquio()
+    {
+        mov.facing = true;
+        mov.behaviourIsRunning = true;
+    }
+
+    public override void Colofon()
+    {
+
+        mov.behaviourIsRunning = false;
+        mov.facing = false;
+    }
+
     public override void Execute()
     {
         float angleThresh = 20;
         //Debug.Log(faced);
-        if (!faced)
+        if (mov.facing)
         {
-            Debug.Log("Facing proximate point: " + mov.proximatePoint);
+            Debug.Log("Facing holdCube");
             SteeringBehaviours.Face(mov, naiv.holdCube.transform.position, angleThresh, true);
-            faced = !mov.facing;
         }
 
-        if (faced)
+        if (!mov.facing)
         {
             updateNScans();
         }
 
         /* Esperar a estar detenido y acumular N iteraciones */
-        if (nscans >= 1 && faced)
+        if (nscans >= 1 && !mov.facing)
         {
             if (naiv.holdCube.name != "marker")
             {
                 //Calcular nuevo greepnoint
-                Vector3 nuevopunto = (Vector3)mov.greenPoint + Random.insideUnitSphere * 0.2f;
-                nuevopunto.y = 0;
-                mov.greenPoint = nuevopunto;
-                mov.Stop(true);
-            }
+                float randomAngle = Random.Range(0, 360);
+                float circunferenceRadius = 0.3f;
+                Vector3 nuevopunto = new Vector3(Mathf.Sin(randomAngle), 0, Mathf.Cos(randomAngle)) * circunferenceRadius;
+                nuevopunto += naiv.holdCube.transform.position;
 
+                while (Physics.Raycast(owner.transform.position, (nuevopunto - owner.transform.position).normalized, (owner.transform.position - nuevopunto).magnitude, LayerMask.GetMask("Obstacles")))
+                {
+                    randomAngle = Random.Range(0, 360);
+                    nuevopunto = new Vector3(Mathf.Sin(randomAngle), 0, Mathf.Cos(randomAngle)) * circunferenceRadius;
+                    nuevopunto += naiv.holdCube.transform.position;
+                }
+                mov.greenPoint = nuevopunto;
+            }
+            mov.Stop(true);
         }
     }
 

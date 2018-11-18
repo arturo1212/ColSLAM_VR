@@ -41,6 +41,7 @@ public class StateMachine : MonoBehaviour {
         transitions.Add(new GoalIsTooFar(tracingExploreState, tracingExploreState));
         transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
         transitions.Add(new ShouldClean(tracingExploreState, cleaningState));
+        transitions.Add(new FromCleanToGreenLooker(cleaningState, greenLookerState));
 
         // TODO Hace falta salir de otros estados a los manuales ??
 

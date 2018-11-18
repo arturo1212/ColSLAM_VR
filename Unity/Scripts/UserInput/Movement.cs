@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class Movement : MonoBehaviour {
 
     public bool behaviourIsRunning = false, stopped = false;
-    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar = false, prision=false;
+    public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar = false, prision = false, arrivedGreen = false;
     public Vector3? metaPoint = null;
     public Vector3? greenPoint = null;
 
@@ -24,7 +24,7 @@ public class Movement : MonoBehaviour {
     public List<GameObject> metaPoints;
     [HideInInspector]
     NaiveMapping naiv;
-    public int counter = -1;
+    public int counter = 0;
     [HideInInspector]
     int index = 0;
 
@@ -95,12 +95,13 @@ public class Movement : MonoBehaviour {
     {
         if (greenPoint != null)
         {
+            Debug.Log("GREEN POINT: "+greenPoint);
             metaPoint = (Vector3)greenPoint;
         }
         else
         {
             // Alguno
-            Debug.Log("METAPOINTS");
+            //Debug.Log("METAPOINTS");
             metaPoint = metaPoints[index].transform.position;
         }
     }

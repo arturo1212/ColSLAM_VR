@@ -47,7 +47,11 @@ public class Cleaning : State
         else
         {
             Debug.Log("Cleaned");
-            mov.Stop(true);
+            if (mov.greenPoint == null)
+            {
+                mov.Stop(true);
+
+            }
         }
         
     }
