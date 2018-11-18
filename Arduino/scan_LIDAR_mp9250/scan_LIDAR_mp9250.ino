@@ -73,7 +73,12 @@ int getDistance()
       }
    } 
    else {
-    return IRprom;
+    if(IRprom < 30 && IRprom > 20){
+      return LIDARprom - 20;
+    }else if(IRprom < 20){
+      return IRprom;
+    }
+    return LIDARprom -15;
    }
 }
 
@@ -99,10 +104,10 @@ void setup() {
   delay(5000);
   
   // GIA LIDAR
-  float accbias[] = {-132.39, 26.31, 11.11};
-  float gyrobias[] = {0.64, 1.15, 0.37};
-  float magbias[] = {-22.99, 286.66, -211.08};
-  float magscale[] = {1.02, 1.09, 0.91}; 
+  float accbias[] = {-150.09, 31.98, -5.49};
+  float gyrobias[] = {0.59, 1.01, 0.25};
+  float magbias[] = {15.92, 211.88, -413.58};
+  float magscale[] = {1.07, 1.08, 0.88}; 
 
   /* Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -147,13 +152,13 @@ void setup() {
     
     < calibration parameters >
     accel bias [g]:
-    -132.39, 26.31, 11.11
+    -150.09, 31.98, -5.49
     gyro bias [deg/s]:
-    0.64, 1.15, 0.37
+    0.59, 1.01, 0.25
     mag bias [mG]:
-    -22.99, 286.66, -211.08
+    15.92, 211.88, -413.58
     mag scale []:
-    1.02, 1.09, 0.91
+    1.07, 1.08, 0.88
     
     < calibration parameters > Calibracion en plano
     accel bias [g]: 
@@ -188,6 +193,7 @@ void loop() {
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
     delay(16);
   }
+  Serial.println("RETURNED: "+String(getDistance()));
   for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();
