@@ -33,7 +33,7 @@ def take_snapshot(images, names, img_counter, dirname):
         cv2.imwrite(img_name, images[i])
 
 class VisionMonitor:
-    def __init__(self, ip, port, close_distance):
+    def __init__(self, ip, port, close_distance = 40, sensitivity = 30, MIN_MATCH_COUNT = 25):
         self.ros = roslibpy.Ros(host=ip, port=port)
         self.ros.on_ready(self.run)
         self.ros.connect()
@@ -44,6 +44,8 @@ class VisionMonitor:
         self.topic_near = None
         self.close_distance = close_distance
         self.distance = 999
+        self.sensitivity = sensitivity
+        self.MIN_MATCH_COUNT = MIN_MATCH_COUNT
         self.ros.run_forever()
 
     def resetme(self, data):
@@ -72,10 +74,9 @@ class VisionMonitor:
         resolution = (640,480)
 
         # Valores del rango de color (VERDE)
-        sensitivity = 30
-        lower = np.array([60 - sensitivity, 100, 60])
-        upper = np.array([60 + sensitivity, 255, 255])
-        MIN_MATCH_COUNT = 25
+        lower = np.array([60 - self.sensitivity, 100, 60])
+        upper = np.array([60 + self.sensitivity, 255, 255])
+        #MIN_MATCH_COUNT = 25
         MIN_CONTOUR_SIZE = 300
 
         with picamera.PiCamera() as camera:     
@@ -101,7 +102,7 @@ class VisionMonitor:
                     print("Distance: "+str(self.distance))
 
                     if(self.close_distance >= self.distance):
-                        M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
+                        M, count = getHomography(image, reference, self.MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
                         if(M is None):                                      # Si no hay suficientes atributos coincidentes
                             print("MISS: ", str(count)) 
                         else:                                               # Si hay suficientes atributos coincidentes
@@ -121,4 +122,4 @@ class VisionMonitor:
                 rawCapture.truncate(0) # Limpiar stream
 
 
-vm = VisionMonitor("rosnodes", 9090, 40)
+vm = VisionMonitor("rosnodes", 9090, int(os.environ['CLOSEDIS']), int(os.environ['CSENSITIVITY']), int(os.environ['MINMATCH']))
