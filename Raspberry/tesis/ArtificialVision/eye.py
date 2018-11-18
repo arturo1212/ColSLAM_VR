@@ -33,7 +33,7 @@ def take_snapshot(images, names, img_counter, dirname):
         cv2.imwrite(img_name, images[i])
 
 class VisionMonitor:
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, close_distance):
         self.ros = roslibpy.Ros(host=ip, port=port)
         self.ros.on_ready(self.run)
         self.ros.connect()
@@ -41,16 +41,25 @@ class VisionMonitor:
         self.topic_homography = None
         self.topic_reset  = None
         self.topic_stream = None
+        self.topic_near = None
+        self.close_distance = close_distance
+        self.distance = 999
         self.ros.run_forever()
 
     def resetme(self, data):
         print("RESETEADO")
-        self.marker_found = False    
+        self.marker_found = False   
+
+    def getDistance(self, data):
+        splited = data["data"].split(",")
+        self.distance = int(splited[1])  
 
     def create_topics(self):
         self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
         self.topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
         self.topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
+        self.topic_near = roslibpy.Topic(self.ros, "arduino", "std_msgs/String")
+        self.topic_near.subscribe(self.getDistance)
         self.topic_reset.subscribe(self.resetme)
         self.topic_homography.advertise()
         self.topic_stream.advertise()
@@ -63,10 +72,10 @@ class VisionMonitor:
         resolution = (640,480)
 
         # Valores del rango de color (VERDE)
-        sensitivity = 30
+        sensitivity = 50
         lower = np.array([60 - sensitivity, 100, 60])
         upper = np.array([60 + sensitivity, 255, 255])
-        MIN_MATCH_COUNT = 20
+        MIN_MATCH_COUNT = 25
         MIN_CONTOUR_SIZE = 300
 
         with picamera.PiCamera() as camera:     
@@ -89,14 +98,17 @@ class VisionMonitor:
                 # Verificacion de colores y marcas
                 if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
                     self.topic_homography.publish({"data" : "hold"})         # Notificar inicio de procesamiento al servidor.
-                    M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
-                    if(M is None):                                      # Si no hay suficientes atributos coincidentes
-                        print("MISS: ", str(count)) 
-                    else:                                               # Si hay suficientes atributos coincidentes
-                        ys = getDRotation(K, M)
-                        self.topic_homography.publish({"data":"found," + str(ys[0]) + "," + str(ys[1])}) # Publicar vector y cambiar booleano
-                        self.marker_found = True
-                        print("FOUND: ", str(ys), str(count))
+                    print("Distance: "+str(self.distance))
+
+                    if(self.close_distance >= self.distance):
+                        M, count = getHomography(image, reference, MIN_MATCH_COUNT, True)       # Obtener matriz de homografia
+                        if(M is None):                                      # Si no hay suficientes atributos coincidentes
+                            print("MISS: ", str(count)) 
+                        else:                                               # Si hay suficientes atributos coincidentes
+                            ys = getDRotation(K, M)
+                            self.topic_homography.publish({"data":"found," + str(ys[0]) + "," + str(ys[1])}) # Publicar vector y cambiar booleano
+                            self.marker_found = True
+                            print("FOUND: ", str(ys), str(count))
 
                 # Mostrar imagenes
                 #cv2.imshow("Frame", image)
@@ -108,4 +120,5 @@ class VisionMonitor:
                     break
                 rawCapture.truncate(0) # Limpiar stream
 
-vm = VisionMonitor("rosnodes", 9090)
+
+vm = VisionMonitor("rosnodes", 9090, 40)
