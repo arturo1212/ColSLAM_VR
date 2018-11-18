@@ -1,14 +1,5 @@
 #include <Servo.h>
 #include "MPU9250.h"
-< calibration parameters >
-accel bias [g]:
--104.13, 56.21, 9.58
-gyro bias [deg/s]:
-0.63, 1.20, 0.34
-mag bias [mG]:
-5.31, 210.10, -312.33
-mag scale []:
-1.02, 0.98, 0.99
 #define window 7
 Servo myservo;
 // Variables del MPU6050
@@ -66,6 +57,10 @@ int getDistance()
     iter++;
   }
   IRprom = IRprom/window;
+  //Serial.println("IR: " + String(IRprom));
+  if(IRprom > 30 ){
+    IRprom+=5;  
+  }
   return IRprom;
 }
 
@@ -91,11 +86,17 @@ void setup() {
   mpu.setup();
   delay(5000);
 
-  // David 2
+  // GIA
+  float accbias[] = {-10.13, 14.22, 37.23};
+  float gyrobias[] = {-0.11, -0.55, 0.43};
+  float magbias[] = {141.97, 335.15, -229.02};
+  float magscale[] = {1.00, 1.07, 0.94};
+
+  /* David 2
   float accbias[] = {-148.13, 34.48, 26.06};
   float gyrobias[] = {-0.10, -0.50, 0.34};
   float magbias[] = {243.13, 354.86, -260.02};
-  float magscale[] = { 1.07, 1.08, 0.87}; 
+  float magscale[] = { 1.07, 1.08, 0.87};*/
 
   /*// Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -190,25 +191,15 @@ void setup() {
     mag scale []: 
     0.81, 0.86, 1.65
 
-    < calibration parameters > Calibracion robot IR GYro 2
-    accel bias [g]: 
-    -160.95, 47.12, 20.51
-    gyro bias [deg/s]: 
-    0.35, 0.85, 0.37
-    mag bias [mG]: 
-    123.00, 77.57, -299.60
-    mag scale []: 
-    1.12, 1.09, 0.84
-
-    < calibration parameters > Calibracion robot IR GYro 1
-    accel bias [g]: 
-    -183.47, 54.02, -2.93
-    gyro bias [deg/s]: 
-    0.59, 1.18, 0.42
-    mag bias [mG]: 
-    -15.92, 236.81, -267.71
-    mag scale []: 
-    1.09, 1.09, 0.86
+    < calibration parameters > Calibracion IR
+    accel bias [g]:
+    -10.13, 14.22, 37.23
+    gyro bias [deg/s]:
+    -0.11, -0.55, 0.43
+    mag bias [mG]:
+    141.97, 335.15, -229.02
+    mag scale []:
+    1.00, 1.07, 0.94
 
     */
 
@@ -234,6 +225,7 @@ void loop() {
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
     delay(16);
   }
+  Serial.println("Result: "+String(getDistance()));
   for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();
