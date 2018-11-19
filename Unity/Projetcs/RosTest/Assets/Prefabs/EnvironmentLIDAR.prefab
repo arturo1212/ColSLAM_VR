@@ -496,7 +496,7 @@ MonoBehaviour:
   angle_thresh: 0.2
   wheelRadius: 2.25
   displacement: 0
-  minDistance: 8
+  minDistance: 0
   maxDistance: 300
   scale: 100
   scanNumber: 0
@@ -511,6 +511,7 @@ MonoBehaviour:
   lastCube: {fileID: 0}
   holdCube: {fileID: 0}
   visionstate: 
+  markerFound: 0
 --- !u!136 &136726706158038558
 CapsuleCollider:
   m_ObjectHideFlags: 1

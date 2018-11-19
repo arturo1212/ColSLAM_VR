@@ -12,15 +12,16 @@ public class MapMerge : MonoBehaviour {
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
+        // Buscar todos los campos disponibles en la escena.
         var fs = GameObject.FindGameObjectsWithTag("Fields").ToList();
         if (fs.Count > aux_count)
         {
             fields = fs;
             aux_count = fields.Count;
         }
+
         List<GameObject> aux = new List<GameObject>();
         foreach (GameObject g in fields)
         {
@@ -69,7 +70,7 @@ public class MapMerge : MonoBehaviour {
         List<string> commonM  = markersA.Select(f => f.name).Intersect(markersB.Select(b => b.name)).ToList();  // Obtener todos los markers encontrados por cada uno.
         commonMarkersA = markersA.Where(f => commonM.Contains(f.name)).ToList();    // Obtener los markers de cada robot.
         commonMarkersB = markersB.Where(f => commonM.Contains(f.name)).ToList();
-        // (FALTA) Ordenar las coincidencias
+        // (FALTA) Ordenar las coincidencias: Solo hace falta para mas de una marca.
         return new Tuple<List<GameObject>, List<GameObject>>(commonMarkersA, commonMarkersB);
     }
 
@@ -86,8 +87,10 @@ public class MapMerge : MonoBehaviour {
         GridGenerator gg = fieldB.GetComponent<GridGenerator>();
         foreach (GameObject obstacle in obstaclesA)
         {
-            gg.createCube(obstacle.transform.position);
+            gg.ObstacleFound(obstacle.transform.position);
+            obstacle.transform.parent = fieldB.transform;
         }
+
         // Eliminar los pivotes.
         fieldA.transform.parent = null; // Parentezco para posicionamiento.
         fieldB.transform.parent = null;
@@ -137,6 +140,8 @@ public class MapMerge : MonoBehaviour {
         var coincidences = marker_coincidences(fieldA, fieldB);
         var markersA = coincidences.Item1;
         var markersB = coincidences.Item2;
+        
+        // Llevar a la raiz
         markersA[0].transform.parent = null;
         markersB[0].transform.parent = null;
 
