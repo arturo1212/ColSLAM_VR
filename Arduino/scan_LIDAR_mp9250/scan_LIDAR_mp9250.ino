@@ -103,18 +103,18 @@ void setup() {
   mpu.setup();
   delay(5000);
   
-  // GIA LIDAR
+  /*// GIA LIDAR
   float accbias[] = {-153.63, 30.88, 6.47};
   float gyrobias[] = {0.69, 1.13, 0.04};
   float magbias[] = {14.15, 293.79, -195.64};
   float magscale[] = {1.09, 1.05, 0.88}; 
-
-  /* Casa David
-  float accbias[] = {-134.83, -29.91, 33.02};
-  float gyrobias[] = {-0.42, 2.45, -0.50};
-  float magbias[] = {124.75, 95.20, -311.45};
-  float magscale[] = {1.09, 1.09, 0.86};
   */
+  // Casa David
+  float accbias[] = {-102.84, 35.71, -1.59};
+  float gyrobias[] = {0.51, 1.16, 0.28};
+  float magbias[] = {33.61, 336.52, -192.20};
+  float magscale[] = {1.03, 1.11, 0.89};
+  
   
   /* GIA
   float accbias[] = {-61.71, 4.82, 16.11};
@@ -140,15 +140,16 @@ void setup() {
     mag scale []: 
     0.99, 1.05, 0.96
     
-    < calibration parameters > Valores en casa de David (montado en robot)
-    accel bias [g]: 
-    -134.83, -29.91, 33.02
-    gyro bias [deg/s]: 
-    -0.42, 2.45, -0.50
-    mag bias [mG]: 
-    124.75, 95.20, -311.45
-    mag scale []: 
-    1.09, 1.09, 0.86
+    Valores en casa de David (montado en robot)
+    < calibration parameters >
+    accel bias [g]:
+    -102.84, 35.71, -1.59
+    gyro bias [deg/s]:
+    0.51, 1.16, 0.28
+    mag bias [mG]:
+    33.61, 336.52, -192.20
+    mag scale []:
+    1.03, 1.11, 0.89
     
     < calibration parameters >
     accel bias [g]:

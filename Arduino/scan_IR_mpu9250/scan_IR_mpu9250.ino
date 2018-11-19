@@ -86,17 +86,18 @@ void setup() {
   mpu.setup();
   delay(5000);
 
-  // GIA
+  /*// GIA
   float accbias[] = {-10.13, 14.22, 37.23};
   float gyrobias[] = {-0.11, -0.55, 0.43};
   float magbias[] = {141.97, 335.15, -229.02};
   float magscale[] = {1.00, 1.07, 0.94};
-
-  /* David 2
-  float accbias[] = {-148.13, 34.48, 26.06};
-  float gyrobias[] = {-0.10, -0.50, 0.34};
-  float magbias[] = {243.13, 354.86, -260.02};
-  float magscale[] = { 1.07, 1.08, 0.87};*/
+  */
+  
+  // David 2
+  float accbias[] = {-105.59, 17.94, 29.85};
+  float gyrobias[] = {-0.07, -0.57, 0.40};
+  float magbias[] = {191.66, 283.17, -194.58};
+  float magscale[] = {0.98, 0.99, 1.04};
 
   /*// Casa David
   float accbias[] = {-134.83, -29.91, 33.02};
@@ -119,26 +120,6 @@ void setup() {
     mpu.setMagBias(i,magbias[i]);
     mpu.setMagScale(i,magscale[i]);
   }
-  /*
-    // GIA LIDAR
-  float accbias[] = {-115.05, 59.14, -7.39};
-  float gyrobias[] = {0.58, 1.07, 0.35};
-  float magbias[] = {123.00, 77.57, -299.60};
-  float magscale[] = {1.00, 1.17, 0.87}; 
-
-  /* Casa David
-  float accbias[] = {-134.83, -29.91, 33.02};
-  float gyrobias[] = {-0.42, 2.45, -0.50};
-  float magbias[] = {124.75, 95.20, -311.45};
-  float magscale[] = {1.09, 1.09, 0.86};
-  */
-  
-  /* GIA
-  float accbias[] = {-61.71, 4.82, 16.11};
-  float gyrobias[] = {-4.59, -0.35, 2.70};
-  float magbias[] = {-40.68, 308.03, -92.67};
-  float magscale[] = {0.99, 1.05, 0.96}; 
-    */
   
   /*
     *< calibration parameters > Valores en el GIA (suelto en la mesa)
@@ -151,15 +132,16 @@ void setup() {
     mag scale []: 
     0.99, 1.05, 0.96
     
-    < calibration parameters > Valores en casa de David (montado en robot)
-    accel bias [g]: 
-    -134.83, -29.91, 33.02
-    gyro bias [deg/s]: 
-    -0.42, 2.45, -0.50
-    mag bias [mG]: 
-    124.75, 95.20, -311.45
-    mag scale []: 
-    1.09, 1.09, 0.86
+    Valores en casa de David (montado en robot)
+    < calibration parameters >
+    accel bias [g]:
+    -105.59, 17.94, 29.85
+    gyro bias [deg/s]:
+    -0.07, -0.57, 0.40
+    mag bias [mG]:
+    191.66, 283.17, -194.58
+    mag scale []:
+    0.98, 0.99, 1.04
 
     < calibration parameters > Calibracion casa de David inalambrica
     accel bias [g]:
@@ -223,9 +205,9 @@ void loop() {
     //Serial.println("Angulos");
     myservo.write(pos);
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(16);
+    delay(65);
   }
-  Serial.println("Result: "+String(getDistance()));
+  //Serial.println("Result: "+String(getDistance()));
   for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();
@@ -234,6 +216,6 @@ void loop() {
     myservo.write(pos);
     //delay(10);
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(16);
+    delay(65);
   }
 }
