@@ -19,7 +19,7 @@ public class NaiveMapping : MonoBehaviour
     public float angle_thresh = 0.2f;
     public float wheelRadius, displacement, minDistance, maxDistance;
 
-    public int scale = 100, scanNumber=0;   // Maxima distancia leida por los sensores (Se usa para escalar).
+    public int scale = 100, scanNumber=0, holdCounter=0;   // Maxima distancia leida por los sensores (Se usa para escalar).
     private bool newReading = false;
 
     [HideInInspector]
@@ -198,8 +198,9 @@ public class NaiveMapping : MonoBehaviour
         //CreateTag(tag);
         lastCube = Instantiate(obstaclePrefab, transform.position + offset + tpoint, Quaternion.LookRotation(-tpoint.normalized, Vector3.up));
         lastCube.name = tag;
+        lastCube.transform.parent = transform.parent;
         GetComponentInParent<GridGenerator>().ObstacleFound(transform.position + offset + tpoint);
-        //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creación de cubo básico (CAMBIAR POR PREFAB)
+        //var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);      // Creaciï¿½n de cubo bï¿½sico (CAMBIAR POR PREFAB)
         //cube.transform.localScale = new Vector3(0.01f, 0.5f, 0.01f);      // Escala del cubito
         //cube.transform.position = transform.position + offset + tpoint; // Desplazamiento + punto = nuevo_punto
         //cube.AddComponent<BoxCollider>();
@@ -239,9 +240,31 @@ public class NaiveMapping : MonoBehaviour
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);
-            if (sensorDistance>minDistance && sensorDistance < maxDistance  )
+            if (sensorDistance>minDistance && sensorDistance <= maxDistance || visionstate=="hold"  )
             {
                 CreateCube();
+            }
+            else //Raycast de limpieza
+            {
+                var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               
+                RaycastHit[] hits;
+                hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, LayerMask.GetMask("Obstacles"));
+
+                if (hits.Length > 0)
+                {
+
+                    RaycastHit hit;
+                    List<GameObject> todelete = new List<GameObject>();
+                    for (int i = 0; i < hits.Length; i++)
+                    {
+                        hit = hits[i];
+                        if (hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker")
+                        {
+                            todelete.Add(hit.transform.gameObject);
+                        }
+                    }
+                    DestroyObstacleList(todelete);
+                }
             }
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
@@ -253,14 +276,19 @@ public class NaiveMapping : MonoBehaviour
         // VISION
         if ( visionstate.Contains("hold"))// Guarda desde donde lo leiste
         {
+            holdCounter++;
             Debug.Log("Vi VERDE");
+            if(holdCube==null && lastCube == null)
+            {
+                return;
+            }
             if (holdCube != null)
             {
                 //Debug.Log("Destruyemeste");
-                Destroy(holdCube);
+                holdCube.name = "oldGreen";
             }
             //Debug.Log("DESPUES DEL IF");
-            holdCube = lastCube;
+            holdCube = lastCube != null ? lastCube : holdCube;
             holdCube.name = "keep";
             Vector3 newScale = holdCube.transform.localScale;
             newScale.y = 3;
@@ -281,13 +309,15 @@ public class NaiveMapping : MonoBehaviour
             y2 = float.Parse(tokens[2]) * Mathf.Rad2Deg;
 
             holdCube.name = "marker";
+            holdCube.tag = "Marker";
             Debug.Log("Antes: " + holdCube.transform.rotation.eulerAngles);
-            holdCube.transform.Rotate(Vector3.up, y2);
+            holdCube.transform.Rotate(Vector3.up, -y2);
             Debug.Log("Despues: " + holdCube.transform.rotation.eulerAngles);
             GetComponent<Movement>().greenPoint = null;
 
             //Detach del handler
             robot.rosSocket.Unsubscribe(markerSubcription_id);
+            while (true) ;
             visionstate = "";
         }
     }

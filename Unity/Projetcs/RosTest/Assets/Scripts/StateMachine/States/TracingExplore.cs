@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.AI;
+﻿using UnityEngine.AI;
 using UnityEngine;
 
 public class TracingExplore : State
@@ -74,7 +72,7 @@ public class TracingExplore : State
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.GetComponent<SphereCollider>().enabled = false;
                 sphere.transform.position = point;
-                sphere.transform.localScale = new Vector3(0.02f, 0.02f, 0.02f);
+                sphere.transform.localScale = new Vector3(0.02f, 1f, 0.02f);
                 (sphere.GetComponent<Renderer>()).material.color = new Color(color1, color2, color3);
                 return point;
             }
@@ -144,6 +142,7 @@ public class TracingExplore : State
 
         if (faced)
         {
+            Debug.Log("Escaneando");
             updateNScans();
         }
 
@@ -167,6 +166,12 @@ public class TracingExplore : State
             else
             {
                 Debug.Log("All clear");
+
+                /*if (initialDist >= naiv.maxDistance / naiv.scale)
+                {
+                    mov.proximatePoint = (mov.proximatePoint - owner.transform.position).normalized * ((naiv.maxDistance / naiv.scale)*0.75f);
+                }*/
+
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.GetComponent<SphereCollider>().enabled = false;
                 sphere.transform.position = mov.proximatePoint;

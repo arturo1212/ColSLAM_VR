@@ -31,7 +31,7 @@ public class ExploreMove : State
 
     public override void Execute()
     {
-        float radius = mov.greenPoint != null ? 0.2f : 0.2f;
+        float radius = mov.greenPoint != null ? mov.greenArrive : 0.2f;
         //Debug.Log("Now Going");
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = mov.proximatePoint;
@@ -41,7 +41,7 @@ public class ExploreMove : State
  
         if ((mov.transform.position - mov.proximatePoint).magnitude < radius)
         {
-            Debug.Log(mov.greenPoint != null ? "Listo ExploreMove GREEN" : "Listo ExploreMove State");
+            Debug.Log((mov.greenPoint != null ? "Listo ExploreMove GREEN " : "Listo ExploreMove State ")+owner.transform.parent.name);
             mov.behaviourIsRunning = false;
             if (mov.greenPoint == null)
             {

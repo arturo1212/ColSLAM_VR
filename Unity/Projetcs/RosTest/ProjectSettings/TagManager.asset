@@ -5,6 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - SensorReading
+  - MetaPoints
+  - Marker
+  - Obstacles
+  - Fields
+  - Robot
   layers:
   - Default
   - TransparentFX

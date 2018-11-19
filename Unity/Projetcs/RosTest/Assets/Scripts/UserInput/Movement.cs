@@ -20,6 +20,7 @@ public class Movement : MonoBehaviour {
 
     public NavMeshPath explorePath; // Path del que surge la explroacion
     public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
+    public float greenArrive;
 
     public List<GameObject> metaPoints;
     [HideInInspector]
@@ -33,6 +34,7 @@ public class Movement : MonoBehaviour {
         robot = gameObject.GetComponent<Robot>();
         explorePath = new NavMeshPath();
         naiv = GetComponent<NaiveMapping>();
+        metaPoints = MapMerge.GetChildObject(transform.parent, "MetaPoints");
     }
 
     // Update is called once per frame
@@ -95,7 +97,7 @@ public class Movement : MonoBehaviour {
     {
         if (greenPoint != null)
         {
-            Debug.Log("GREEN POINT: "+greenPoint);
+            //Debug.Log("GREEN POINT: "+greenPoint);
             metaPoint = (Vector3)greenPoint;
         }
         else

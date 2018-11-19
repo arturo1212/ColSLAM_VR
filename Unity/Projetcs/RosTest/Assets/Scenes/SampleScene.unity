@@ -268,8 +268,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1479352676}
   - component: {fileID: 1479352675}
+  - component: {fileID: 1479352677}
   m_Layer: 0
-  m_Name: OmniPresent
+  m_Name: OmniPotent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -287,9 +288,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agents:
-  - {fileID: 1095214725955506, guid: c4a82365990717b44ba8493a1667596d, type: 2}
+  - {fileID: 1975511931240172, guid: c4a82365990717b44ba8493a1667596d, type: 2}
+  - {fileID: 1321606413195568, guid: 45d5f234887d1fc47b49e646a4a22294, type: 2}
   selectedAgent: {fileID: 0}
-  index: 0
+  index: 1
   agent_count: 0
 --- !u!4 &1479352676
 Transform:
@@ -304,3 +306,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1479352677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1479352674}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a2b065e0a033cc4c918042b6984f123, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fields: []
+  axis_helper: {fileID: 0}
