@@ -223,9 +223,9 @@ void loop() {
     //Serial.println("Angulos");
     myservo.write(pos);
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(16);
+    delay(65);
   }
-  Serial.println("Result: "+String(getDistance()));
+  //Serial.println("Result: "+String(getDistance()));
   for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();
@@ -234,6 +234,6 @@ void loop() {
     myservo.write(pos);
     //delay(10);
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(16);
+    delay(65);
   }
 }
