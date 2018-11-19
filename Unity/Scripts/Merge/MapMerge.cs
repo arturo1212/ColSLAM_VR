@@ -8,13 +8,19 @@ using UnityEngine;
 public class MapMerge : MonoBehaviour {
     public List<GameObject> fields = new List<GameObject>();
     public GameObject axis_helper;
-
+    public int aux_count = 0;
 	void Start () {
 		
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        var fs = GameObject.FindGameObjectsWithTag("Fields").ToList();
+        if (fs.Count > aux_count)
+        {
+            fields = fs;
+            aux_count = fields.Count;
+        }
         List<GameObject> aux = new List<GameObject>();
         foreach (GameObject g in fields)
         {
@@ -34,10 +40,16 @@ public class MapMerge : MonoBehaviour {
                 }
                 else if(markersA.Count >= 1)
                 {
+                    Debug.Log("MERGEANDO");
                     MapOverlapping(g, f, Pivot_1Point);
+                    
                     // Add Robot to map
+                    var robot = GetChildObject(g.transform, "Robot")[0]; // GENERALIZAR
+                    robot.GetComponent<Movement>().metaPoints = GetChildObject(f.transform, "MetaPoints");
+                    
+                    // Clean fields
                     fields.Remove(g);
-                    //Destroy(g);
+                    Destroy(g);
                     return;
                 }
             }
@@ -68,8 +80,8 @@ public class MapMerge : MonoBehaviour {
         pivotA.transform.position = pivotB.transform.position;
 
         // Recrear obstaculos.
-        List<GameObject> obstaclesA = GetChildObject(fieldA.transform, "Obstacle");
-        List<GameObject> obstaclesB = GetChildObject(fieldB.transform, "Obstacle");
+        List<GameObject> obstaclesA = GetChildObject(fieldA.transform, "Obstacles");
+        List<GameObject> obstaclesB = GetChildObject(fieldB.transform, "Obstacles");
         GridGenerator gg = fieldB.GetComponent<GridGenerator>();
         foreach (GameObject obstacle in obstaclesA)
         {
@@ -141,7 +153,7 @@ public class MapMerge : MonoBehaviour {
     #endregion
 
     #region Helpers
-    public List<GameObject> GetChildObject(Transform parent, string _tag)
+    public static List<GameObject> GetChildObject(Transform parent, string _tag)
     {
         List<GameObject> result = new List<GameObject>();
         for (int i = 0; i < parent.childCount; i++)
