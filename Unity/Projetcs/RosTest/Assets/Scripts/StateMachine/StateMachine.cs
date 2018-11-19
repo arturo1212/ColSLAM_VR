@@ -42,7 +42,6 @@ public class StateMachine : MonoBehaviour {
         transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
         transitions.Add(new ShouldClean(tracingExploreState, cleaningState));
         transitions.Add(new FromCleanToGreenLooker(cleaningState, greenLookerState));
-
         // TODO Hace falta salir de otros estados a los manuales ??
 
         move = GetComponent<Movement>();
@@ -71,6 +70,11 @@ public class StateMachine : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (naiveMapper.markerFound)
+        {
+            move.Stop();
+            return;
+        }
         currentState = EvalTransitions();
         currentState.Execute();
         if(prevState != currentState)

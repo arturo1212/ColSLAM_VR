@@ -46,6 +46,7 @@ public class MapMerge : MonoBehaviour {
                     // Add Robot to map
                     var robot = GetChildObject(g.transform, "Robot")[0]; // GENERALIZAR
                     robot.GetComponent<Movement>().metaPoints = GetChildObject(f.transform, "MetaPoints");
+                    robot.transform.parent = f.transform;   // Cambiar padre del robot a eliminar
                     
                     // Clean fields
                     fields.Remove(g);
@@ -136,6 +137,8 @@ public class MapMerge : MonoBehaviour {
         var coincidences = marker_coincidences(fieldA, fieldB);
         var markersA = coincidences.Item1;
         var markersB = coincidences.Item2;
+        markersA[0].transform.parent = null;
+        markersB[0].transform.parent = null;
 
         //Obtener el centro entre dos marcas y definir eje de rotacion
         GameObject axisA = markersA[0];

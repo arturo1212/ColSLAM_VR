@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosTest", "Assembly-CSharp.csproj", "{79F5B8FC-1542-CEE1-8529-799FCE8C387C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{79F5B8FC-1542-CEE1-8529-799FCE8C387C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosTest", "NavMeshComponents.csproj", "{56C3BBC9-742D-BFF7-0B39-21BAA1D837F9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavMeshComponents", "NavMeshComponents.csproj", "{56C3BBC9-742D-BFF7-0B39-21BAA1D837F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosTest", "NavMeshComponentsEditor.csproj", "{DC5450AC-0D78-1A1E-B242-52DF3AE4C62D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NavMeshComponentsEditor", "NavMeshComponentsEditor.csproj", "{DC5450AC-0D78-1A1E-B242-52DF3AE4C62D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RosTest", "Assembly-CSharp-Editor.csproj", "{D26313EE-F2FD-6D53-7C5C-7D8284DFF24E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{D26313EE-F2FD-6D53-7C5C-7D8284DFF24E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

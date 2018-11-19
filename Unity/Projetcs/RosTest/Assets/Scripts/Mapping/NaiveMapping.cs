@@ -36,6 +36,7 @@ public class NaiveMapping : MonoBehaviour
     [HideInInspector]
     public string visionstate="";
     float y1, y2;
+    public bool markerFound = false;
 
 
     private void ReadArduino(string values)
@@ -317,7 +318,7 @@ public class NaiveMapping : MonoBehaviour
 
             //Detach del handler
             robot.rosSocket.Unsubscribe(markerSubcription_id);
-            while (true) ;
+            markerFound = true;
             visionstate = "";
         }
     }
