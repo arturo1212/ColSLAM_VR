@@ -103,25 +103,11 @@ void setup() {
   mpu.setup();
   delay(5000);
   
-  /*// GIA LIDAR
-  float accbias[] = {-153.63, 30.88, 6.47};
-  float gyrobias[] = {0.69, 1.13, 0.04};
-  float magbias[] = {14.15, 293.79, -195.64};
-  float magscale[] = {1.09, 1.05, 0.88}; 
-  */
-  // Casa David
-  float accbias[] = {-102.84, 35.71, -1.59};
-  float gyrobias[] = {0.51, 1.16, 0.28};
-  float magbias[] = {33.61, 336.52, -192.20};
-  float magscale[] = {1.03, 1.11, 0.89};
-  
-  
-  /* GIA
-  float accbias[] = {-61.71, 4.82, 16.11};
-  float gyrobias[] = {-4.59, -0.35, 2.70};
-  float magbias[] = {-40.68, 308.03, -92.67};
-  float magscale[] = {0.99, 1.05, 0.96}; 
-    */
+  // GIA LIDAR
+  float accbias[] = {-127.38, 22.71, 4.33};
+  float gyrobias[] = {0.74, 1.16, 0.33};
+  float magbias[] = {-17.69, 320.49, -92.67};
+  float magscale[] = {1.00, 1.11, 0.91}; 
   
   for(int i=0;i<3;i++){
     mpu.setAccBias(i,accbias[i]*0.001);
@@ -129,60 +115,27 @@ void setup() {
     mpu.setMagBias(i,magbias[i]);
     mpu.setMagScale(i,magscale[i]);
   }
-  /*
-    *< calibration parameters > Valores en el GIA (suelto en la mesa)
-    accel bias [g]: 
-    -61.71, 4.82, 16.11
-    gyro bias [deg/s]: 
-    -4.59, -0.35, 2.70
-    mag bias [mG]: 
-    -40.68, 308.03, -92.67
-    mag scale []: 
-    0.99, 1.05, 0.96
-    
-    Valores en casa de David (montado en robot)
-    < calibration parameters >
-    accel bias [g]:
-    -102.84, 35.71, -1.59
-    gyro bias [deg/s]:
-    0.51, 1.16, 0.28
-    mag bias [mG]:
-    33.61, 336.52, -192.20
-    mag scale []:
-    1.03, 1.11, 0.89
-    
-    < calibration parameters >
-    accel bias [g]:
-    -153.63, 30.88, 6.47
-    gyro bias [deg/s]:
-    0.69, 1.13, 0.04
-    mag bias [mG]:
-    14.15, 293.79, -195.64
-    mag scale []:
-    1.09, 1.05, 0.88
-    
-    < calibration parameters > Calibracion en plano
-    accel bias [g]: 
-    -113.59, 53.41, -7.26
-    gyro bias [deg/s]: 
-    0.51, 1.03, 0.31
-    mag bias [mG]: 
-    12.38, 194.08, -233.39
-    mag scale []: 
-    0.81, 0.86, 1.65
 
-    */
+  /* GIA ULTIMOS BUENOS
+  < calibration parameters >
+  accel bias [g]:
+  -127.38, 22.71, 4.33
+  gyro bias [deg/s]:
+  0.74, 1.16, 0.33
+  mag bias [mG]:
+  -17.69, 320.49, -92.67
+  mag scale []:
+  1.00, 1.11, 0.91
+  */
 
-    //mpu.calibrateAccelGyro();
-    //mpu.calibrateMag();
+  //mpu.calibrateAccelGyro();
+  //mpu.calibrateMag();
 
-    //mpu.printCalibration();
+  //mpu.printCalibration();
 }
 
 void loop() {
-  //char copy[15];
-  //Serial.println(String(getDistance()));
-  
+
   for(int pos = 20; pos <= 180; pos += 1)
   { 
     mpu.update();
@@ -194,7 +147,7 @@ void loop() {
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
     delay(16);
   }
-  Serial.println("RETURNED: "+String(getDistance()));
+  //Serial.println("RETURNED: "+String(getDistance()));
   for(int pos = 180; pos>=20; pos-=1)
   {
     mpu.update();

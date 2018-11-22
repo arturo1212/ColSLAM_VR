@@ -81,67 +81,52 @@ void setup() {
   pinMode(pinFeedback_right, INPUT);
 
   Wire.begin();
-  myservo.write(20);
+  myservo.write(90);
   delay(2000);
   mpu.setup();
   delay(5000);
 
   // GIA
-  float accbias[] = {-114.38, 19.04, 30.94};
-  float gyrobias[] = {-0.08, -0.47, 0.36};
-  float magbias[] = {188.11, 293.93, -198.02};
-  float magscale[] = {1.04, 1.05, 0.92};
-
+  float accbias[] = {-136.29, -22.77, 28.93};
+  float gyrobias[] = {0.19, 0.96, 0.30};
+  float magbias[] = {279.38, 114.59, -416.40};
+  float magscale[] = {1.08, 0.96, 0.96};
+  
   for(int i=0;i<3;i++){
     mpu.setAccBias(i,accbias[i]*0.001);
     mpu.setGyroBias(i,gyrobias[i]);
     mpu.setMagBias(i,magbias[i]);
     mpu.setMagScale(i,magscale[i]);
   }
-  
-  /* ULTIMOS BUENOS
-  < calibration parameters >
-  accel bias [g]:
-  -114.38, 19.04, 30.94
-  gyro bias [deg/s]:
-  -0.08, -0.47, 0.36
-  mag bias [mG]:
-  188.11, 293.93, -198.02
-  mag scale []:
-  1.04, 1.05, 0.92
-  */
+    /*
+    ULTIMOS BUENOS
+    < calibration parameters >
+    accel bias [g]:
+    -136.29, -22.77, 28.93
+    gyro bias [deg/s]:
+    0.19, 0.96, 0.30
+    mag bias [mG]:
+    279.38, 114.59, -416.40
+    mag scale []:
+    1.08, 0.96, 0.96
+    */
 
-  //mpu.calibrateAccelGyro();
-  //mpu.calibrateMag();
+    //mpu.calibrateAccelGyro();
+    //mpu.calibrateMag();
 
-  //mpu.printCalibration();
+    //mpu.printCalibration();
 
 }
 
 void loop() {
-  //char copy[15];
-  //Serial.println(String(getDistance()));
-  
-  for(int pos = 20; pos <= 180; pos += 1)
-  { 
+
     mpu.update();
     //Serial.println("Entro");
     odom1 = mido_angulo(pinFeedback_left);
     odom2 = mido_angulo(pinFeedback_right);
     //Serial.println("Angulos");
-    myservo.write(pos);
+    //myservo.write(pos);
+    int pos = 90;
     Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(65);
-  }
-  //Serial.println("Result: "+String(getDistance()));
-  for(int pos = 180; pos>=20; pos-=1)
-  {
-    mpu.update();
-    odom1 = mido_angulo(pinFeedback_left);
-    odom2 = mido_angulo(pinFeedback_right);
-    myservo.write(pos);
-    //delay(10);
-    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(65);
-  }
+    delay(16);
 }
