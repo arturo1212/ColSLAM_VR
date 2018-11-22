@@ -26,6 +26,8 @@ public class Robot:MonoBehaviour {
     // Velocidad de cada rueda (de 0 a 100).
     public float RVelocity = 50, LVelocity = 50, RTurnVelocity=50, LTurnVelocity=50;
 
+    public int FOV = 15;
+
     // Use this for initialization
     void Start () {
         rosSocket = new RosSocket("ws://"+Ip+":9090");

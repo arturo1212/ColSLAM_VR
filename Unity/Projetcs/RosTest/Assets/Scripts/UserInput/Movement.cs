@@ -6,12 +6,13 @@ using UnityEngine.AI;
 
 public class Movement : MonoBehaviour {
 
-    public bool behaviourIsRunning = false, stopped = false;
+    public bool behaviourIsRunning = false, stopped = false, debug = true;
     public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar = false, prision = false, arrivedGreen = false;
     public Vector3? metaPoint = null;
     public Vector3? greenPoint = null;
 
-    private Robot robot;
+    [HideInInspector]
+    public Robot robot;
 
     private int pwmRForward = 1280;
     private int pwmLForward = 1720;
@@ -24,7 +25,7 @@ public class Movement : MonoBehaviour {
 
     public List<GameObject> metaPoints;
     [HideInInspector]
-    NaiveMapping naiv;
+    public NaiveMapping naiv;
     public int counter = 0;
     [HideInInspector]
     int index = 0;

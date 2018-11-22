@@ -164,10 +164,6 @@ public class NaiveMapping : MonoBehaviour
         var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
         tpoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * sensorDistance / scale;   // Punto de obstaculo
 
-        /* DEBUG */
-        var center_point = tpoint - offset;
-        //print(tpoint);
-
         RaycastHit[] hits;
         hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, LayerMask.GetMask("Obstacles"));
 
@@ -241,31 +237,27 @@ public class NaiveMapping : MonoBehaviour
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);
+            // Crear cubos dentro del rango de vision y cubos verdes aunque esten lejos
             if (sensorDistance>minDistance && sensorDistance <= maxDistance || visionstate=="hold"  )
             {
                 CreateCube();
             }
             else //Raycast de limpieza
             {
-                var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               
+
+                var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;
+
                 RaycastHit[] hits;
-                hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (sensorDistance + 20) / scale, LayerMask.GetMask("Obstacles"));
-
-                if (hits.Length > 0)
+                hits = Physics.RaycastAll(transform.position + offset, tpoint.normalized, (maxDistance + 20) / scale, LayerMask.GetMask("Obstacles"));
+                List<GameObject> todelete = new List<GameObject>();
+                foreach (RaycastHit hit in hits)
                 {
-
-                    RaycastHit hit;
-                    List<GameObject> todelete = new List<GameObject>();
-                    for (int i = 0; i < hits.Length; i++)
+                    if (hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker")
                     {
-                        hit = hits[i];
-                        if (hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker")
-                        {
-                            todelete.Add(hit.transform.gameObject);
-                        }
+                        todelete.Add(hit.transform.gameObject);
                     }
-                    DestroyObstacleList(todelete);
                 }
+                DestroyObstacleList(todelete);
             }
             var rotation_sensor = transform.rotation.eulerAngles;
             rotation_sensor.y = sensorAngle;
@@ -304,7 +296,6 @@ public class NaiveMapping : MonoBehaviour
         else if (visionstate.Contains("found"))
         {
             Debug.Log("VI LA MARCA");
-
             string[] tokens = visionstate.Split(',');
             y1 = float.Parse(tokens[1]) * Mathf.Rad2Deg;
             y2 = float.Parse(tokens[2]) * Mathf.Rad2Deg;

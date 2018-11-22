@@ -97,7 +97,7 @@ public class TracingExplore : State
 
     public override void Execute()
     {
-        //Debug.Log(faced);
+        // Si no hay PATH -> Limpiar / Explorar en corto
         if(path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("NO PATH FOUND");
@@ -105,7 +105,9 @@ public class TracingExplore : State
             mov.prision = true;
             return;
         }
-        if (path.status != NavMeshPathStatus.PathComplete)// TODO pegado calculando path
+
+        // Si el grafo es muy complejo -> Limpiar / Explorar en corto
+        if (path.status != NavMeshPathStatus.PathComplete) // TODO pegado calculando path
         {
 
             Debug.Log("Calculating path...");
@@ -116,7 +118,12 @@ public class TracingExplore : State
             }
             return;
         }
-        DrawPath();
+
+        if(path != null && path.corners.Length > 0 && mov.debug)
+        {
+            DrawPath();
+        }
+
         float radius = mov.greenPoint != null ? 0.1f : 0.2f, angleThresh = 20;
         if (mov.proximatePoint.y == -1)
         {
@@ -129,13 +136,10 @@ public class TracingExplore : State
                 return;
             }
             initialDist = (mov.proximatePoint - owner.transform.position).magnitude;
-            
         }
 
-        //Debug.Log(faced);
         if (!faced)
         {
-            //Debug.Log("Facing proximate point: " + mov.proximatePoint);
             SteeringBehaviours.Face(mov, mov.proximatePoint, angleThresh, true);
             faced = !mov.facing;
         }
@@ -154,11 +158,22 @@ public class TracingExplore : State
                 mov.tooFar = true;
                 return;
             }
-            Debug.Log("Now Going");
+            Debug.Log("Collision Raycasting");
             // Si hay algo en el medio RIP
             Debug.DrawRay(owner.transform.position, (mov.proximatePoint - owner.transform.position), Color.green,30);
+            Vector3 directionVector = (mov.proximatePoint - owner.transform.position).normalized;
+            float distance = (owner.transform.position - mov.proximatePoint).magnitude;
+            bool ray1 = Physics.Raycast(owner.transform.position, directionVector, distance, LayerMask.GetMask("Ghobstacles"));
+            bool ray2 = Physics.Raycast(owner.transform.position, Quaternion.AngleAxis(mov.robot.FOV, Vector3.up) * directionVector, distance, LayerMask.GetMask("Ghobstacles"));
+            bool ray3 = Physics.Raycast(owner.transform.position, Quaternion.AngleAxis(-mov.robot.FOV, Vector3.up) * directionVector, distance, LayerMask.GetMask("Ghobstacles"));
+            if (mov.debug)
+            {
+                Debug.DrawRay(owner.transform.position, directionVector * distance, Color.yellow, 10);
+                Debug.DrawRay(owner.transform.position, Quaternion.AngleAxis(mov.robot.FOV, Vector3.up) * directionVector * distance, Color.yellow, 10);
+                Debug.DrawRay(owner.transform.position, Quaternion.AngleAxis(-mov.robot.FOV, Vector3.up) * directionVector * distance, Color.yellow, 10);
+            }
 
-            if (Physics.Raycast(owner.transform.position, (mov.proximatePoint - owner.transform.position).normalized, (owner.transform.position - mov.proximatePoint).magnitude, LayerMask.GetMask("Ghobstacles"))) 
+            if (ray1 || ray2 || ray3) 
             {
                 Debug.Log("Path Obstructed");
                 mov.pathObstructed = true;

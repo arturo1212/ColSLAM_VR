@@ -55,7 +55,9 @@ public static class SteeringBehaviours{
     {
         float myRot = move.transform.rotation.eulerAngles[1];
         //Debug.Log("Facing point: " + target);
-        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), tresh, notify);
+        var distance = (move.transform.position - target).magnitude / move.naiv.scale;
+        var new_tresh = PWMHelper.Remap(distance, move.naiv.minDistance, move.naiv.maxDistance, 45, tresh);
+        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), new_tresh, notify);
     }
 
     // La forma en la que esta funcion controla el robot esta deprecada
@@ -66,7 +68,6 @@ public static class SteeringBehaviours{
         float diffRot;
         if (Mathf.Abs(targetRot - myrotation) > 180)
         {
-
             diffRot = (360 - (targetRot - myrotation)) * ((targetRot > myrotation) ? -1 : 1);
         }
         else

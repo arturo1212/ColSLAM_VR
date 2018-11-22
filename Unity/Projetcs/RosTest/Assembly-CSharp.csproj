@@ -61,6 +61,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Planet Earth Free\SpinFree.cs" />
     <Compile Include="Assets\RosSharp\Scripts\Extensions\StandardHeaderExtensions.cs" />
     <Compile Include="Assets\RosSharp\Scripts\Extensions\TransformExtensions.cs" />
     <Compile Include="Assets\RosSharp\Scripts\MessageHandling\DirectJoyAxisReceiver.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Assets\Scripts\UserInput\ClawControl.cs" />
     <Compile Include="Assets\Scripts\UserInput\Configuration.cs" />
     <Compile Include="Assets\Scripts\UserInput\Movement.cs" />
+    <None Include="Assets\Sci-Fi Styled Modular Pack\Readme.txt" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>C:/Users/vader/ColSLAM_VR/Unity/Projetcs/RosTest/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
