@@ -87,10 +87,10 @@ void setup() {
   delay(5000);
 
   // GIA
-  float accbias[] = {-136.29, -22.77, 28.93};
-  float gyrobias[] = {0.19, 0.96, 0.30};
-  float magbias[] = {279.38, 114.59, -416.40};
-  float magscale[] = {1.08, 0.96, 0.96};
+  float accbias[] = {-189.94, -36.74, 12.02};
+  float gyrobias[] = {0.27, 0.92, 0.31};
+  float magbias[] = {233.69, 123.41, -365.62};
+  float magscale[] = {1.10, 0.98, 0.94};
   
   for(int i=0;i<3;i++){
     mpu.setAccBias(i,accbias[i]*0.001);
@@ -102,13 +102,13 @@ void setup() {
     ULTIMOS BUENOS
     < calibration parameters >
     accel bias [g]:
-    -136.29, -22.77, 28.93
+    -189.94, -36.74, 12.02
     gyro bias [deg/s]:
-    0.19, 0.96, 0.30
+    0.27, 0.92, 0.31
     mag bias [mG]:
-    279.38, 114.59, -416.40
+    233.69, 123.41, -365.62
     mag scale []:
-    1.08, 0.96, 0.96
+    1.10, 0.98, 0.94
     */
 
     //mpu.calibrateAccelGyro();
