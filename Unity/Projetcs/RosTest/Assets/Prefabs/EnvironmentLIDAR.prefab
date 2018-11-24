@@ -409,6 +409,7 @@ MonoBehaviour:
   behaviourIsRunning: 0
   stopped: 0
   debug: 1
+  enableControl: 0
   facing: 0
   goingToGoal: 0
   traceDone: 0

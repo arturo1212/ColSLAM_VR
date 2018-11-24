@@ -240,9 +240,9 @@ public class NaiveClaw : MonoBehaviour
             Vector3 rotationVector = transform.rotation.eulerAngles;
             rotationVector.y = rotation_robot;
             transform.rotation = Quaternion.Euler(rotationVector);
-            if (sensorDistance > minDistance && sensorDistance <= maxDistance || visionstate == "hold")
+            if (sensorDistance > minDistance && sensorDistance < maxDistance || visionstate == "hold")
             {
-                //CreateCube();
+                CreateCube();
             }
             else //Raycast de limpieza
             {

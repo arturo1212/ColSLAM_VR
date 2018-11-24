@@ -19,22 +19,30 @@ public class LaserPointer : MonoBehaviour {
 
     public LayerMask teleportMask, watchMask;
 
+    public bool touchPadPressed;
     private bool shouldTeleport, shouldWatch, watching;
 
+    public Vector2 touchPad;
 
-    private SteamVR_Controller.Device Controller
-    {
-        get { return SteamVR_Controller.Input((int)trackedObj.index); }
-    }
+
+    public SteamVR_Controller.Device Controller;
 
     void Awake()
     {
         trackedObj = GetComponent<SteamVR_TrackedObject>();
+        Debug.Log(trackedObj);
     }
     // Use this for initialization
     void Start () {
+        Controller = SteamVR_Controller.Input((int)trackedObj.index);
         laser_teleport = Instantiate(laserPrefab);
         laser_watch = Instantiate(laserWatchPrefab);
+    }
+
+    private void FixedUpdate()
+    {
+        Controller = SteamVR_Controller.Input((int)trackedObj.index);
+        touchPad = Controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
     }
 
     // Update is called once per frame
@@ -42,6 +50,7 @@ public class LaserPointer : MonoBehaviour {
         if (Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
         {
             RaycastHit hit;
+            touchPadPressed = true;
 
             if (Physics.Raycast(trackedObj.transform.position, transform.forward, out hit, 100, teleportMask))
             {
@@ -52,6 +61,7 @@ public class LaserPointer : MonoBehaviour {
         }
         else
         {
+            touchPadPressed = false;
             laser_teleport.SetActive(false);
         }
         if (Controller.GetPress(SteamVR_Controller.ButtonMask.Trigger))
