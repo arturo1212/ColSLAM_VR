@@ -31,7 +31,7 @@ public class Movement : MonoBehaviour {
     int index = 0;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         robot = gameObject.GetComponent<Robot>();
         explorePath = new NavMeshPath();
         naiv = GetComponent<NaiveMapping>();

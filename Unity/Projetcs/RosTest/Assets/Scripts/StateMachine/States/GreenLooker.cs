@@ -52,7 +52,7 @@ public class Greenlooker : State
         if (mov.facing)
         {
             Debug.Log("Facing holdCube");
-            SteeringBehaviours.Face(mov, naiv.holdCube.transform.position, angleThresh, true);
+            SteeringBehaviours.Face(mov, naiv.holdCube.transform.position, angleThresh, 0.2f, true);
         }
 
         if (!mov.facing)

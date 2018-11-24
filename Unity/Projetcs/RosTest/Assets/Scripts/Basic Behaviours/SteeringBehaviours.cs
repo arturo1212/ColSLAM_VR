@@ -51,13 +51,13 @@ public static class SteeringBehaviours{
     }
 
 
-    public static void Face(Movement move, Vector3 target, float tresh, bool notify=false)
+    public static void Face(Movement move, Vector3 target, float tresh, float tooClose=-1, bool notify=false)
     {
         float myRot = move.transform.rotation.eulerAngles[1];
         //Debug.Log("Facing point: " + target);
-        var distance = (move.transform.position - target).magnitude / move.naiv.scale;
-        var new_tresh = PWMHelper.Remap(distance, move.naiv.minDistance, move.naiv.maxDistance, 45, tresh);
-        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), new_tresh, notify);
+        float  distance = (move.transform.position - target).magnitude;
+        float factor = 1 + tooClose / distance;
+        Face(move, AngleHelpers.angleToPositive(AngleHelpers.angleToLookTo(move.transform, target) + myRot), tooClose == -1 ? tresh : tresh * factor, notify);
     }
 
     // La forma en la que esta funcion controla el robot esta deprecada

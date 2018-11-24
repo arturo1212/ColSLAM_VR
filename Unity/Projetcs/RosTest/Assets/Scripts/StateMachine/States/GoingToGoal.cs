@@ -78,7 +78,7 @@ public class GoingToGoal : State
         if (!faced)
         {
             Debug.Log("Facing");
-            SteeringBehaviours.Face(mov, destiny, angleThresh, true);
+            SteeringBehaviours.Face(mov, destiny, angleThresh, radius, true);
             faced = !mov.facing;
         }
 

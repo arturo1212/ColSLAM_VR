@@ -4,12 +4,10 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - SensorReading
-  - MetaPoints
-  - Marker
-  - Obstacles
   - Fields
+  - MetaPoints
   - Robot
+  - Obstacles
   layers:
   - Default
   - TransparentFX
@@ -19,11 +17,11 @@ TagManager:
   - UI
   - 
   - 
-  - PostProcessing
-  - Floor
-  - Robots
   - Obstacles
   - Ghobstacles
+  - Invisible
+  - CanTeleport
+  - Floor
   - 
   - 
   - 

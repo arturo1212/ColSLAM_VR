@@ -128,6 +128,10 @@ public class NaiveMapping : MonoBehaviour
     {
         auxPose = transform.position;
         robot = gameObject.GetComponent<Robot>();
+        if (robot.rosSocket == null)
+        {
+            Debug.Log("ROSSOCKET ES NULL");
+        }
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
     }

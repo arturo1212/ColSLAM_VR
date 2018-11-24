@@ -42,7 +42,7 @@ public class Cleaning : State
         if (mov.facing)
         {
             Debug.Log("Clean Facing");
-            SteeringBehaviours.Face(mov, cleanPoint, angleThresh, true);
+            SteeringBehaviours.Face(mov, cleanPoint, angleThresh, -1, true);
         }
         else
         {

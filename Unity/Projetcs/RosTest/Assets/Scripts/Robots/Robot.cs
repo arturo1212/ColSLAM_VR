@@ -29,8 +29,16 @@ public class Robot:MonoBehaviour {
     public int FOV = 15;
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         rosSocket = new RosSocket("ws://"+Ip+":9090");
+        if (rosSocket != null)
+        {
+            Debug.Log("Rossocket SETEADO");
+        }
+        else
+        {
+            Debug.Log("SE CAGO ROSSOCKET");
+        }
         movementPublisherId = rosSocket.Advertise("movement", "std_msgs/String");
         resetPublisherId = rosSocket.Advertise("reset", "std_msgs/String");
     }

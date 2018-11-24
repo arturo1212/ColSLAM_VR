@@ -17,6 +17,14 @@ public class TracingExplore : State
         mov = owner.GetComponent<Movement>();
         naiv = owner.GetComponent<NaiveMapping>();
         path = mov.explorePath;
+        if (path != null)
+        {
+            Debug.Log("Path accesible");
+        }
+        else
+        {
+            Debug.Log("PATH ES NULL");
+        }
     }
 
     private void DrawPath()
@@ -140,7 +148,7 @@ public class TracingExplore : State
 
         if (!faced)
         {
-            SteeringBehaviours.Face(mov, mov.proximatePoint, angleThresh, true);
+            SteeringBehaviours.Face(mov, mov.proximatePoint, angleThresh, radius, true);
             faced = !mov.facing;
         }
 

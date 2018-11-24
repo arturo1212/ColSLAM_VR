@@ -110,7 +110,7 @@ public class GridGenerator : MonoBehaviour {
         GameObject cube = Instantiate(Obstacle);
         point.x = (step_x * Mathf.Floor(point.x / step_x) + step_x * Mathf.Ceil(point.x / step_x)) / 2;
         point.z = (step_z * Mathf.Floor(point.z / step_z) + step_z * Mathf.Ceil(point.z / step_z)) / 2;
-        point.y = 0;
+        point.y = transform.position.y;
         cube.transform.localPosition = point;
         Vector3 new_scale = new Vector3(floorCollider.bounds.size.x / rows, 1, floorCollider.bounds.size.z / columns);
         cube.transform.localScale = new_scale;
