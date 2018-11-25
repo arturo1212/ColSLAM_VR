@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+import rospy
+from std_msgs.msg import String
+def callback(data):
+    pass    
+
+def listener():
+    rospy.init_node('objectiveN', anonymous=True)
+    rospy.Subscriber("objective", String, callback)
+    rospy.spin()
+
+if __name__ == '__main__':
+    listener()

@@ -38,6 +38,8 @@ class VisionMonitor:
         self.ros.on_ready(self.run)
         self.ros.connect()
         self.marker_found  = False
+        self.obj_found  = False         # (NUEVO)
+        self.topic_objective = None     # (NUEVO)
         self.topic_homography = None
         self.topic_reset  = None
         self.topic_stream = None
@@ -58,12 +60,14 @@ class VisionMonitor:
 
     def create_topics(self):
         self.topic_homography = roslibpy.Topic(self.ros, "homography", "std_msgs/String")
+        self.topic_objective = roslibpy.Topic(self.ros, "objective", "std_msgs/String") # (NUEVO)
         self.topic_stream = roslibpy.Topic(self.ros, "stream", "std_msgs/String")
         self.topic_reset = roslibpy.Topic(self.ros, "reset", "std_msgs/String")
         self.topic_near = roslibpy.Topic(self.ros, "arduino", "std_msgs/String")
         self.topic_near.subscribe(self.getDistance)
         self.topic_reset.subscribe(self.resetme)
         self.topic_homography.advertise()
+        self.topic_objective.advertise()    # (NUEVO)
         self.topic_stream.advertise()
 
     def run(self):
@@ -74,8 +78,12 @@ class VisionMonitor:
         resolution = (640,480)
 
         # Valores del rango de color (VERDE)
-        lower = np.array([60 - self.sensitivity, 100, 60])
-        upper = np.array([60 + self.sensitivity, 255, 255])
+        lower_green = np.array([60 - self.sensitivity, 100, 60])
+        upper_green = np.array([60 + self.sensitivity, 255, 255])
+
+        #(NUEVO) AGREGADAS VARIABLES PARA ROJO
+        lower_red = np.array ([0,100,100])
+        upper_red = np.array ([18,255,255])
         #MIN_MATCH_COUNT = 25
         MIN_CONTOUR_SIZE = 300
 
@@ -94,7 +102,9 @@ class VisionMonitor:
                 self.topic_stream.publish(stream_data)
                 image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
                 crop_img = get_center_segment(image_hsv, center_width)      # Obtener imagen del centro.
-                green_img, cnts, color_found = color_detection(crop_img, lower, upper, MIN_CONTOUR_SIZE) # Filtro por color
+
+                #(NUEVO) Cambio de nombre a las variables lower y upper
+                green_img, cnts, color_found = color_detection(crop_img, lower_green, upper_green, MIN_CONTOUR_SIZE) # Filtro por color
                 
                 # Verificacion de colores y marcas
                 if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
@@ -110,6 +120,14 @@ class VisionMonitor:
                             self.topic_homography.publish({"data":"found," + str(ys[0]) + "," + str(ys[1])}) # Publicar vector y cambiar booleano
                             self.marker_found = True
                             print("FOUND: ", str(ys), str(count))
+                
+                # (NUEVO) Deteccion de color rojo
+                red_img, cnts, obj_found = color_detection(crop_img, lower_red, upper_red, MIN_CONTOUR_SIZE) # Filtro por color
+                if(obj_found):
+                    self.topic_objective.publish({"data":"found"}) # Publicar vector y cambiar booleano
+                    self.marker_found = True
+                    print("Objetivo encontrado")
+                
 
                 # Mostrar imagenes
                 #cv2.imshow("Frame", image)
