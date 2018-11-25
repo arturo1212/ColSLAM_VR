@@ -1,7 +1,13 @@
 #include <Servo.h>
 #include "MPU9250.h"
 #define window 7
-Servo myservo;
+
+Servo rotation_servo, claw_servo;
+
+// Remote control
+int angle_open = 175, angle_close = 130, pos = 90;;
+String action;
+
 // Variables del MPU6050
 MPU9250 mpu;
 
@@ -76,13 +82,17 @@ float Remap(float value, float from1, float to1, float from2, float to2)
 
 void setup() {
   Serial.begin(115200); // Start serial communications
-  myservo.attach(9);
+  rotation_servo.attach(9);
+  claw_servo.attach(10);
+
   pinMode(pinFeedback_left, INPUT);
   pinMode(pinFeedback_right, INPUT);
 
   Wire.begin();
-  myservo.write(90);
+  rotation_servo.write(90);
+  claw_servo.write(angle_close);
   delay(2000);
+  Serial.println("SETTING UP");
   mpu.setup();
   delay(5000);
 
@@ -115,18 +125,34 @@ void setup() {
     //mpu.calibrateMag();
 
     //mpu.printCalibration();
-
+  Serial.println("SETUP DONE!");
 }
 
 void loop() {
+  
+  mpu.update();
+  odom1 = mido_angulo(pinFeedback_left);
+  odom2 = mido_angulo(pinFeedback_right);
 
-    mpu.update();
-    //Serial.println("Entro");
-    odom1 = mido_angulo(pinFeedback_left);
-    odom2 = mido_angulo(pinFeedback_right);
-    //Serial.println("Angulos");
-    //myservo.write(pos);
-    int pos = 90;
-    Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(Remap(pos,20,180,0,180))+","+String(odom1)+","+String(odom2));
-    delay(16);
+  if(Serial.available()) {
+    action = Serial.readString();// read the incoming data as string
+    
+    int action_number = action.toInt();
+    if(action_number == 1){
+      claw_servo.write(angle_open);
+      //delay(15);
+    }
+    else if(action_number == 0){
+      claw_servo.write(angle_close);
+      //delay(15); 
+    }
+    else if(action_number <= 180 && action_number >= 2){
+      pos = action_number;
+      rotation_servo.write(action_number);
+    }
+    //Serial.println(action);
+  }
+
+  Serial.println(String(mpu.getYaw())+ "," + String(getDistance()) + "," + String(pos)+","+String(odom1)+","+String(odom2));
+  delay(16);
 }
