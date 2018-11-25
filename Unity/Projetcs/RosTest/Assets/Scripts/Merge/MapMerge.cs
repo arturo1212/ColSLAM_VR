@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEditor;
 
 public class MapMerge : MonoBehaviour {
     public List<GameObject> fields = new List<GameObject>();
@@ -42,6 +43,7 @@ public class MapMerge : MonoBehaviour {
                 else if(markersA.Count >= 1)
                 {
                     Debug.Log("MERGEANDO");
+                    EditorApplication.isPaused = true;
                     MapOverlapping(g, f, Pivot_1Point);
                     
                     // Add Robot to map
@@ -83,6 +85,12 @@ public class MapMerge : MonoBehaviour {
 
         // Recrear obstaculos.
         List<GameObject> obstaclesA = GetChildObject(fieldA.transform, "Obstacles");
+        List<GameObject> objectivesA = GetChildObject(fieldA.transform, "Objectives");
+        foreach (GameObject g in objectivesA)
+        {
+            obstaclesA.Add(g);
+        }
+
         List<GameObject> obstaclesB = GetChildObject(fieldB.transform, "Obstacles");
         GridGenerator gg = fieldB.GetComponent<GridGenerator>();
         foreach (GameObject obstacle in obstaclesA)

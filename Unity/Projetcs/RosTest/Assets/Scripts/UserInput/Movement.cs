@@ -10,7 +10,7 @@ public class Movement : MonoBehaviour {
 
     public bool behaviourIsRunning = false, stopped = false, debug = true, enableControl = true;
     public bool facing = false, goingToGoal = false, traceDone = false, pathObstructed = false, tooFar = false, prision = false, arrivedGreen = false;
-    public Vector3? metaPoint = null;
+    public Vector3 metaPoint;
     public Vector3? greenPoint = null;
 
     [HideInInspector]
@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour {
 
     public NavMeshPath explorePath; // Path del que surge la explroacion
     public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
-    public float greenArrive;
+    public float greenArrive, wanderSphereRadius=1;
 
     public List<GameObject> metaPoints;
     [HideInInspector]
@@ -44,6 +44,7 @@ public class Movement : MonoBehaviour {
     private void Start()
     {
         control = controller.GetComponent<ControllerData>();
+        calculateMetaPoint();
     }
 
     public void WASD()
@@ -101,7 +102,7 @@ public class Movement : MonoBehaviour {
         return null;
     }
 
-    void calculateMetaPoint()
+    public void calculateMetaPoint()
     {
         if (greenPoint != null)
         {
@@ -112,21 +113,31 @@ public class Movement : MonoBehaviour {
         {
             // Alguno
             //Debug.Log("METAPOINTS");
-            metaPoint = metaPoints[index].transform.position;
+            Vector3 point = Random.insideUnitSphere * wanderSphereRadius;
+            point += transform.position + transform.forward * (naiv.maxDistance / naiv.scale);
+            NavMeshHit navhit;
+            if (NavMesh.SamplePosition(point, out navhit, wanderSphereRadius + 0.5f, NavMesh.AllAreas)) {
+                metaPoint = navhit.position;
+                //GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                //cube.transform.position = metaPoint;
+            }
+            //metaPoint = metaPoints[index].transform.position;
         }
+
+        Debug.DrawLine(transform.position, metaPoint, Color.red, 10);
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
-            metaPoint = GetClickedPoint();
+            //metaPoint = GetClickedPoint();
         }
         if (enableControl)
         {
             WASD();
         }
-        if (counter == 0)
+        /*if (counter == 0)
         {
             index++;
             index = index % metaPoints.Count;
@@ -134,6 +145,7 @@ public class Movement : MonoBehaviour {
         }
         counter = counter % 5;
         calculateMetaPoint();
+        */
     }
 
     public void TurnLeft(bool notify=false)

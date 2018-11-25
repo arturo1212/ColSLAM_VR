@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LaserPointer : MonoBehaviour {
 
-    public GameObject laserPrefab, laserWatchPrefab;
+    public GameObject laserPrefab, laserWatchPrefab, watcherControl;
     private GameObject laser_teleport, laser_watch;
 
     public Vector3 teleportReticleOffset;
@@ -91,6 +91,7 @@ public class LaserPointer : MonoBehaviour {
         shouldWatch = false;
         watchedTransform = plane.Find("Robot");
         cameraRigTransform.localScale = new Vector3(1, 1, 1)*0.25f;
+        watcherControl.GetComponent<StreamScreen>().activeRobot = plane.Find("Robot").gameObject;
     }
 
     private void Teleport()

@@ -28,7 +28,7 @@ public class Turning: State
 
     public override void Colofon()
     {
-        mov.metaPoint = null;
+        //mov.metaPoint = null;
         odo.useGyro = false;
     }
 }

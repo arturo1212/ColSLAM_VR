@@ -31,7 +31,6 @@ public class GoingToGoal : State
 
     public override void Colofon()
     {
-        mov.metaPoint = null;
         mov.behaviourIsRunning = false;
     }
 

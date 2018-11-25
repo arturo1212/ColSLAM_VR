@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 33363119193469334}
   - component: {fileID: 23364224102738306}
   - component: {fileID: 136216213534305558}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -78,7 +78,7 @@ GameObject:
   - component: {fileID: 114613576260133508}
   - component: {fileID: 114217431471147086}
   - component: {fileID: 114881129721497924}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Robot
   m_TagString: Robot
   m_Icon: {fileID: 0}
@@ -149,8 +149,8 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1236090656840208}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.4, y: 5.38, z: 4.43}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 35.75, y: 4.69, z: 18.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4722496460351516}
@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294966271
+    m_Bits: 6967
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
@@ -417,12 +417,15 @@ MonoBehaviour:
   tooFar: 0
   prision: 0
   arrivedGreen: 0
+  metaPoint: {x: 0, y: 0, z: 0}
   robot: {fileID: 0}
   proximatePoint: {x: -1, y: -1, z: -1}
   greenArrive: 0.5
+  metaFOV: 0
   metaPoints: []
   naiv: {fileID: 0}
   counter: -1
+  controller: {fileID: 0}
 --- !u!114 &114613576260133508
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -484,11 +487,12 @@ MonoBehaviour:
   pwmLBackward: 1280
   movementPublisherId: 0
   resetPublisherId: 0
+  clawPublisherId: 0
   RVelocity: 60
   LVelocity: 60
   RTurnVelocity: 30
   LTurnVelocity: 30
-  FOV: 10
+  FOV: 0
 --- !u!114 &114881129721497924
 MonoBehaviour:
   m_ObjectHideFlags: 1

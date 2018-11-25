@@ -8,6 +8,7 @@ TagManager:
   - MetaPoints
   - Robot
   - Obstacles
+  - Objectives
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Invisible
   - CanTeleport
   - Floor
-  - 
+  - Robot
   - 
   - 
   - 

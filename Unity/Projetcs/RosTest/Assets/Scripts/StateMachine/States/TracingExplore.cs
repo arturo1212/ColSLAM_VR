@@ -42,7 +42,18 @@ public class TracingExplore : State
         Debug.Log("Init Explore");
         path.ClearCorners();
         initialTime = Time.realtimeSinceStartup;
-        NavMesh.CalculatePath(owner.transform.position, (Vector3)mov.metaPoint, NavMesh.AllAreas, path);
+        NavMeshHit navhit;
+        Vector3 point;
+        if(NavMesh.SamplePosition(owner.transform.position, out navhit, 0.5f, NavMesh.AllAreas))
+        {
+            point = navhit.position;
+        }
+        else
+        {
+            point = owner.transform.position;
+        }
+
+        NavMesh.CalculatePath(point, mov.metaPoint, NavMesh.AllAreas, path);
         
         mov.proximatePoint = new Vector3(-1, -1, -1);
         nscans = 0;
@@ -109,8 +120,9 @@ public class TracingExplore : State
         if(path.status == NavMeshPathStatus.PathInvalid)
         {
             Debug.Log("NO PATH FOUND");
-            mov.Stop();
-            mov.prision = true;
+            mov.calculateMetaPoint();
+            mov.Stop(true);
+            //mov.prision = true;
             return;
         }
 
@@ -122,7 +134,9 @@ public class TracingExplore : State
             float diff = Time.realtimeSinceStartup - initialTime;
             if ( diff > 5)
             {
-                mov.prision = true;
+                mov.calculateMetaPoint();
+                mov.Stop(true);
+                //mov.prision = true;
             }
             return;
         }
@@ -132,7 +146,7 @@ public class TracingExplore : State
             DrawPath();
         }
 
-        float radius = mov.greenPoint != null ? 0.1f : 0.2f, angleThresh = 20;
+        float radius = mov.greenPoint != null ? 0.1f : 0.3f, angleThresh = 20;
         if (mov.proximatePoint.y == -1)
         {
             mov.proximatePoint = nextPoint(radius);
@@ -141,6 +155,7 @@ public class TracingExplore : State
                 mov.Stop(true);
                 mov.behaviourIsRunning = false;
                 nscans = 0;
+                mov.calculateMetaPoint();
                 return;
             }
             initialDist = (mov.proximatePoint - owner.transform.position).magnitude;

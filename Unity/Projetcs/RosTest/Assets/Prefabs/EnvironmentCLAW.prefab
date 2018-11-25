@@ -69,7 +69,8 @@ GameObject:
   - component: {fileID: 114359761391151800}
   - component: {fileID: 114371759460375310}
   - component: {fileID: 114922706489279510}
-  m_Layer: 0
+  - component: {fileID: 114665110643892474}
+  m_Layer: 13
   m_Name: Robot
   m_TagString: Robot
   m_Icon: {fileID: 0}
@@ -107,7 +108,7 @@ GameObject:
   - component: {fileID: 33981793052506618}
   - component: {fileID: 23054633892843276}
   - component: {fileID: 136709126980995870}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Sensor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -136,7 +137,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1483289921192274}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 13.190001, y: 5.42, z: -16.970001}
+  m_LocalPosition: {x: 35.54, y: 4.73, z: -3.380001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4586560947086922}
@@ -337,7 +338,7 @@ MeshFilter:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1483289921192274}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 0}
 --- !u!33 &33213421820285786
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -382,8 +383,9 @@ MonoBehaviour:
   pwmLForward: 1720
   pwmRBackward: 1720
   pwmLBackward: 1280
-  movementPublisherId: 0
-  resetPublisherId: 0
+  movementPublisherId: 2083407731
+  resetPublisherId: 565212200
+  clawPublisherId: 1412147608
   RVelocity: 60
   LVelocity: 60
   RTurnVelocity: 30
@@ -421,16 +423,31 @@ MonoBehaviour:
   scale: 100
   scanNumber: 0
   holdCounter: 0
-  calibrtionSubcription_id: 0
+  calibrtionSubcription_id: -242209772
   arduinoSubscription_id: -1
-  markerSubcription_id: 0
+  markerSubcription_id: 2005614668
   auxScan: -1
   tpoint: {x: 0, y: 0, z: 0}
   actualPose: {x: 0, y: 0, z: 0}
-  auxPose: {x: 0, y: 0, z: 0}
+  auxPose: {x: 35.54, y: 4.799, z: -3.380001}
   lastCube: {fileID: 0}
   holdCube: {fileID: 0}
   visionstate: 
+--- !u!114 &114665110643892474
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1412418399241704}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ff490b125db3a841a2856bd57c3116e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  controller: {fileID: 0}
+  holding: 0
+  shouldHold: 0
+  shouldLook: 0
 --- !u!114 &114758802874555542
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -448,7 +465,7 @@ MonoBehaviour:
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
     serializedVersion: 2
-    m_Bits: 4294966271
+    m_Bits: 6967
   m_UseGeometry: 1
   m_DefaultArea: 0
   m_IgnoreNavMeshAgent: 1
@@ -497,10 +514,10 @@ MonoBehaviour:
   tooFar: 0
   prision: 0
   arrivedGreen: 0
-  robot: {fileID: 0}
+  robot: {fileID: 114359761391151800}
   proximatePoint: {x: -1, y: -1, z: -1}
   greenArrive: 0
-  naiv: {fileID: 0}
+  naiv: {fileID: 114371759460375310}
   counter: 0
   controller: {fileID: 0}
 --- !u!136 &136709126980995870

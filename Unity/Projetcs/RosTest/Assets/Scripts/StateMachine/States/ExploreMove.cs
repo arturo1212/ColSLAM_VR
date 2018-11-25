@@ -31,7 +31,7 @@ public class ExploreMove : State
 
     public override void Execute()
     {
-        float radius = mov.greenPoint != null ? mov.greenArrive : 0.2f;
+        float radius = mov.greenPoint != null ? mov.greenArrive : 0.25f;
         //Debug.Log("Now Going");
         GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         sphere.transform.position = mov.proximatePoint;

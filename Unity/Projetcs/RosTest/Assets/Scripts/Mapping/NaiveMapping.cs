@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 
 public class NaiveMapping : MonoBehaviour
 {
@@ -23,7 +24,7 @@ public class NaiveMapping : MonoBehaviour
     private bool newReading = false;
 
     [HideInInspector]
-    public int calibrtionSubcription_id, arduinoSubscription_id = -1, markerSubcription_id, auxScan=-1;
+    public int calibrtionSubcription_id, arduinoSubscription_id = -1, markerSubcription_id, auxScan = -1, objectiveSubscription_id = -1, streamSubscription_id = -1;
     [HideInInspector]
     public Vector3 tpoint, actualPose, auxPose;
     [HideInInspector]
@@ -32,11 +33,12 @@ public class NaiveMapping : MonoBehaviour
     Vector3 savedPosition;
     [HideInInspector]
     public GameObject lastCube;
-    public GameObject holdCube=null;
+    public GameObject holdCube=null, redCube = null;
     [HideInInspector]
-    public string visionstate="";
+    public string visionstate="", visionobj = "";
     float y1, y2;
     public bool markerFound = false;
+    public byte[] imageBytes;
 
 
     private void ReadArduino(string values)
@@ -106,10 +108,32 @@ public class NaiveMapping : MonoBehaviour
         visionstate = message;
     }
 
+    private void ObjectiveReader(string message)
+    {
+        visionobj = message;
+    }
+
+    private void StreamReader(string message)
+    {
+        imageBytes = Convert.FromBase64String(message);
+    }
+
+    private void SubscriptionStreamHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        StreamReader(standardString.data);
+    }
+
     private void SubscriptionMarkHandler(Message message)
     {
         StandardString standardString = (StandardString)message;
         MarkerReader(standardString.data);
+    }
+
+    private void SubscriptionObjectiveHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        ObjectiveReader(standardString.data);
     }
 
     private void SubscriptionHandler(Message message)
@@ -134,6 +158,8 @@ public class NaiveMapping : MonoBehaviour
         }
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
+        objectiveSubscription_id = robot.rosSocket.Subscribe("/objective", "std_msgs/String", SubscriptionObjectiveHandler);
+        streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
     }
 
     void CreateTag(string s)
@@ -315,6 +341,18 @@ public class NaiveMapping : MonoBehaviour
             robot.rosSocket.Unsubscribe(markerSubcription_id);
             markerFound = true;
             visionstate = "";
+        }
+        if (!string.IsNullOrEmpty(visionobj))
+        {
+            if(lastCube!=null)
+            {
+                redCube = lastCube;
+                redCube.name = "Rojito";
+                redCube.tag = "Objectives";
+                redCube.GetComponent<Renderer>().material.color = Color.red;
+                visionobj = "";
+
+            }
         }
     }
 
