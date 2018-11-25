@@ -82,8 +82,8 @@ class VisionMonitor:
         upper_green = np.array([60 + self.sensitivity, 255, 255])
 
         #(NUEVO) AGREGADAS VARIABLES PARA ROJO
-        lower_red = np.array ([0,100,100])
-        upper_red = np.array ([18,255,255])
+        lower_red = np.array ([160,100,100])
+        upper_red = np.array ([179,255,255])
         #MIN_MATCH_COUNT = 25
         MIN_CONTOUR_SIZE = 300
 
@@ -125,7 +125,7 @@ class VisionMonitor:
                 red_img, cnts, obj_found = color_detection(crop_img, lower_red, upper_red, MIN_CONTOUR_SIZE) # Filtro por color
                 if(obj_found):
                     self.topic_objective.publish({"data":"found"}) # Publicar vector y cambiar booleano
-                    self.marker_found = True
+                    self.obj_found = True
                     print("Objetivo encontrado")
                 
 
