@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using UnityEngine.AI;
+using System;
 
 public class NaiveClaw : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class NaiveClaw : MonoBehaviour
     [HideInInspector]
     public string visionstate = "";
     float y1, y2;
+    public byte[] imageBytes;
 
 
     private void ReadArduino(string values)
@@ -103,6 +105,17 @@ public class NaiveClaw : MonoBehaviour
     private void MarkerReader(string message)
     {
         visionstate = message;
+    }
+
+    private void StreamReader(string message)
+    {
+        imageBytes = Convert.FromBase64String(message);
+    }
+
+    private void SubscriptionStreamHandler(Message message)
+    {
+        StandardString standardString = (StandardString)message;
+        StreamReader(standardString.data);
     }
 
     private void SubscriptionMarkHandler(Message message)

@@ -9,6 +9,7 @@ TagManager:
   - Robot
   - Obstacles
   - Objectives
+  - Marker
   layers:
   - Default
   - TransparentFX
