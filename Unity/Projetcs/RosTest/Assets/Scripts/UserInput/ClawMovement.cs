@@ -31,7 +31,7 @@ public class ClawMovement : MonoBehaviour
     int index = 0;
 
     public GameObject controller;
-    private LaserPointer laser;
+    private ControllerData control;
 
     // Use this for initialization
     void Awake()
@@ -44,29 +44,29 @@ public class ClawMovement : MonoBehaviour
 
     private void Start()
     {
-        laser = controller.GetComponent<LaserPointer>();
+        control = controller.GetComponent<ControllerData>();
     }
 
     // Update is called once per frame
 
     public void WASD()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || ( laser.touchPadPressed && laser.touchPad.y > 0.7f))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || ( control.touchPadPressed && control.touchPad.y > 0.6f))
         {
             GoForward();
             print("W key was pressed");
         }
-        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || (laser.touchPadPressed && laser.touchPad.x < -0.7f))
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || (control.touchPadPressed && control.touchPad.x < -0.6f))
         {
             TurnLeft();
             print("A key was pressed");
         }
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || (laser.touchPadPressed && laser.touchPad.y < -0.7f))
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || (control.touchPadPressed && control.touchPad.y < -0.6f))
         {
             GoBackwards();
             print("S key was pressed");
         }
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || (laser.touchPadPressed && laser.touchPad.x > 0.7f))
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || (control.touchPadPressed && control.touchPad.x > 0.6f))
         {
             TurnRight();
             print("D key was pressed");

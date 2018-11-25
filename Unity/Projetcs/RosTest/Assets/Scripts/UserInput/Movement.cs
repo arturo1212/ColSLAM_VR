@@ -32,6 +32,7 @@ public class Movement : MonoBehaviour {
     [HideInInspector]
     int index = 0;
     public GameObject controller;
+    ControllerData control;
     // Use this for initialization
     void Awake () {
         robot = gameObject.GetComponent<Robot>();
@@ -40,28 +41,30 @@ public class Movement : MonoBehaviour {
         metaPoints = MapMerge.GetChildObject(transform.parent, "MetaPoints");
     }
 
+    private void Start()
+    {
+        control = controller.GetComponent<ControllerData>();
+    }
+
     public void WASD()
     {
 
-        bool touchPadPressed = controller.GetComponent<LaserPointer>().Controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
-        Vector2 touchPad = controller.GetComponent<LaserPointer>().Controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0);
-
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || (touchPadPressed && touchPad.y > 0.7f))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) || (control.touchPadPressed && control.touchPad.y > 0.7f))
         {
             GoForward();
             //print("W key was pressed");
         }
-        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || (touchPadPressed && touchPad.x < -0.7f))
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) || (control.touchPadPressed && control.touchPad.x < -0.7f))
         {
             TurnLeft();
             //print("A key was pressed");
         }
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || (touchPadPressed && touchPad.y < -0.7f))
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) || (control.touchPadPressed && control.touchPad.y < -0.7f))
         {
             GoBackwards();
             //print("S key was pressed");
         }
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || (touchPadPressed && touchPad.x > 0.7f))
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) || (control.touchPadPressed && control.touchPad.x > 0.7f))
         {
             TurnRight();
             //print("D key was pressed");

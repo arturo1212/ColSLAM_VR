@@ -21,7 +21,7 @@ public class Robot:MonoBehaviour {
     [HideInInspector]
     public RosSocket rosSocket;
     [HideInInspector]
-    public int movementPublisherId, resetPublisherId;
+    public int movementPublisherId, resetPublisherId, clawPublisherId;
 
     // Velocidad de cada rueda (de 0 a 100).
     public float RVelocity = 50, LVelocity = 50, RTurnVelocity=50, LTurnVelocity=50;
@@ -41,6 +41,7 @@ public class Robot:MonoBehaviour {
         }
         movementPublisherId = rosSocket.Advertise("movement", "std_msgs/String");
         resetPublisherId = rosSocket.Advertise("reset", "std_msgs/String");
+        clawPublisherId = rosSocket.Advertise("claw", "std_msgs/String");
     }
 
     // Update is called once per frame

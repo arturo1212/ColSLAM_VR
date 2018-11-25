@@ -267,8 +267,8 @@ public class NaiveClaw : MonoBehaviour
                 }
             }
             var rotation_sensor = transform.rotation.eulerAngles;
-            rotation_sensor.y = sensorAngle;
-            //sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
+            rotation_sensor.y = sensorAngle - 90;
+            sensorObject.transform.rotation = Quaternion.Euler(rotation_sensor);
             transform.position = transform.position + transform.forward * 1f* displacement / scale;
             newReading = false;
         }
