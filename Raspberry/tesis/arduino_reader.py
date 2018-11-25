@@ -15,7 +15,6 @@ pub = rospy.Publisher('arduino', String, queue_size=1)
 rospy.init_node('arduino_talker', anonymous=True)
 rate = rospy.Rate(60) # 60hz
 start = time.time()
-rospy.init_node('mirameste')
 rospy.Subscriber("claw", String, callback)
 while not rospy.is_shutdown():
     result = str(ser.readline().strip())    # read up to one hundred bytes
