@@ -11,8 +11,8 @@ def callback(data):
     action = int(msg)    
     ser.write(msg+"\n")
 
-pub = rospy.Publisher('arduino', String, queue_size=1)
 rospy.init_node('arduino_talker', anonymous=True)
+pub = rospy.Publisher('arduino', String, queue_size=1)
 rate = rospy.Rate(60) # 60hz
 start = time.time()
 rospy.Subscriber("claw", String, callback)
