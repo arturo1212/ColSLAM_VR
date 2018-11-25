@@ -30,26 +30,26 @@ public class GridGenerator : MonoBehaviour {
         start_z = floorCollider.bounds.center.z - floorCollider.bounds.size.z / 2;
 
         
-        for (float i = start_x; i <= start_x + floorCollider.bounds.size.x; i+=step_x )
+        /*for (float i = start_x; i <= start_x + floorCollider.bounds.size.x; i+=step_x )
         {
             LineRenderer lineRenderer = new GameObject().AddComponent<LineRenderer> () as LineRenderer;
             lineRenderer.transform.parent = transform;
             lineRenderer.useWorldSpace = false;
             lineRenderer.widthMultiplier = 0.01f;
             lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, new Vector3(i, 0.01f, -floorCollider.bounds.size.z / 2));
-            lineRenderer.SetPosition(1, new Vector3(i, 0.01f, floorCollider.bounds.size.z / 2));
+            lineRenderer.SetPosition(0, new Vector3(i, transform.position.y, floorCollider.bounds.center.z - floorCollider.bounds.size.z / 2));
+            lineRenderer.SetPosition(1, new Vector3(i, transform.position.y, floorCollider.bounds.center.z + floorCollider.bounds.size.z / 2));
         }
 
-        /*for (float i = start_z; i <= start_z + floorCollider.bounds.size.z; i += step_z)
+        for (float i = start_z; i <= start_z + floorCollider.bounds.size.z; i += step_z)
         {
             LineRenderer lineRenderer = new GameObject().AddComponent<LineRenderer>() as LineRenderer;
             lineRenderer.transform.parent = transform;
             lineRenderer.useWorldSpace = false;
-            lineRenderer.widthMultiplier = 0.1f;
+            lineRenderer.widthMultiplier = 0.01f;
             lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, new Vector3(floorCollider.bounds.center.x - floorCollider.bounds.size.x / 2, 0.01f, i));
-            lineRenderer.SetPosition(1, new Vector3(floorCollider.bounds.center.x + floorCollider.bounds.size.x / 2, 0.01f, i));
+            lineRenderer.SetPosition(0, new Vector3(floorCollider.bounds.center.x - floorCollider.bounds.size.x / 2, transform.position.y, i));
+            lineRenderer.SetPosition(1, new Vector3(floorCollider.bounds.center.x + floorCollider.bounds.size.x / 2, transform.position.y, i));
         }*/
     }
 
@@ -68,7 +68,7 @@ public class GridGenerator : MonoBehaviour {
         }
         if (Input.GetMouseButtonDown(1))
         {
-            MarkerFound();
+            //MarkerFound();
         }
 
         float timeNow = Time.realtimeSinceStartup;
