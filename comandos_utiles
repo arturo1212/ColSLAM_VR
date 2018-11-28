@@ -1,13 +1,18 @@
 
 # PAra levantar visison sin display LIDAR
-docker run -it -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+docker run -it -e ISCLAW=0 -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 # Para levantar vision con display LIDAR
-docker run -it -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 -e DISPLAY --volume="/tmp/.X11-unix:/tmp/.X11-unix" -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+docker run -it -e ISCLAW=0 -e CLOSEDIS=80 -e CSENSITIVITY=30 -e MINMATCH=25 -e DISPLAY --volume="/tmp/.X11-unix:/tmp/.X11-unix" -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 
 # PAra levantar visison sin display IR
-docker run -it -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+docker run -it -e ISCLAW=0 -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 # Para levantar vision con display IR
-docker run -it -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -e DISPLAY --volume="/tmp/.X11-unix:/tmp/.X11-unix" -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+docker run -it -e ISCLAW=0 -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -e DISPLAY --volume="/tmp/.X11-unix:/tmp/.X11-unix" -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+
+# PAra levantar visison sin display Claw
+docker run -it -e ISCLAW=1 -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
+# Para levantar vision con display IR
+docker run -it -e ISCLAW=1 -e CLOSEDIS=45 -e CSENSITIVITY=30 -e MINMATCH=25 -e DISPLAY --volume="/tmp/.X11-unix:/tmp/.X11-unix" -v $HOME/ColSLAM_VR/robot_pictures:/photos  --network robotnet --rm --privileged colslam:vision bash
 
 
 #Para levantar rosnodes en ambos
