@@ -33,7 +33,7 @@ def take_snapshot(images, names, img_counter, dirname):
         cv2.imwrite(img_name, images[i])
 
 class VisionMonitor:
-    def __init__(self, ip, port, close_distance = 40, sensitivity = 30, MIN_MATCH_COUNT = 25):
+    def __init__(self, ip, port, close_distance = 40, sensitivity = 30, MIN_MATCH_COUNT = 25, is_claw = 0):
         self.ros = roslibpy.Ros(host=ip, port=port)
         self.ros.on_ready(self.run)
         self.ros.connect()
@@ -48,6 +48,7 @@ class VisionMonitor:
         self.distance = 999
         self.sensitivity = sensitivity
         self.MIN_MATCH_COUNT = MIN_MATCH_COUNT
+        self.is_claw = is_claw
         self.ros.run_forever()
 
     def resetme(self, data):
@@ -107,7 +108,7 @@ class VisionMonitor:
                 green_img, cnts, color_found = color_detection(crop_img, lower_green, upper_green, MIN_CONTOUR_SIZE) # Filtro por color
                 
                 # Verificacion de colores y marcas
-                if(color_found and not self.marker_found):                   # Si encontramos color y no hemos visto marca.
+                if(color_found and not self.marker_found and self.is_claw==0):                   # Si encontramos color y no hemos visto marca.
                     self.topic_homography.publish({"data" : "hold"})         # Notificar inicio de procesamiento al servidor.
                     print("Distance: "+str(self.distance))
 
@@ -140,4 +141,4 @@ class VisionMonitor:
                 rawCapture.truncate(0) # Limpiar stream
 
 
-vm = VisionMonitor("rosnodes", 9090, int(os.environ['CLOSEDIS']), int(os.environ['CSENSITIVITY']), int(os.environ['MINMATCH']))
+vm = VisionMonitor("rosnodes", 9090, int(os.environ['CLOSEDIS']), int(os.environ['CSENSITIVITY']), int(os.environ['MINMATCH']), int(os.environ['ISCLAW']))
