@@ -41,7 +41,11 @@ public class TracingExplore : State
     {
         Debug.Log("Init Explore");
         path.ClearCorners();
-        
+
+        if (mov.greenPoint != null)
+        {
+            mov.calculateMetaPoint();
+        }
         mov.proximatePoint = new Vector3(-1, -1, -1);
         nscans = 0;
         auxScan = -1;
@@ -106,8 +110,6 @@ public class TracingExplore : State
 
     public override void Execute()
     {
-        // FALTAN CAOS DE GREENPOINT
-
         // Orientacion hacia el metapunto
         if (!metaFaced)
         {

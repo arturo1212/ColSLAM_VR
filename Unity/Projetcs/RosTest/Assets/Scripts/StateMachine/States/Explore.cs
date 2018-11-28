@@ -88,6 +88,15 @@ public class Explore : State
             if (ray1)
             {
                 Debug.Log("Path Obstructed");
+                if (mov.greenPoint != null)
+                {
+                    Vector3 greenAux = (Vector3)mov.greenPoint;
+                    mov.greenPoint = null;
+                    mov.calculateMetaPoint();
+                    mov.greenPoint = greenAux;
+                    mov.pathObstructed = true;
+                    return;
+                }
                 mov.calculateMetaPoint();
                 mov.pathObstructed = true;
             }

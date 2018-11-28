@@ -159,7 +159,7 @@ public class NaiveMapping : MonoBehaviour
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
         objectiveSubscription_id = robot.rosSocket.Subscribe("/objective", "std_msgs/String", SubscriptionObjectiveHandler);
-        //streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
+        streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
     }
 
     void CreateTag(string s)
@@ -297,7 +297,7 @@ public class NaiveMapping : MonoBehaviour
         }
 
         // VISION
-        if ( visionstate.Contains("hold"))// Guarda desde donde lo leiste
+        if ( visionstate.Contains("hold") && !markerFound)// Guarda desde donde lo leiste
         {
             holdCounter++;
             Debug.Log("Vi VERDE");
@@ -322,6 +322,10 @@ public class NaiveMapping : MonoBehaviour
             // Generar punto cercano a la marca verde.
             var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
             mov.greenPoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * (sensorDistance - 30) / scale;   // Punto de obstaculo
+            mov.greenPoint += holdCube.transform.position;
+            //GameObject gr = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+            //gr.transform.position = (Vector3)mov.greenPoint;
+            //gr.transform.localScale = new Vector3(0.1f, 1, 0.1f);
             //Debug.Log("Green Point seteado " + mov.greenPoint);
             visionstate = "";
         }

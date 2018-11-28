@@ -42,10 +42,10 @@ public class StateMachine : MonoBehaviour {
         transitions.Add(new ExploreTraced(exploreState, exploreMoveState));
         transitions.Add(new Stopped(exploreMoveState, freezedState));
         //transitions.Add(new Stopped(tracingExploreState, freezedState));
-        //transitions.Add(new Stopped(greenLookerState, freezedState));
+        transitions.Add(new Stopped(greenLookerState, freezedState));
         //transitions.Add(new Stopped(cleaningState, freezedState));
         transitions.Add(new GoalIsTooFar(tracingExploreState, exploreState));
-        //transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
+        transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
         transitions.Add(new ShouldClean(tracingExploreState, exploreState));
         //transitions.Add(new FromCleanToGreenLooker(cleaningState, greenLookerState));
         

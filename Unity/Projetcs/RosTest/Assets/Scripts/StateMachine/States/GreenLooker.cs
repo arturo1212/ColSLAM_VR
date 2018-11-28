@@ -35,6 +35,8 @@ public class Greenlooker : State
     public override void Circunloquio()
     {
         mov.facing = true;
+        nscans = 0;
+        auxScan = -1;
         mov.behaviourIsRunning = true;
     }
 
@@ -78,6 +80,11 @@ public class Greenlooker : State
                     nuevopunto += naiv.holdCube.transform.position;
                 }
                 mov.greenPoint = nuevopunto;
+                mov.calculateMetaPoint();
+                //GameObject gr = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
+                //gr.transform.position = nuevopunto;
+                //gr.transform.localScale = new Vector3(0.1f, 1, 0.1f);
+
             }
             mov.Stop(true);
         }
