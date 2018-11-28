@@ -97,10 +97,13 @@ class VisionMonitor:
                 # Imagenes y espacios de colores
                 #print("CONN: " + str(self.ros.is_connected))
                 image = frame.array                                         # Imagen sin procesar.
-                retval, buff = cv2.imencode('.jpg', image)
+                resized = cv2.resize(image,(320,240))
+                retval, buff = cv2.imencode('.jpg', resized)
                 jpg_as_text = base64.b64encode(buff)
                 stream_data = {"data" : jpg_as_text}
                 self.topic_stream.publish(stream_data)
+
+                # Procesar las imagenes
                 image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)    # Espacio HSV
                 crop_img = get_center_segment(image_hsv, center_width)      # Obtener imagen del centro.
 
