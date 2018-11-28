@@ -10,6 +10,7 @@ public class StateMachine : MonoBehaviour {
 
     private Movement move;
     private NaiveMapping naiveMapper;
+    public string current;
 
     // Use this for initialization
     void Start () {
@@ -24,24 +25,30 @@ public class StateMachine : MonoBehaviour {
         ExploreMove exploreMoveState = new ExploreMove(gameObject);
         Greenlooker greenLookerState = new Greenlooker(gameObject);
         Cleaning cleaningState = new Cleaning(gameObject);
+        Explore exploreState = new Explore(gameObject);
 
         states.Add(calibratorState);
         //states.Add(exploreMoveState);
         //states.Add(tracingExploreState);
         currentState = states[0];
 
+        //FALTA PASAR A LO DEL VERDE DESDE EXPLORE DEL TRACING EXPLORE
+
         transitions.Add(new CalibrationCompleted(calibratorState, freezedState));
         transitions.Add(new GoalPointSet(freezedState, tracingExploreState));
-        transitions.Add(new ExplorePathIsObstructed(tracingExploreState, tracingExploreState));
+        transitions.Add(new ExplorePathIsObstructed(tracingExploreState, exploreState));
+        transitions.Add(new ExplorePathIsObstructed(exploreState, exploreState));
         transitions.Add(new ExploreTraced(tracingExploreState, exploreMoveState));
+        transitions.Add(new ExploreTraced(exploreState, exploreMoveState));
         transitions.Add(new Stopped(exploreMoveState, freezedState));
-        transitions.Add(new Stopped(tracingExploreState, freezedState));
-        transitions.Add(new Stopped(greenLookerState, freezedState));
-        transitions.Add(new Stopped(cleaningState, freezedState));
-        transitions.Add(new GoalIsTooFar(tracingExploreState, tracingExploreState));
-        transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
-        transitions.Add(new ShouldClean(tracingExploreState, cleaningState));
-        transitions.Add(new FromCleanToGreenLooker(cleaningState, greenLookerState));
+        //transitions.Add(new Stopped(tracingExploreState, freezedState));
+        //transitions.Add(new Stopped(greenLookerState, freezedState));
+        //transitions.Add(new Stopped(cleaningState, freezedState));
+        transitions.Add(new GoalIsTooFar(tracingExploreState, exploreState));
+        //transitions.Add(new ShouldLookGreen(exploreMoveState, greenLookerState));
+        transitions.Add(new ShouldClean(tracingExploreState, exploreState));
+        //transitions.Add(new FromCleanToGreenLooker(cleaningState, greenLookerState));
+        
         // TODO Hace falta salir de otros estados a los manuales ??
 
         move = GetComponent<Movement>();
@@ -72,16 +79,17 @@ public class StateMachine : MonoBehaviour {
 	void Update () {
         if (naiveMapper.markerFound)
         {
-            move.Stop();
-            return;
+            //move.Stop();
+            //return;
         }
         currentState = EvalTransitions();
         currentState.Execute();
+        current = currentState.ToString();
         if(prevState != currentState)
         {
             prevState = currentState;
+            Debug.Log(currentState);
         }
-        Debug.Log(currentState);
 
     }
 }

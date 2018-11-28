@@ -10,7 +10,7 @@ public class TracingExplore : State
     Vector3 destiny = new Vector3(-1, -1, -1);
     NavMeshSurface surface;
 
-    bool faced = false;
+    bool faced = false, metaFaced, pathCalcStart = false, metaScan = false;
     float initialDist, initialTime;
     public TracingExplore(GameObject owner) : base(owner)
     {
@@ -41,24 +41,14 @@ public class TracingExplore : State
     {
         Debug.Log("Init Explore");
         path.ClearCorners();
-        initialTime = Time.realtimeSinceStartup;
-        NavMeshHit navhit;
-        Vector3 point;
-        if(NavMesh.SamplePosition(owner.transform.position, out navhit, 0.5f, NavMesh.AllAreas))
-        {
-            point = navhit.position;
-        }
-        else
-        {
-            point = owner.transform.position;
-        }
-
-        NavMesh.CalculatePath(point, mov.metaPoint, NavMesh.AllAreas, path);
         
         mov.proximatePoint = new Vector3(-1, -1, -1);
         nscans = 0;
         auxScan = -1;
         faced = false;
+        metaFaced = false;
+        metaScan = false;
+        pathCalcStart = false;
         mov.behaviourIsRunning = true;
         mov.traceDone = false;
         mov.pathObstructed = false;
@@ -116,28 +106,66 @@ public class TracingExplore : State
 
     public override void Execute()
     {
-        // Si no hay PATH -> Limpiar / Explorar en corto
-        if(path.status == NavMeshPathStatus.PathInvalid)
+        // FALTAN CAOS DE GREENPOINT
+
+        // Orientacion hacia el metapunto
+        if (!metaFaced)
         {
-            Debug.Log("NO PATH FOUND");
-            mov.calculateMetaPoint();
-            mov.Stop(true);
-            //mov.prision = true;
+            SteeringBehaviours.Face(mov, mov.metaPoint, 20f, 0.25f, true);
+            metaFaced = !mov.facing;
             return;
         }
 
-        // Si el grafo es muy complejo -> Limpiar / Explorar en corto
-        if (path.status != NavMeshPathStatus.PathComplete) // TODO pegado calculando path
+        // Escaneos hacia el metapunto
+        if (metaFaced && nscans < 1 && !metaScan)
         {
-
-            Debug.Log("Calculating path...");
-            float diff = Time.realtimeSinceStartup - initialTime;
-            if ( diff > 5)
+            mov.Stop();
+            Debug.Log("Escaneando Luego del MetaFace");
+            updateNScans();
+            return;
+        }
+        else if(!metaScan)
+        {
+            metaScan = nscans >= 1;
+            return;
+        }
+        // Calcular camino hacia el metapunto
+        if (!pathCalcStart)
+        {
+            NavMeshHit navhit;
+            Vector3 point, destiny;
+            if (NavMesh.SamplePosition(owner.transform.position, out navhit, 0.5f, NavMesh.AllAreas))
             {
-                mov.calculateMetaPoint();
-                mov.Stop(true);
-                //mov.prision = true;
+                point = navhit.position;
             }
+            else
+            {
+                Debug.Log("ELSE DE LA PERDICION LEER CODIGO");
+                point = owner.transform.position;
+            }
+
+            NavMeshHit navhit2;
+            if (NavMesh.SamplePosition(mov.metaPoint, out navhit2, 0.5f, NavMesh.AllAreas))
+            {
+                destiny = navhit2.position;
+            }
+            else
+            {
+                Debug.Log("ELSE DE LA PERDICION LEER CODIGO");
+                destiny = mov.metaPoint;
+            }
+
+            initialTime = Time.realtimeSinceStartup;
+            NavMesh.CalculatePath(point, destiny, NavMesh.AllAreas, path);
+            pathCalcStart = true;
+        }
+
+        float diff = Time.realtimeSinceStartup - initialTime;
+        if (path.status == NavMeshPathStatus.PathInvalid || (path.status != NavMeshPathStatus.PathComplete && diff > 5 ) )
+        {
+            Debug.Log("NO PATH FOUND");
+            //Cleaning
+            mov.prision = true;
             return;
         }
 
@@ -146,16 +174,15 @@ public class TracingExplore : State
             DrawPath();
         }
 
-        float radius = mov.greenPoint != null ? 0.1f : 0.3f, angleThresh = 20;
+        float radius = mov.greenPoint != null ? 0.1f : 0.25f, angleThresh = 20;
+
+        // Obtener punto del camino generado.
         if (mov.proximatePoint.y == -1)
         {
-            mov.proximatePoint = nextPoint(radius);
+            mov.proximatePoint = nextPoint(0.2f);
             if (mov.proximatePoint.y == -1) // TODO no hay punto proximo (Que hacer ? )
             {
-                mov.Stop(true);
-                mov.behaviourIsRunning = false;
-                nscans = 0;
-                mov.calculateMetaPoint();
+                mov.prision = true;
                 return;
             }
             initialDist = (mov.proximatePoint - owner.transform.position).magnitude;
@@ -165,6 +192,8 @@ public class TracingExplore : State
         {
             SteeringBehaviours.Face(mov, mov.proximatePoint, angleThresh, radius, true);
             faced = !mov.facing;
+            nscans = 0;
+            auxScan = -1;
         }
 
         if (faced)
@@ -176,7 +205,7 @@ public class TracingExplore : State
         /* Esperar a estar detenido y acumular N iteraciones */
         if (nscans >= 1 && faced)
         {
-            if (initialDist > 1.5f)
+            if (initialDist > naiv.maxDistance)
             {
                 mov.tooFar = true;
                 return;
@@ -187,28 +216,21 @@ public class TracingExplore : State
             Vector3 directionVector = (mov.proximatePoint - owner.transform.position).normalized;
             float distance = (owner.transform.position - mov.proximatePoint).magnitude;
             bool ray1 = Physics.Raycast(owner.transform.position, directionVector, distance, LayerMask.GetMask("Ghobstacles"));
-            bool ray2 = Physics.Raycast(owner.transform.position, Quaternion.AngleAxis(mov.robot.FOV, Vector3.up) * directionVector, distance, LayerMask.GetMask("Ghobstacles"));
-            bool ray3 = Physics.Raycast(owner.transform.position, Quaternion.AngleAxis(-mov.robot.FOV, Vector3.up) * directionVector, distance, LayerMask.GetMask("Ghobstacles"));
             if (mov.debug)
             {
                 Debug.DrawRay(owner.transform.position, directionVector * distance, Color.yellow, 10);
-                Debug.DrawRay(owner.transform.position, Quaternion.AngleAxis(mov.robot.FOV, Vector3.up) * directionVector * distance, Color.yellow, 10);
-                Debug.DrawRay(owner.transform.position, Quaternion.AngleAxis(-mov.robot.FOV, Vector3.up) * directionVector * distance, Color.yellow, 10);
             }
 
-            if (ray1 || ray2 || ray3) 
+            if (ray1 ) 
             {
                 Debug.Log("Path Obstructed");
+                //Recordar lo del contador. Pero provisionalmente nos vamos a cleaning
+                //mov.calculateMetaPoint();
                 mov.pathObstructed = true;
             }
             else
             {
                 Debug.Log("All clear");
-
-                /*if (initialDist >= naiv.maxDistance / naiv.scale)
-                {
-                    mov.proximatePoint = (mov.proximatePoint - owner.transform.position).normalized * ((naiv.maxDistance / naiv.scale)*0.75f);
-                }*/
 
                 GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
                 sphere.GetComponent<SphereCollider>().enabled = false;

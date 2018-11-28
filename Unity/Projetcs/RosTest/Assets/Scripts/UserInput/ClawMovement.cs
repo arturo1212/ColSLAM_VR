@@ -175,6 +175,7 @@ public class ClawMovement : MonoBehaviour
         {
             data = leftPWM.ToString() + "," + rightPWM.ToString()
         };
+        robot.movementPublisherId = robot.rosSocket.Advertise("movement", "std_msgs/String");
         robot.rosSocket.Publish(robot.movementPublisherId, msg);
     }
 }

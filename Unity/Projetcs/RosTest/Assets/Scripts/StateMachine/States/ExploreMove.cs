@@ -26,6 +26,7 @@ public class ExploreMove : State
         if (mov.greenPoint == null)
         {
             mov.counter++;
+            mov.calculateMetaPoint();
         }
     }
 

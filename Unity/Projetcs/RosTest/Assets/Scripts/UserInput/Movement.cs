@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour {
 
     public NavMeshPath explorePath; // Path del que surge la explroacion
     public Vector3 proximatePoint = new Vector3(-1,-1,-1); // Punto mas proxio al robot en el path de exploracion
-    public float greenArrive, wanderSphereRadius=1;
+    public float greenArrive, wanderSphereRadius=1, wanderDistance;
 
     public List<GameObject> metaPoints;
     [HideInInspector]
@@ -44,7 +44,6 @@ public class Movement : MonoBehaviour {
     private void Start()
     {
         control = controller.GetComponent<ControllerData>();
-        calculateMetaPoint();
     }
 
     public void WASD()
@@ -114,7 +113,7 @@ public class Movement : MonoBehaviour {
             // Alguno
             //Debug.Log("METAPOINTS");
             Vector3 point = Random.insideUnitSphere * wanderSphereRadius;
-            point += transform.position + transform.forward * (naiv.maxDistance / naiv.scale);
+            point += transform.position + transform.forward * (wanderDistance / naiv.scale);
             NavMeshHit navhit;
             if (NavMesh.SamplePosition(point, out navhit, wanderSphereRadius + 0.5f, NavMesh.AllAreas)) {
                 metaPoint = navhit.position;
@@ -137,6 +136,10 @@ public class Movement : MonoBehaviour {
         {
             WASD();
         }
+        //if (stopped)
+       //{
+        //    Send_motors_pwm();
+        //}
         /*if (counter == 0)
         {
             index++;
@@ -210,6 +213,8 @@ public class Movement : MonoBehaviour {
         {
             data = leftPWM.ToString() + "," + rightPWM.ToString()
         };
+        //Debug.Log("Enviando PWM");
+        robot.movementPublisherId = robot.rosSocket.Advertise("movement", "std_msgs/String");
         robot.rosSocket.Publish(robot.movementPublisherId, msg);
     }
 }

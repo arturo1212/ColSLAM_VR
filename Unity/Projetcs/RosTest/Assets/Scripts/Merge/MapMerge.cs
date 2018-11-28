@@ -61,7 +61,7 @@ public class MapMerge : MonoBehaviour {
     }
 
     /* Obtener todas las coincidencias entre 2 mapas */
-    Tuple<List<GameObject>, List<GameObject>> marker_coincidences(GameObject fieldA, GameObject fieldB)
+    System.Tuple<List<GameObject>, List<GameObject>> marker_coincidences(GameObject fieldA, GameObject fieldB)
     {
         List<GameObject> commonMarkersA = new List<GameObject>();
         List<GameObject> commonMarkersB = new List<GameObject>();
@@ -73,7 +73,7 @@ public class MapMerge : MonoBehaviour {
         commonMarkersA = markersA.Where(f => commonM.Contains(f.name)).ToList();    // Obtener los markers de cada robot.
         commonMarkersB = markersB.Where(f => commonM.Contains(f.name)).ToList();
         // (FALTA) Ordenar las coincidencias: Solo hace falta para mas de una marca.
-        return new Tuple<List<GameObject>, List<GameObject>>(commonMarkersA, commonMarkersB);
+        return new System.Tuple<List<GameObject>, List<GameObject>>(commonMarkersA, commonMarkersB);
     }
 
     void MergePosition(GameObject fieldA, GameObject fieldB, GameObject pivotA, GameObject pivotB)
@@ -106,17 +106,17 @@ public class MapMerge : MonoBehaviour {
         Destroy(pivotB);
     }
 
-    void MapOverlapping(GameObject fieldA, GameObject fieldB, Func<GameObject, GameObject, Tuple<GameObject,GameObject>> getPivots)
+    void MapOverlapping(GameObject fieldA, GameObject fieldB, Func<GameObject, GameObject, System.Tuple<GameObject, GameObject>> getPivots)
     {
         // getPivots selecciona los pivotes y realiza las rotaciones pertinentes.
         //Obtener el centro entre dos marcas y definir eje de rotacion
-        Tuple <GameObject,GameObject> pivots = getPivots(fieldA, fieldB);
+        System.Tuple<GameObject, GameObject> pivots = getPivots(fieldA, fieldB);
         GameObject axisA = pivots.Item1, axisB = pivots.Item2;
         MergePosition(fieldA, fieldB, axisA, axisB);    // Se puede pasar como argumento tambien.
     }
 
     #region Hallar pivote
-    Tuple<GameObject, GameObject> Pivot_3Point(GameObject fieldA, GameObject fieldB)
+    System.Tuple<GameObject, GameObject> Pivot_3Point(GameObject fieldA, GameObject fieldB)
     {
         var coincidences = marker_coincidences(fieldA, fieldB);
         var markersA = coincidences.Item1;
@@ -140,10 +140,10 @@ public class MapMerge : MonoBehaviour {
         axisA.transform.rotation = axisB.transform.rotation;
         fieldA.transform.parent = null; // Parentezco para posicionamiento.
         fieldB.transform.parent = null;
-        return new Tuple<GameObject, GameObject>(axisA, axisB);
+        return new System.Tuple<GameObject, GameObject>(axisA, axisB);
     }
 
-    Tuple<GameObject, GameObject> Pivot_1Point(GameObject fieldA, GameObject fieldB)
+    System.Tuple<GameObject, GameObject> Pivot_1Point(GameObject fieldA, GameObject fieldB)
     {
         var coincidences = marker_coincidences(fieldA, fieldB);
         var markersA = coincidences.Item1;
@@ -163,7 +163,7 @@ public class MapMerge : MonoBehaviour {
 
         // Igualar rotacion y posicion de los planos
         axisA.transform.rotation = axisB.transform.rotation;
-        return new Tuple<GameObject, GameObject>(axisA, axisB);
+        return new System.Tuple<GameObject, GameObject>(axisA, axisB);
     }
 
     #endregion

@@ -159,7 +159,7 @@ public class NaiveMapping : MonoBehaviour
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
         objectiveSubscription_id = robot.rosSocket.Subscribe("/objective", "std_msgs/String", SubscriptionObjectiveHandler);
-        streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
+        //streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
     }
 
     void CreateTag(string s)
@@ -282,7 +282,7 @@ public class NaiveMapping : MonoBehaviour
                 List<GameObject> todelete = new List<GameObject>();
                 foreach (RaycastHit hit in hits)
                 {
-                    if (hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker")
+                    if (hit.transform.gameObject.name != gameObject.name + scanNumber && hit.transform.gameObject.name != "keep" && hit.transform.gameObject.name != "marker" && hit.transform.gameObject.name != "Rojito")
                     {
                         todelete.Add(hit.transform.gameObject);
                     }
@@ -318,6 +318,8 @@ public class NaiveMapping : MonoBehaviour
             holdCube.transform.localScale = newScale;
             //Debug.Log("hold " + holdCube + " last " + lastCube);
             Movement mov = GetComponent<Movement>();
+
+            // Generar punto cercano a la marca verde.
             var offset = new Vector3(Mathf.Sin(Mathf.Deg2Rad * rotation_robot), 0, Mathf.Cos(Mathf.Deg2Rad * rotation_robot)) * 8.5f / scale;               // Separacion entre Centro y LIDAR
             mov.greenPoint = new Vector3(Mathf.Sin(Mathf.Deg2Rad * pointOrientation), 0, Mathf.Cos(Mathf.Deg2Rad * pointOrientation)) * (sensorDistance - 30) / scale;   // Punto de obstaculo
             //Debug.Log("Green Point seteado " + mov.greenPoint);
