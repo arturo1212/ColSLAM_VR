@@ -36,7 +36,7 @@ public class StreamScreen : MonoBehaviour {
                 {
                     Destroy(tex);
                     tex = new Texture2D(640, 480);
-                    tex.LoadImage(naiv.imageBytes);
+                    tex.LoadImage(naiv_claw.imageBytes);
                     screen.GetComponent<Renderer>().material.mainTexture = tex;
                 }
             }

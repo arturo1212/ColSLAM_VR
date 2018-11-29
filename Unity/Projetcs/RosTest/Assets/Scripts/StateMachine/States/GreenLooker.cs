@@ -73,11 +73,13 @@ public class Greenlooker : State
                 Vector3 nuevopunto = new Vector3(Mathf.Sin(randomAngle), 0, Mathf.Cos(randomAngle)) * circunferenceRadius;
                 nuevopunto += naiv.holdCube.transform.position;
 
-                while (Physics.Raycast(owner.transform.position, (nuevopunto - owner.transform.position).normalized, (owner.transform.position - nuevopunto).magnitude, LayerMask.GetMask("Obstacles")))
+                int timesGenerated = 0;
+                while ( timesGenerated<500 && Physics.Raycast(owner.transform.position, (nuevopunto - owner.transform.position).normalized, (owner.transform.position - nuevopunto).magnitude, LayerMask.GetMask("Obstacles")))
                 {
                     randomAngle = Random.Range(0, 360);
                     nuevopunto = new Vector3(Mathf.Sin(randomAngle), 0, Mathf.Cos(randomAngle)) * circunferenceRadius;
                     nuevopunto += naiv.holdCube.transform.position;
+                    timesGenerated++;
                 }
                 mov.greenPoint = nuevopunto;
                 mov.calculateMetaPoint();

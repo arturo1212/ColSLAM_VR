@@ -24,7 +24,7 @@ public class NaiveClaw : MonoBehaviour
     private bool newReading = false;
 
     [HideInInspector]
-    public int calibrtionSubcription_id, arduinoSubscription_id = -1, markerSubcription_id, auxScan = -1;
+    public int calibrtionSubcription_id, arduinoSubscription_id = -1, markerSubcription_id, auxScan = -1, streamSubscription_id = -1;
     [HideInInspector]
     public Vector3 tpoint, actualPose, auxPose;
     [HideInInspector]
@@ -142,6 +142,7 @@ public class NaiveClaw : MonoBehaviour
         robot = gameObject.GetComponent<Robot>();
         calibrtionSubcription_id = robot.rosSocket.Subscribe("/arduino", "std_msgs/String", CalibrationSubscritpionHandler);
         markerSubcription_id = robot.rosSocket.Subscribe("/homography", "std_msgs/String", SubscriptionMarkHandler);
+        streamSubscription_id = robot.rosSocket.Subscribe("/stream", "std_msgs/String", SubscriptionStreamHandler);
     }
 
     void CreateTag(string s)
