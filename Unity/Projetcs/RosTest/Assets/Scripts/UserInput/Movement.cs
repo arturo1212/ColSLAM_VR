@@ -214,7 +214,6 @@ public class Movement : MonoBehaviour {
             data = leftPWM.ToString() + "," + rightPWM.ToString()
         };
         //Debug.Log("Enviando PWM");
-        robot.movementPublisherId = robot.rosSocket.Advertise("movement", "std_msgs/String");
         robot.rosSocket.Publish(robot.movementPublisherId, msg);
     }
 }
