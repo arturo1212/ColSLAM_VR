@@ -207,10 +207,9 @@ public class TracingExplore : State
         /* Esperar a estar detenido y acumular N iteraciones */
         if (nscans >= 1 && faced)
         {
-            if (initialDist > naiv.maxDistance)
+            if (initialDist > naiv.maxDistance/naiv.scale)
             {
-                mov.tooFar = true;
-                return;
+                mov.proximatePoint = Vector3.MoveTowards(owner.transform.position, mov.proximatePoint, (naiv.maxDistance / naiv.scale) * 0.75f);
             }
             Debug.Log("Collision Raycasting");
             // Si hay algo en el medio RIP

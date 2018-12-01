@@ -73,7 +73,11 @@ public class Explore : State
 
         if (nscans >= 1 && faced)
         {
-            
+
+            if ((mov.proximatePoint - owner.transform.position).magnitude > naiv.maxDistance/naiv.scale)
+            {
+                mov.proximatePoint = Vector3.MoveTowards(owner.transform.position, mov.proximatePoint, (naiv.maxDistance / naiv.scale)*0.75f );
+            }
             Debug.Log("Collision Raycasting");
             // Si hay algo en el medio RIP
             Debug.DrawRay(owner.transform.position, (mov.proximatePoint - owner.transform.position), Color.green, 30);

@@ -2,14 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
+using System.IO;
 
 public class ExploreMove : State
 {
+    StreamWriter writer;
     Movement mov;
     float initialDist;
+    Vector3 initialPosition;
+    NaiveMapping naiv;
+    string path;
     public ExploreMove(GameObject owner) : base(owner)
     {
         mov = owner.GetComponent<Movement>();
+        naiv = owner.GetComponent<NaiveMapping>();
+        string date = System.DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss") + ".txt";
+        path = "Assets/Resources/" + owner.transform.parent.name + '_' + date;
     }
 
     public override void Circunloquio()
@@ -17,6 +25,7 @@ public class ExploreMove : State
         Debug.Log("Quiero ir al goal");
         mov.behaviourIsRunning = true;
         mov.arrivedGreen = false;
+        initialPosition = owner.transform.position;
     }
 
     public override void Colofon()
@@ -28,6 +37,12 @@ public class ExploreMove : State
             mov.counter++;
             mov.calculateMetaPoint();
         }
+        float distance = (owner.transform.position - initialPosition).magnitude;
+        writer = new StreamWriter(path, true);
+        string line = distance.ToString() + "/" + (distance*naiv.scale).ToString();
+        line += initialPosition + "/" + owner.transform.position;
+        writer.WriteLine(line);
+        writer.Close();
     }
 
     public override void Execute()
