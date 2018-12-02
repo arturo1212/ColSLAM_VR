@@ -39,7 +39,7 @@ public class ExploreMove : State
         }
         float distance = (owner.transform.position - initialPosition).magnitude;
         writer = new StreamWriter(path, true);
-        string line = distance.ToString() + "/" + (distance*naiv.scale).ToString();
+        string line = distance.ToString() + "/" + (distance*naiv.scale).ToString() + "/";
         line += initialPosition + "/" + owner.transform.position;
         writer.WriteLine(line);
         writer.Close();
