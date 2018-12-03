@@ -1,6 +1,7 @@
 import os
 import glob
 import sys
+import math
 import numpy as np
 
 def calculate_stats(computed, measured):
@@ -12,7 +13,12 @@ def calculate_stats(computed, measured):
         diff = sum(diff)/diff.size
         sqr_diff.append(diff)
     return sqr_diff
-        
+
+def magnitude(tuple_vector):
+    return math.sqrt(tuple_vector[0]**2 + tuple_vector[1]**2)
+
+def tuple_diff(t1,t2):
+    return (t1[0]-t2[0],t1[1]-t2[1])
 
 if __name__ == "__main__":
     cwd = os.getcwd()
@@ -113,8 +119,6 @@ if __name__ == "__main__":
         #Desviacion estandar de la diferencia cuadrada media
         ir_std_sqr_diff = np.std(ir_sqr_diffs,ddof=1)
         lidar_std_sqr_diff = np.std(lidar_sqr_diffs,ddof=1)
-        #Porcentajes de choques, detecciones y falsos positivos
-        
 
         print("IR----------")
         print("Diferencia cuadrada media: " + str(ir_mean_sqr_diff))
@@ -127,7 +131,6 @@ if __name__ == "__main__":
 
         print(ir_sqr_diffs)
 
-
         print("LIDAR----------")
         print("Diferencia cuadrada media: " + str(lidar_mean_sqr_diff))
         print("Std: " + str(lidar_std_sqr_diff))
@@ -138,4 +141,31 @@ if __name__ == "__main__":
         print("Errores por corrida:")
 
         print(lidar_sqr_diffs)
+
+    elif sys.argv[1] == "Merge":
+        full_merge_fodler = os.path.join(cwd,merge_folder)
+        data_file = os.path.join(full_merge_fodler, "data.txt")
+
+        #Leemos data medida y computda
+        f = open(data_file,'r')
+        lines = f.readlines()
+        errors = []
+        for i in range (4,len(lines),3):
+            init_pose = lines[i].strip().split(',')
+            end_pose = lines[i+1].strip().split(',')
+            measured_dist_between = int(lines[i+2])
+
+            init_pose = (float(init_pose[0]),float(init_pose[1]))
+            end_pose = (float(end_pose[0]),float(end_pose[1]))
+            
+            displacement_vector = tuple_diff(end_pose, init_pose)
+            calculated_dist_between = magnitude(displacement_vector)*100
+
+            error = measured_dist_between - calculated_dist_between
+            errors.append(abs(error))
+
+        print("MERGE")
+        print("Error promedio: " + str(np.mean(np.array(errors))))
+        print("Errores:")
+        print(errors)
 
