@@ -3,6 +3,17 @@ import glob
 import sys
 import numpy as np
 
+def calculate_stats(computed, measured):
+    
+    sqr_diff = []
+
+    for c,m in zip(computed, measured):
+        diff = (c-m)**2
+        diff = sum(diff)/diff.size
+        sqr_diff.append(diff)
+    return sqr_diff
+        
+
 if __name__ == "__main__":
     cwd = os.getcwd()
     slam_folder = "SLAM"
@@ -32,7 +43,7 @@ if __name__ == "__main__":
                 #print(line_data, os.path.join(computed, filename))
                 current_result.append(float(line_data[1]))
             
-            matrix.append(current_result)
+            matrix.append(np.array(current_result))
         
         ir_measured_matrix = []
         lidar_measured_matrix = []
@@ -91,10 +102,40 @@ if __name__ == "__main__":
                 ir_falsemarker_detections += faslemarker_detections
                 ir_marker_detections += marker_detections
                 
-            matrix.append(current_result)
+            matrix.append(np.array(current_result))
+        
+        ir_sqr_diffs = calculate_stats(ir_computed_matrix, ir_measured_matrix)
+        lidar_sqr_diffs = calculate_stats(lidar_computed_matrix, lidar_measured_matrix)
 
-        print("IR Measured")
-        print(ir_measured_matrix)
-        print("LIDAR Measured")
-        print(lidar_measured_matrix)
+        #Diferencia cuadrada media
+        ir_mean_sqr_diff =  np.mean(ir_sqr_diffs)
+        lidar_mean_sqr_diff = np.mean(lidar_sqr_diffs)
+        #Desviacion estandar de la diferencia cuadrada media
+        ir_std_sqr_diff = np.std(ir_sqr_diffs,ddof=1)
+        lidar_std_sqr_diff = np.std(lidar_sqr_diffs,ddof=1)
+        #Porcentajes de choques, detecciones y falsos positivos
+        
+
+        print("IR----------")
+        print("Diferencia cuadrada media: " + str(ir_mean_sqr_diff))
+        print("Std: " + str(ir_std_sqr_diff))
+        print("Porcentaje de choques: " + str(ir_collisions/len(ir_sqr_diffs)))
+        print("Porcentaje de verde: " + str(ir_green_detections/len(ir_sqr_diffs)))
+        print("Porcentaje de marcador: " + str(ir_marker_detections/len(ir_sqr_diffs)))
+        print("FALTAN FALSOS")
+        print("Errores por corrida:")
+
+        print(ir_sqr_diffs)
+
+
+        print("LIDAR----------")
+        print("Diferencia cuadrada media: " + str(lidar_mean_sqr_diff))
+        print("Std: " + str(lidar_std_sqr_diff))
+        print("Porcentaje de choques: " + str(lidar_collisions/len(lidar_sqr_diffs)))
+        print("Porcentaje de verde: " + str(lidar_green_detections/len(lidar_sqr_diffs)))
+        print("Porcentaje de marcador: " + str(lidar_marker_detections/len(lidar_sqr_diffs)))
+        print("FALTAN FALSOS")
+        print("Errores por corrida:")
+
+        print(lidar_sqr_diffs)
 
