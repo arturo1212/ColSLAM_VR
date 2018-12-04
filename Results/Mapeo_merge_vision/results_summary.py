@@ -6,13 +6,16 @@ import numpy as np
 
 def calculate_stats(computed, measured):
     
-    sqr_diff = []
-
+    sqr_diffs = []
+    diffs = []
     for c,m in zip(computed, measured):
-        diff = (c-m)**2
+        diff = abs(m - c)
+        sqrdiff = (c-m)**2
+        sqrdiff = sum(sqrdiff)/sqrdiff.size
         diff = sum(diff)/diff.size
-        sqr_diff.append(diff)
-    return sqr_diff
+        sqr_diffs.append(sqrdiff)
+        diffs.append(diff)
+    return diffs, sqr_diffs
 
 def magnitude(tuple_vector):
     return math.sqrt(tuple_vector[0]**2 + tuple_vector[1]**2)
@@ -25,7 +28,7 @@ if __name__ == "__main__":
     slam_folder = "SLAM"
     merge_folder = "Merge"
 
-    if sys.argv[1] == "SLAM":
+    if sys.argv[1] == "SLAM": 
         full_slam_fodler = os.path.join(cwd,slam_folder)
         computed = os.path.join(full_slam_fodler, "Computed")
         measured = os.path.join(full_slam_fodler, "Measured")
@@ -110,38 +113,50 @@ if __name__ == "__main__":
                 
             matrix.append(np.array(current_result))
         
-        ir_sqr_diffs = calculate_stats(ir_computed_matrix, ir_measured_matrix)
-        lidar_sqr_diffs = calculate_stats(lidar_computed_matrix, lidar_measured_matrix)
+        ir_diffs, ir_sqr_diffs = calculate_stats(ir_computed_matrix, ir_measured_matrix)
+        lidar_diffs, lidar_sqr_diffs = calculate_stats(lidar_computed_matrix, lidar_measured_matrix)
 
+        #Diferencia media
+        ir_mean_diff = np.mean(ir_diffs)
+        lidar_mean_diff = np.mean(lidar_diffs)
         #Diferencia cuadrada media
         ir_mean_sqr_diff =  np.mean(ir_sqr_diffs)
         lidar_mean_sqr_diff = np.mean(lidar_sqr_diffs)
+        #Desviacion estandar de la diferencia media
+        ir_std_diff = np.std(ir_diffs, ddof=1)
+        lidar_std_diff = np.std(lidar_diffs, ddof=1)
         #Desviacion estandar de la diferencia cuadrada media
-        ir_std_sqr_diff = np.std(ir_sqr_diffs,ddof=1)
+        ir_std_sqr_diff = np.std(ir_sqr_diffs, ddof=1)
         lidar_std_sqr_diff = np.std(lidar_sqr_diffs,ddof=1)
 
         print("IR----------")
         print("Diferencia cuadrada media: " + str(ir_mean_sqr_diff))
         print("Std: " + str(ir_std_sqr_diff))
-        print("Porcentaje de choques: " + str(ir_collisions/len(ir_sqr_diffs)))
+        print("Diferencia media: " + str(ir_mean_diff))
+        print("Std: " + str(ir_std_diff))
+        print("Choques por corrida: " + str(ir_collisions/len(ir_sqr_diffs)))
         print("Porcentaje de verde: " + str(ir_green_detections/len(ir_sqr_diffs)))
         print("Porcentaje de marcador: " + str(ir_marker_detections/len(ir_sqr_diffs)))
         print("FALTAN FALSOS")
         print("Errores por corrida:")
 
         print(ir_sqr_diffs)
+        print(ir_diffs)
 
         print("LIDAR----------")
         print("Diferencia cuadrada media: " + str(lidar_mean_sqr_diff))
         print("Std: " + str(lidar_std_sqr_diff))
-        print("Porcentaje de choques: " + str(lidar_collisions/len(lidar_sqr_diffs)))
+        print("Diferencia media: " + str(lidar_mean_diff))
+        print("Std: " + str(lidar_std_diff))
+        print("Choques por corrida: " + str(lidar_collisions/len(lidar_sqr_diffs)))
         print("Porcentaje de verde: " + str(lidar_green_detections/len(lidar_sqr_diffs)))
         print("Porcentaje de marcador: " + str(lidar_marker_detections/len(lidar_sqr_diffs)))
         print("FALTAN FALSOS")
         print("Errores por corrida:")
 
         print(lidar_sqr_diffs)
-
+        print(lidar_diffs)
+        
     elif sys.argv[1] == "Merge":
         full_merge_fodler = os.path.join(cwd,merge_folder)
         data_file = os.path.join(full_merge_fodler, "data.txt")
